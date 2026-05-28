@@ -41,3 +41,11 @@ backend/.env.*
 *.sw?
 
 .vercel
+# Temp: exclude large binaries for initial push
+public/mockups/tshirt.png
+public/mockups/tshirtbp.png
+public/TeeCollection/
+Other-Upperwear-designs/*.png
+public/TestPerson.png
+public/TestTshirt.png
+backend/designs/
