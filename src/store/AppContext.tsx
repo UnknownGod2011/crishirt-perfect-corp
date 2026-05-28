@@ -155,7 +155,7 @@ const initialState: AppState = {
   currentSide: 'front',
   isGenerating: false,
   isRefining: false,
-  tshirtColor: '#000000',
+  tshirtColor: '#87CEEB',
   apparelType: 'tshirt',
   material: 'Cotton',
   size: 'M',
