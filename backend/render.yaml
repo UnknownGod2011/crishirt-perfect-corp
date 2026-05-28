@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: crishirts-backend
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node index.perfect.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        sync: false
+      - key: PERFECT_API_KEY
+        sync: false
+      - key: PERFECT_API_BASE_URL
+        value: https://yce-api-01.makeupar.com
+      - key: PERFECT_V1_API_BASE_URL
+        value: https://yce-api-01.makeupar.com
+      - key: PERFECT_DEMO_MODE
+        value: "false"
+      - key: PERFECT_API_POLL_INTERVAL_MS
+        value: "2000"
+      - key: PERFECT_API_MAX_ATTEMPTS
+        value: "45"
+      - key: PERFECT_V1_ACCESS_TOKEN
+        sync: false
+      - key: PERFECT_V1_CLIENT_ID
+        sync: false
+      - key: PERFECT_V1_CLIENT_SECRET
+        sync: false
+      - key: PERFECT_TEXT_STYLE_GROUP_ID
+        value: "13600722"
+      - key: PERFECT_TEXT_STYLE_ID
+        value: "5257"
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-2.5-flash
