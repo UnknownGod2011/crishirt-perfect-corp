@@ -23,33 +23,18 @@ function AppContent() {
       try {
         const isLocalHost = ['localhost', '127.0.0.1', '::1'].includes(window.location.hostname);
         const apiUrl = import.meta.env.VITE_API_URL || (isLocalHost ? 'http://localhost:5000' : '');
-        if (!apiUrl) return;
-        console.log('Waking up backend server...');
-        
-        const response = await fetch(`${apiUrl}/api/health`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        
-        if (response.ok) {
-          console.log('Backend server is awake and ready.');
-        } else {
-          console.log('Backend responded but may be starting up.');
-        }
+        if (!apiUrl) return; // no backend configured
+        await fetch(`${apiUrl}/api/health`, { method: 'GET' });
       } catch {
-        console.log('Backend is starting up; this is normal on first load.');
+        // silent — backend may still be waking up
       }
     };
 
-    // Wake up immediately
+    // Fire immediately when site loads so Render wakes up
     wakeUpBackend();
-    
-    // Also wake up after 30 seconds to ensure it's fully ready
-    const wakeUpTimer = setTimeout(wakeUpBackend, 30000);
-    
-    return () => clearTimeout(wakeUpTimer);
+    // Fire again at 25s as a safety net (Render cold start can take ~20s)
+    const timer = setTimeout(wakeUpBackend, 25000);
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
