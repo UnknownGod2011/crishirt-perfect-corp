@@ -20,7 +20,7 @@ Built for the **DevNetwork AI + ML Hackathon 2026** and extended with an agent-n
 
 ## WebMCP Agent Interface
 
-CriShirt keeps the existing human UI intact and adds a thin semantic WebMCP adapter over the same React application state and Perfect Corp-backed actions. In browsers that do not expose `document.modelContext`, the bridge is a no-op and the human website behaves normally.
+CriShirt keeps the existing human UI intact and adds thin semantic WebMCP adapters over the same React application state and existing product logic. In browsers that do not expose `document.modelContext`, the bridges are no-ops and the human website behaves normally.
 
 The current agent surface is intentionally compact:
 
@@ -34,21 +34,32 @@ The current agent surface is intentionally compact:
 | `crishirt_add_current_design_to_cart` | Add the current configured apparel and artwork to the same cart model used by the human app |
 | `crishirt_get_cart` | Read a compact semantic cart summary |
 | `crishirt_remove_cart_item` | Remove a cart item by stable item id |
+| `crishirt_list_collection` | Read the existing Exclusive Collection as compact structured product data instead of inspecting product cards visually |
+| `crishirt_add_collection_item_to_cart` | Add an available collection product to the same cart state used by the human Collection page |
 | `crishirt_navigate` | Navigate directly among Create, VR Try-On, Collection, and Cart surfaces |
 
 ### Agent-use philosophy
 
 The goal is not to reproduce every button as a tool. The goal is to reduce agent observation and interaction cost while preserving the same legitimate user capabilities.
 
-A visual agent might otherwise need to inspect the page, locate several selectors, click through front/back controls, type a prompt, locate generation controls, wait, visually estimate artwork placement, drag and resize it, locate cart controls, and inspect cart cards. WebMCP replaces those fragile steps with a few structured semantic calls while the visible UI continues to update from the same shared state.
+A visual agent might otherwise need to inspect the page, locate several selectors, click through front/back controls, type a prompt, locate generation controls, wait, visually estimate artwork placement, drag and resize it, browse collection cards, locate cart controls, and inspect cart cards. WebMCP replaces those fragile steps with a few structured semantic calls while the visible UI continues to update from the same shared state.
 
-Common example flow:
+Common custom-design flow:
 
 1. Call `crishirt_get_workspace_state`.
 2. Call `crishirt_generate_design` with the prompt plus optional garment attributes in one request.
 3. Call `crishirt_set_design_placement` to position the result precisely.
 4. Call `crishirt_add_current_design_to_cart`.
 5. Call `crishirt_get_cart` to verify the resulting state.
+
+Common collection flow:
+
+1. Call `crishirt_list_collection`.
+2. Choose an available product id.
+3. Call `crishirt_add_collection_item_to_cart`.
+4. Call `crishirt_get_cart` to verify the cart.
+
+The Collection page and collection WebMCP tools share the same `collectionCatalog` module and the same cart-item construction helper, preventing the human and agent product definitions from drifting apart.
 
 Mutating workspace tools accept an optional `expectedRevision`. If the human changes the shared workspace before an agent mutation, the tool returns `STALE_STATE` instead of silently applying an edit against stale state.
 
@@ -64,6 +75,7 @@ Use a WebMCP-capable browser/build and inspect the page's registered tools throu
 - “Make the graphic smaller and move it upward.”
 - “Switch to the back and add a second design.”
 - “Add this apparel to my cart and tell me what is in the cart.”
+- “Show me the available Exclusive Collection products and add the Retro Gaming Tee.”
 - “Take me directly to virtual try-on.”
 
 The production human site remains independent of WebMCP support. Detailed implementation state, validation evidence, remaining opportunities, and commit handoff notes are maintained in `PROGRESS.md`.
@@ -152,7 +164,7 @@ Set `VITE_API_URL` to your Render backend URL in Vercel environment variables.
 
 ## WebMCP Progress Note
 
-The WebMCP work is developed on the `webmcp-agent-native` branch so the existing `main` production deployment remains stable. The first agent-native implementation introduced the semantic bridge and revision/cancellation safeguards; the follow-up audit verified the Vercel preview deployment, rechecked the current WebMCP specification, and documented the agent contract here. See `PROGRESS.md` for the detailed handoff and validation record.
+The WebMCP work is developed on the `webmcp-agent-native` branch so the existing `main` production deployment remains stable. The first implementation introduced the semantic creation/cart/navigation bridge and revision/cancellation safeguards. Follow-up audits verified Vercel previews and then moved the Exclusive Collection catalog/cart-item creation into shared logic so both humans and agents use the same product definitions. The current feature branch exposes eleven semantic tools. See `PROGRESS.md` for the detailed handoff and validation record.
 
 ---
 
