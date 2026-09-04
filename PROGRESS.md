@@ -9,11 +9,15 @@ Repository: `UnknownGod2011/crishirt-perfect-corp`
 
 Default branch: `main`
 
-Baseline commit audited: `88daa417caa5305f81e5554977a13a94a793cdeb`
+Production baseline commit audited: `88daa417caa5305f81e5554977a13a94a793cdeb`
 
 Working integration branch: `webmcp-agent-native`
 
-Latest functional WebMCP commit: `5913bb9e72703621c2627112d7bf520e7385c5dd`
+Initial functional WebMCP commit: `5913bb9e72703621c2627112d7bf520e7385c5dd`
+
+Preview-validation documentation commit: `cba7eccf2ef8987b74d1d79b6ebc3f3f0ff8e1eb`
+
+README WebMCP documentation commit: `9a764e36358fa6f8ebc9d02e9d045f493dbcfc13`
 
 Production deployment configuration has not been changed by this work.
 
@@ -27,7 +31,7 @@ The human UI already supports garment selection, color, material, size, front/ba
 
 WebMCP is therefore being added as a thin semantic adapter over the existing state/actions and backend APIs, not as a redesign.
 
-## WebMCP implementation in this run
+## WebMCP implementation
 
 Added `src/components/WebMCPBridge.tsx` using the current `document.modelContext.registerTool` imperative API.
 
@@ -70,7 +74,7 @@ Implemented tools:
 
 A normal agent no longer needs to visually locate selectors, inspect front/back controls, drag artwork, find generation/refinement buttons, parse cart cards or search navigation links for these flows.
 
-The generation tool can combine garment configuration plus generation into one call, reducing round trips for common requests such as "make me a black oversized tee with a motorsport graphic".
+The generation tool can combine garment configuration plus generation into one call, reducing round trips for common requests such as “make me a black oversized tee with a motorsport graphic”.
 
 Read tools return compact structured state instead of image-heavy DOM observations.
 
@@ -92,42 +96,69 @@ Generated/user prompt content is marked with `untrustedContentHint` on read/gene
 
 ## Validation performed
 
-Repository identity and main branch were verified through GitHub before editing.
+Repository identity and branch state were verified through GitHub before each pass.
 
-Current official WebMCP specification and Chrome documentation were rechecked on 2026-09-04. The implementation uses `document.modelContext`, `registerTool`, JSON Schema, `readOnlyHint`, `untrustedContentHint`, registration AbortSignal and execution AbortSignal as currently specified.
+The Vercel project `crishirtpc` is confirmed connected to `UnknownGod2011/crishirt-perfect-corp`.
 
-Source-level compatibility was checked against the actual current `AppContext`, `ControlPanel`, apparel catalog and cart rendering code.
+The production deployment is still on `main` commit `88daa417caa5305f81e5554977a13a94a793cdeb` and remains untouched.
 
-Vercel automatically built the `webmcp-agent-native` branch at commit `5913bb9e72703621c2627112d7bf520e7385c5dd`. The preview deployment `dpl_58dv13zMPPbBLot2oP8FAtgGB18P` reached `READY`, which verifies the project install, TypeScript build and Vite production build completed successfully.
+Separate preview deployments for `webmcp-agent-native` are `READY`. The functional WebMCP commit `5913bb9e72703621c2627112d7bf520e7385c5dd` and the preview-validation commit `cba7eccf2ef8987b74d1d79b6ebc3f3f0ff8e1eb` both built successfully on Vercel.
 
-The preview root returned HTTP 200 and served the expected CriShirt Vite application shell.
+Current official WebMCP specification was rechecked on 2026-09-04. The implementation matches the current `Document.modelContext` API, `registerTool`, JSON Schema input descriptions, `readOnlyHint`, `untrustedContentHint`, registration `AbortSignal`, and execution `AbortSignal` model.
 
-Production remains on `main` commit `88daa417caa5305f81e5554977a13a94a793cdeb`; this run did not promote or alter the production deployment.
+Source-level compatibility was checked against the actual current `AppContext`, `ControlPanel`, apparel catalog, cart rendering code, Collection page and AR Try-On page.
 
-Actual in-browser `document.modelContext.getTools()` execution has not yet been observed because the available deployment fetcher is HTTP-level rather than a WebMCP-capable interactive Chrome session. That remains a specific next-run verification target rather than being claimed as complete.
+Actual in-browser `document.modelContext.getTools()` execution has not been observed in this automation environment because the available deployment fetch path is HTTP-level rather than a WebMCP-capable interactive browser context. This remains explicitly unclaimed rather than being treated as passed.
 
-## Remaining opportunities
+## Second-pass journey audit
 
-Inspect actual registered WebMCP tools in a compatible browser/testing environment.
+The full existing user journey was re-read after the first WebMCP implementation.
 
-Exercise realistic agent journeys end-to-end and verify visible UI state changes.
+### Create workspace
+Coverage is strong. The agent can read state, configure several garment properties in one call, generate/refine, place artwork precisely, and coordinate against human edits through `expectedRevision`.
 
-Check whether virtual try-on itself exposes a safe existing action that can be wrapped semantically without duplicating its current page logic.
+### Cart
+Coverage is strong for the current custom-design cart model. Agents can add the current design, inspect cart contents semantically, and remove specific items by stable id.
 
-Evaluate whether collection item selection/add-to-cart should have a WebMCP tool.
+### Navigation
+Coverage is sufficient. Agents can move directly to Create, Try-On, Collection and Cart without visually searching navigation.
 
-Evaluate cart snapshot parity for agent-added custom designs; current cart fallback is alignment-aware, but the human Add to Cart path also creates canvas snapshots.
+### Exclusive Collection
+The human Collection page currently has four available fixed products and visual add-to-cart buttons. A future improvement could expose a read-only collection catalog plus semantic add-to-cart action. This was deliberately not rushed into the final pass because the product catalog is currently local page data rather than a shared domain module; duplicating it inside the WebMCP bridge would create drift. The safer future change is to extract that catalog/cart-item construction into a shared module used by both the human page and the agent adapter.
 
-Re-audit schemas and descriptions after real browser execution for unnecessary round trips or ambiguous fields.
+### AR Try-On
+The current AR page relies on local browser camera permission and direct `getUserMedia` interaction. Agent navigation to the page is exposed, but starting the camera or downloading snapshots was deliberately not wrapped as an autonomous WebMCP action. Camera permission remains a user/browser-controlled boundary. This avoids turning a human permission-sensitive capability into an opaque agent action.
 
-Once the branch is proven stable beyond build/shell validation, merge only the tested WebMCP work and update README with concise final WebMCP documentation.
+### Remaining efficiency opportunities
 
-## Next run
+1. Extract Collection catalog/cart-item creation into shared domain code, then add `crishirt_list_collection` and `crishirt_add_collection_item_to_cart` without duplicating page constants.
+2. Add a small shared “prepare current design for try-on” action if the human generation path and AR page can share it safely; do not automate camera permission.
+3. Inspect the nine registered tools in a WebMCP-capable browser with `document.modelContext.getTools()` and execute representative calls while observing live UI state.
+4. Add focused automated tests around tool registration, schema shape, stale revision handling, cancellation and unsupported-browser no-op behavior if the repository gets a WebMCP test harness.
+5. Revisit placement coordinates only if a later architecture change exposes a normalized design surface; do not rewrite the stable mockup solely for this.
 
-1. Read this file first and verify the branch has not diverged unexpectedly.
-2. Inspect actual tool registration if a WebMCP-capable browser/preview is available.
-3. Test realistic workspace generation, placement, cart and navigation tool journeys.
-4. Fix only concrete integration issues found by testing.
-5. Audit virtual try-on and collection journeys for one or two additional high-leverage semantic tools.
-6. Re-evaluate whether the tested branch is safe to merge to `main` without destabilizing production.
-7. Update this file and, once mature, add concise README WebMCP documentation.
+## README / submission documentation
+
+`README.md` now contains a concise WebMCP section describing:
+
+- the agent-native philosophy
+- all nine current tools
+- shared-state behavior
+- revision safety
+- cancellation behavior
+- annotations
+- realistic example prompts
+- how to inspect/test the registered tools
+- branch isolation from production
+
+Detailed progress remains here rather than turning the README into an internal log.
+
+## Current handoff
+
+The branch is production-isolated, Vercel-build-validated, and materially more agent-accessible without changing the external human product surface.
+
+Do not merge merely because the preview builds. Before promotion to `main`, perform one WebMCP-capable interactive browser run that confirms the nine tools are actually discoverable and that representative generation, placement, cart, and navigation calls visibly affect the same UI state.
+
+Latest durable documentation commit before this file update: `9a764e36358fa6f8ebc9d02e9d045f493dbcfc13`.
+
+If future work continues, read this file first, verify the canonical repository/branch, and prioritize runtime verification before adding more tools.
