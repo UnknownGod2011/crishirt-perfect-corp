@@ -1,10 +1,10 @@
-﻿
 import { Link, Routes, Route } from 'react-router-dom';
 import { Sparkles, ShoppingCart } from 'lucide-react';
 import { AppProvider, useTshirtState, useDesignState, useCartState, useProductState } from './store/AppContext';
 import { getApparelConfig } from './config/apparel';
 import TShirtMockup from './components/TShirtMockup';
 import ControlPanel from './components/ControlPanel';
+import WebMCPBridge from './components/WebMCPBridge';
 import Collection from './pages/collection';
 import Cart from './pages/cart';
 import VRTryOnPage from './pages/vr-tryon.tsx';
@@ -122,8 +122,8 @@ function AppContent() {
                     <h2 className="text-lg font-semibold text-gray-800">Live {apparel.label} Preview</h2>
                     <p className="text-sm text-gray-600">See your apparel design in real time</p>
                   </div>
-                  <div 
-                    className="h-full" 
+                  <div
+                    className="h-full"
                     style={{
                       background: 'transparent !important',
                       backgroundColor: 'transparent !important'
@@ -252,10 +252,10 @@ function AppContent() {
 function App() {
   return (
     <AppProvider>
+      <WebMCPBridge />
       <AppContent />
     </AppProvider>
   );
 }
 
 export default App;
-
