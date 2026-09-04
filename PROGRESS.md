@@ -14,9 +14,7 @@ Production baseline commit: `88daa417caa5305f81e5554977a13a94a793cdeb`
 
 Working branch: `webmcp-agent-native`
 
-Branch head before this progress update: `5cd09e18693ffcf35a72025a2132775e4eccd8af`
-
-Fresh comparison on 2026-09-05: feature branch is 7 commits ahead and 0 behind `main`; merge base remains exactly the production baseline. Production configuration has not been changed or promoted by this work.
+Fresh comparison on 2026-09-05: the feature branch is 8 commits ahead and 0 behind `main`. The merge base remains exactly the production baseline. Production configuration has not been changed or promoted by this work.
 
 ## Current WebMCP surface
 
@@ -53,17 +51,17 @@ No primary WebMCP operation depends on CSS selectors, screen coordinates, or DOM
 
 ## Current-spec verification
 
-The official WebMCP draft was rechecked on 2026-09-05. The implementation still matches the current imperative model using `document.modelContext.registerTool`, JSON Schema input schemas, tool annotations including `readOnlyHint` and `untrustedContentHint`, registration lifetime cancellation through `AbortSignal`, and execution cancellation through `AbortSignal`.
+The implementation remains aligned with the imperative WebMCP model already used by the branch: `document.modelContext.registerTool`, JSON Schema inputs, tool annotations including `readOnlyHint` and `untrustedContentHint`, registration lifetime cancellation, and execution cancellation through `AbortSignal`.
 
-Actual interactive `document.modelContext.getTools()` and `executeTool()` validation in a WebMCP-capable browser is still not available from this automation environment and remains explicitly unclaimed.
+Actual interactive `document.modelContext.getTools()` and representative `executeTool()` validation in a WebMCP-capable browser is still unavailable from this automation environment and remains explicitly unclaimed.
 
-## Latest full journey audit
+## Fresh full journey audit
 
 ### Create workspace
 
-Strong coverage. An agent can read garment/design/cart state in one call, configure multiple garment properties semantically, generate/refine through the existing Perfect Corp routes, position artwork precisely without visual dragging, and add the result to the existing cart.
+Strong coverage. An agent can read garment/design/cart state in one compact call, configure multiple garment properties semantically, generate/refine through the existing Perfect Corp routes, position artwork precisely without visual dragging, and add the result to the existing cart.
 
-The existing generation tool already combines optional garment configuration with generation. A larger generation-plus-placement-plus-cart compound action is still intentionally rejected because it would hide multiple distinct side effects and make partial-failure recovery worse for only a small round-trip saving.
+A larger generation-plus-placement-plus-cart compound action remains intentionally rejected. It would save only a small number of round trips while hiding several distinct side effects and making partial-failure recovery worse.
 
 ### Cart
 
@@ -71,35 +69,50 @@ Strong coverage. Agents can inspect the current custom-design cart and remove st
 
 ### Exclusive Collection
 
-Strong coverage. Agents can inspect the full static collection without visually scanning cards and can add an available product directly by stable ID.
+Strong coverage. Agents can inspect the static collection without visually scanning cards and can add an available product directly by stable ID. The human page and agent path share the same catalog and cart-item builder.
 
 ### Navigation
 
 Strong coverage. Agents can directly navigate to Create, Virtual Try-On, Collection, and Cart without link discovery.
 
-### Virtual Try-On audit — new finding
+### Virtual Try-On
 
-`src/components/VRTryOn.tsx` was inspected in full during this run.
+This remains the only clear high-value uncovered journey.
 
-The current human flow has three separable steps:
+`src/components/VRTryOn.tsx` currently keeps `userPhoto`, selected cart item, loading state, result, and error state locally. Its existing human flow is:
 
-1. the human supplies a torso/full-body photo by file chooser or camera permission;
-2. the user selects a cart design;
-3. the existing Perfect Corp Clothes Try-On request runs using the selected cart garment plus the human photo.
+1. human supplies a torso/full-body photo by upload or camera permission;
+2. human selects a cart design;
+3. existing Perfect Corp Clothes Try-On request runs using the human photo and selected cart garment.
 
-Camera capture and file upload should remain human/browser-controlled. They are permission-sensitive and/or carry large private image data, so this automation will not wrap those actions in an opaque autonomous WebMCP tool.
+The privacy/permission boundary is correct and must remain intact. WebMCP should never request camera/file permission autonomously and should never accept or return the raw person-image payload.
 
-However, there is a legitimate remaining agent-friction opportunity after the human has already supplied the photo: cart-design selection and the subsequent Perfect Corp try-on execution are currently only available through visual UI controls. A future safe implementation may expose a small try-on-specific bridge that can:
+A future safe implementation can expose only the post-consent handoff:
 
-- read whether a human photo is already present, which cart item is selected, whether the try-on is running, and whether a result exists;
-- select a specific existing cart design by stable cart item ID;
-- invoke the existing `generateVirtualTryOn` logic only when a human-supplied photo and valid cart design are already present;
-- forward `AbortSignal` to the Perfect Corp request;
-- never accept raw person-image data through WebMCP and never request camera/file permissions autonomously.
+- read whether a human photo is present without exposing its content;
+- list/select eligible cart items by stable ID;
+- read try-on busy/result readiness state without returning the private photo;
+- invoke the same existing Perfect Corp Clothes Try-On action only after a human photo already exists;
+- forward the tool execution `AbortSignal` into the Perfect Corp fetch;
+- return deterministic errors such as `PHOTO_REQUIRED`, `CART_ITEM_NOT_FOUND`, `TRYON_ALREADY_RUNNING`, and provider failures.
 
-This would create a clean human-agent handoff: human supplies private photo; agent handles semantic product selection and existing Perfect Corp operation. It would meaningfully reduce visual inspection/click cost while preserving the permission boundary.
+No code was shipped for this path in this audit because the state and request logic are still local to `VRTryOn`. A second, separate bridge that duplicates that request would violate the shared-business-logic requirement and can drift from the human button. The safe implementation requires a small refactor inside the existing component or a shared hook/action so human and agent invoke the exact same state transition and request.
 
-No implementation was shipped this run because `VRTryOn` currently keeps photo, selected-design, loading, and result state locally. Adding WebMCP safely requires a small shared-function/refactor so the human button and agent tool invoke the exact same logic. A hurried duplicate implementation would violate the shared-business-logic requirement and risk divergence. The next code change should only proceed if this shared refactor can be made and validated cleanly.
+### AR camera and photo acquisition
+
+Intentionally not agentized. Camera capture uses `navigator.mediaDevices.getUserMedia` and photo upload uses browser file selection. These are permission-sensitive human actions and do not become better simply by wrapping them in an autonomous agent tool.
+
+## Agent interaction cost review
+
+Current high-value design journey:
+
+Human-style agent automation would require page interpretation, control discovery, several clicks, visual drag/resize operations, cart discovery, and repeated state re-reading.
+
+Current WebMCP path reduces that to compact semantic reads and mutations with explicit state and stable IDs.
+
+The remaining material friction is Virtual Try-On after the human supplies a photo. Everything before photo acquisition is already appropriately human-controlled; everything after photo acquisition can eventually become semantic without weakening privacy.
+
+No other new tool is justified merely to increase tool count.
 
 ## Validation status
 
@@ -109,18 +122,21 @@ Production remains on `main` and has not been changed.
 
 Interactive WebMCP runtime execution remains the strongest outstanding promotion gate.
 
+The project currently has no dedicated automated WebMCP test harness in `package.json`; the build command is `tsc -b && vite build`. Adding a large test framework solely for this branch is not justified while production stability is the priority, but a minimal tool-registration/runtime test would be valuable if the environment can execute the WebMCP API.
+
 ## Remaining opportunities
 
-1. Prioritize actual WebMCP runtime discovery and representative execution in a compatible browser if available.
-2. Implement the safe Virtual Try-On human-agent handoff only through shared existing `VRTryOn` logic, with no camera/file automation and no raw photo payloads in WebMCP.
-3. Re-test stale revisions, cancellation, provider failure handling, unsupported-browser no-op behavior, collection availability validation, and shared cart behavior once runtime execution is available.
-4. Continue auditing tool descriptions, deterministic errors, payload size, and unnecessary agent round trips without increasing tool count for its own sake.
-5. Do not merge to `main` solely because preview builds pass; runtime WebMCP-capable browser validation remains the strongest promotion gate.
+1. Prioritize real WebMCP runtime discovery and representative tool execution in a compatible browser if available.
+2. Implement the safe Virtual Try-On post-photo handoff only through shared existing `VRTryOn` logic.
+3. Do not automate camera permission, file selection, or raw person-image transfer through WebMCP.
+4. Re-test stale revisions, cancellation, provider failure handling, unsupported-browser no-op behavior, collection availability validation, and shared cart behavior once runtime execution is available.
+5. Continue auditing descriptions, deterministic errors, response payload size, side-effect boundaries, and unnecessary agent round trips.
+6. Do not merge to `main` solely because preview builds pass; runtime WebMCP-capable browser validation remains the strongest promotion gate.
 
 ## README
 
-`README.md` already documents the eleven-tool WebMCP surface, agent-use philosophy, revision and cancellation behavior, collection flow, shared collection catalog design, and representative test prompts. Detailed evolving handoff state remains in this file.
+`README.md` documents the eleven-tool WebMCP surface, agent-use philosophy, revision/cancellation behavior, collection flow, shared collection catalog design, and representative test prompts. Detailed evolving handoff state remains in this file.
 
 ## Next run
 
-Read this file first. Reverify repository identity, branch head, `main` isolation, and current official WebMCP behavior. Attempt runtime verification first. If runtime verification is still unavailable, revisit the Virtual Try-On shared-logic opportunity and only implement it if the human and agent paths can share exactly the same state transitions and Perfect Corp request without automating camera/file permission or duplicating business logic. Otherwise perform a fresh full journey audit and record a verified no-op rather than shipping speculative code.
+Read this file first. Reverify repository identity, branch head, `main` isolation, and current WebMCP behavior. Attempt runtime verification first if a compatible browser/testing surface becomes available. Otherwise revisit the Virtual Try-On shared-logic refactor and ship it only if the human button and agent tool can invoke exactly the same request/state transitions with no autonomous camera/file access and no raw person-photo exposure. If that cannot be validated safely, perform a fresh journey audit and record a verified no-op rather than shipping speculative code.
