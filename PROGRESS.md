@@ -16,6 +16,8 @@ Working integration branch: `webmcp-agent-native`
 
 Latest functional WebMCP commit: `631a3471e0839c11b97d3ff733690f0bdb1a079e`
 
+Latest documentation/audit commit before this run: `8dd204c6ff64f64ee8290fcb638b957ac0965b8c`
+
 Production deployment configuration has not been changed by this work.
 
 ## Existing application facts
@@ -28,7 +30,7 @@ WebMCP remains a thin semantic layer over those existing capabilities rather tha
 
 ## Current WebMCP surface
 
-The feature branch now exposes eleven semantic tools.
+The feature branch exposes eleven semantic tools.
 
 Main workspace bridge: `src/components/WebMCPBridge.tsx`
 
@@ -55,31 +57,45 @@ Workspace mutations can accept `expectedRevision`; stale writes return `STALE_ST
 
 Perfect Corp generation and refinement forward the WebMCP execution `AbortSignal` to their underlying fetch calls.
 
-The Exclusive Collection was specifically refactored to avoid agent/human drift. `src/config/collectionCatalog.ts` now contains the existing product definitions and a shared `createCollectionCartItem` helper. The human Collection page and the WebMCP collection bridge both use those same definitions and the same cart-item construction logic.
-
-No duplicate agent-only catalog was created.
+The Exclusive Collection uses shared definitions from `src/config/collectionCatalog.ts`; the human Collection page and WebMCP bridge use the same product definitions and cart-item construction logic.
 
 ## Validation
 
 Repository and branch identity were rechecked before editing.
 
-The Vercel project `crishirtpc` is connected to `UnknownGod2011/crishirt-perfect-corp`.
+Vercel project `crishirtpc` is still connected to `UnknownGod2011/crishirt-perfect-corp`.
 
-Production remains on `main` commit `88daa417caa5305f81e5554977a13a94a793cdeb` and was not promoted or modified.
+Production remains on `main` commit `88daa417caa5305f81e5554977a13a94a793cdeb` and has not been promoted or modified by WebMCP work.
 
-The collection WebMCP commit `631a3471e0839c11b97d3ff733690f0bdb1a079e` triggered a Vercel preview deployment. Vercel cloned the correct repository, branch, and commit, ran `npm install`, then `tsc -b && vite build`, and the deployment reached `READY`.
+The latest `webmcp-agent-native` Vercel preview for commit `8dd204c6ff64f64ee8290fcb638b957ac0965b8c` is `READY`.
 
-Current WebMCP documentation was rechecked during this pass. The implementation continues to use `document.modelContext.registerTool`, JSON Schema inputs, `readOnlyHint` where applicable, registration cancellation, and execution cancellation consistently with the current API.
+The current official WebMCP draft was rechecked on 2026-09-05. The implementation still matches the current imperative API: `document.modelContext.registerTool`, JSON Schema inputs, `readOnlyHint`, `untrustedContentHint`, registration cancellation through `AbortSignal`, and execution cancellation through `AbortSignal`.
 
-Actual interactive `document.modelContext.getTools()` / `executeTool()` validation inside a WebMCP-capable browser has still not been observed in this automation environment. This remains explicitly unclaimed rather than being marked as passed.
+Actual interactive `document.modelContext.getTools()` / `executeTool()` validation in a WebMCP-capable browser is still not available from this automation environment. A browser-session attempt was made in this run but the environment could not launch the required interactive browser. This remains explicitly unclaimed.
 
-The build also reports pre-existing dependency audit and Browserslist/install-script warnings. These were not introduced by the WebMCP collection change and were deliberately not turned into unrelated dependency-upgrade work.
+## Branch isolation audit
 
-## Latest journey audit
+A fresh `main...webmcp-agent-native` comparison shows the branch is six commits ahead and zero behind. The merge base is exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
+
+Changed files remain scoped to WebMCP integration/documentation plus the collection refactor required to share human/agent product logic:
+
+- `PROGRESS.md`
+- `README.md`
+- `src/App.tsx`
+- `src/components/WebMCPBridge.tsx`
+- `src/components/CollectionWebMCPBridge.tsx`
+- `src/config/collectionCatalog.ts`
+- `src/pages/collection.tsx`
+
+One audit note: GitHub reports `src/App.tsx` as a large textual diff because the original production file uses BOM/CRLF while the feature-branch edit was normalized to LF. The semantic App change is only the two WebMCP bridge imports plus mounting the bridges under `AppProvider`; this is not a functional UI rewrite. Do not perform a risky formatting-only rewrite during the deadline window merely to shrink the diff.
+
+## Latest journey re-audit
 
 ### Create workspace
 
-Strong coverage. One state read can drive compound garment configuration, Perfect Corp generation/refinement, exact placement, cart addition, and safe coordination with concurrent human edits.
+Strong coverage. One read can drive garment configuration, generation/refinement, exact placement, cart addition, and safe coordination with concurrent human edits.
+
+A tempting optimization is to make `crishirt_generate_design` also accept placement and auto-add-to-cart. This run deliberately did not add that behavior. Generation, placement, and cart insertion are distinct user intents with different failure/undo semantics; hiding them behind one larger side-effecting call would reduce round trips but make accidental cart changes and partial-success recovery harder. The existing generation tool already folds garment configuration into generation, which captures the highest-value safe compound action.
 
 ### Custom-design cart
 
@@ -87,16 +103,7 @@ Strong coverage. Agents can add the live design, inspect structured cart state, 
 
 ### Exclusive Collection
 
-Previously human-only except for navigation. This gap is now closed safely.
-
-An agent can perform:
-
-`crishirt_list_collection`
-→ choose an available stable product id
-→ `crishirt_add_collection_item_to_cart`
-→ `crishirt_get_cart`
-
-This removes collection-card visual inspection and button discovery while preserving exactly the same underlying collection product definitions and cart behavior as the human UI.
+Strong coverage through shared human/agent catalog logic. No duplicate agent-only product catalog exists.
 
 ### Navigation
 
@@ -104,15 +111,29 @@ Direct semantic navigation remains sufficient for Create, Try-On, Collection, an
 
 ### AR Try-On
 
-Camera startup remains intentionally human/browser-controlled because the existing flow requires `getUserMedia` permission. Do not wrap camera permission itself as an opaque autonomous action. A future safe improvement may expose preparation/state around try-on if it reuses existing logic without automating permission-sensitive capture.
+Camera startup remains intentionally human/browser-controlled because the existing flow requires `getUserMedia` permission. Do not wrap camera permission itself as an opaque autonomous action. A future safe improvement may expose non-camera preparation/readiness state only if it reuses existing logic and measurably saves agent observations.
+
+## No-op decision for this run
+
+No functional code commit was justified after the fresh audit.
+
+Reasons:
+
+1. The current eleven-tool surface already covers the highest-value existing user intents without DOM clicking.
+2. The most obvious further compound action, generation plus placement plus cart insertion, would introduce broader hidden side effects and weaker recovery semantics for a small round-trip saving.
+3. A proper runtime test remains more valuable than increasing tool count.
+4. Adding a new test framework solely for WebMCP at this stage would expand dependencies and destabilization risk; current preview builds are healthy and runtime WebMCP execution is the remaining meaningful proof.
+5. Camera/permission automation for try-on would cross a browser/user-interaction boundary and is intentionally not added.
+
+This run therefore preferred a verified no-op over speculative code, as required by the automation mission.
 
 ## Remaining opportunities
 
-1. Perform actual `document.modelContext.getTools()` discovery and representative `executeTool()` calls in a WebMCP-capable interactive browser while observing the visible CriShirt state.
-2. Add a focused WebMCP test harness for registration, schemas, unsupported-browser no-op behavior, stale revisions, cancellation, collection availability validation, and shared cart behavior if it can be done without destabilizing the project.
-3. Inspect whether a shared non-camera “prepare current design for try-on” action can remove agent navigation/observation steps safely.
-4. Re-audit all eleven tools for avoidable round trips, verbose payloads, ambiguous schemas/descriptions, or missing deterministic errors after runtime testing.
-5. Do not merge the feature branch to `main` solely because preview builds pass; runtime WebMCP-capable browser validation remains the strongest remaining promotion gate.
+1. Perform actual `document.modelContext.getTools()` discovery and representative `executeTool()` calls in a WebMCP-capable interactive browser while observing visible CriShirt state.
+2. If a compatible runtime becomes available, test stale revisions, cancellation, unsupported-browser no-op behavior, collection availability validation, and shared cart behavior before promotion.
+3. Inspect whether a shared non-camera try-on readiness/preparation read can remove a real agent observation step without automating permission-sensitive capture.
+4. Re-audit all eleven tools after runtime testing for ambiguous descriptions, excessive payloads, or deterministic-error gaps.
+5. Do not merge to `main` solely because preview builds pass; runtime WebMCP-capable browser validation remains the strongest promotion gate.
 
 ## README
 
@@ -120,4 +141,4 @@ Camera startup remains intentionally human/browser-controlled because the existi
 
 ## Next run
 
-Read this file first, verify repository/branch and production isolation, then prioritize real WebMCP runtime verification. If runtime verification is still unavailable, focus only on safe automated test coverage or a clearly measurable reduction in agent interaction cost. Do not add tools merely to increase the tool count.
+Read this file first. Reverify repository/branch and production isolation. Prioritize actual WebMCP runtime verification. If runtime verification is still unavailable, perform another full user-journey audit and only ship code where the reduction in agent interaction cost clearly outweighs added state/side-effect risk. Do not add tools merely to increase tool count.
