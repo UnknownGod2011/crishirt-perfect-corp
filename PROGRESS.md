@@ -13,6 +13,8 @@ Baseline commit audited: `88daa417caa5305f81e5554977a13a94a793cdeb`
 
 Working integration branch: `webmcp-agent-native`
 
+Latest functional WebMCP commit: `5913bb9e72703621c2627112d7bf520e7385c5dd`
+
 Production deployment configuration has not been changed by this work.
 
 ## Existing application facts
@@ -96,11 +98,17 @@ Current official WebMCP specification and Chrome documentation were rechecked on
 
 Source-level compatibility was checked against the actual current `AppContext`, `ControlPanel`, apparel catalog and cart rendering code.
 
-A local package build could not be executed in this automation environment during this run, so the integration is intentionally isolated on `webmcp-agent-native` rather than merged into `main` yet. Production remains unchanged until a build/preview verification succeeds.
+Vercel automatically built the `webmcp-agent-native` branch at commit `5913bb9e72703621c2627112d7bf520e7385c5dd`. The preview deployment `dpl_58dv13zMPPbBLot2oP8FAtgGB18P` reached `READY`, which verifies the project install, TypeScript build and Vite production build completed successfully.
+
+The preview root returned HTTP 200 and served the expected CriShirt Vite application shell.
+
+Production remains on `main` commit `88daa417caa5305f81e5554977a13a94a793cdeb`; this run did not promote or alter the production deployment.
+
+Actual in-browser `document.modelContext.getTools()` execution has not yet been observed because the available deployment fetcher is HTTP-level rather than a WebMCP-capable interactive Chrome session. That remains a specific next-run verification target rather than being claimed as complete.
 
 ## Remaining opportunities
 
-Run a real branch build/preview and inspect registered WebMCP tools in a compatible browser.
+Inspect actual registered WebMCP tools in a compatible browser/testing environment.
 
 Exercise realistic agent journeys end-to-end and verify visible UI state changes.
 
@@ -112,12 +120,14 @@ Evaluate cart snapshot parity for agent-added custom designs; current cart fallb
 
 Re-audit schemas and descriptions after real browser execution for unnecessary round trips or ambiguous fields.
 
-Once the branch is proven stable, merge only the tested WebMCP commit and update README with concise final WebMCP documentation.
+Once the branch is proven stable beyond build/shell validation, merge only the tested WebMCP work and update README with concise final WebMCP documentation.
 
 ## Next run
 
-1. Verify the branch commit and any available CI or preview deployment.
+1. Read this file first and verify the branch has not diverged unexpectedly.
 2. Inspect actual tool registration if a WebMCP-capable browser/preview is available.
-3. Fix only concrete integration issues found by testing.
-4. Audit virtual try-on and collection journeys for one or two additional high-leverage semantic tools.
-5. Update this file with exact results and latest commit SHA.
+3. Test realistic workspace generation, placement, cart and navigation tool journeys.
+4. Fix only concrete integration issues found by testing.
+5. Audit virtual try-on and collection journeys for one or two additional high-leverage semantic tools.
+6. Re-evaluate whether the tested branch is safe to merge to `main` without destabilizing production.
+7. Update this file and, once mature, add concise README WebMCP documentation.
