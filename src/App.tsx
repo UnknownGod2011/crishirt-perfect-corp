@@ -5,6 +5,7 @@ import { getApparelConfig } from './config/apparel';
 import TShirtMockup from './components/TShirtMockup';
 import ControlPanel from './components/ControlPanel';
 import WebMCPBridge from './components/WebMCPBridge';
+import CollectionWebMCPBridge from './components/CollectionWebMCPBridge';
 import Collection from './pages/collection';
 import Cart from './pages/cart';
 import VRTryOnPage from './pages/vr-tryon.tsx';
@@ -253,6 +254,7 @@ function App() {
   return (
     <AppProvider>
       <WebMCPBridge />
+      <CollectionWebMCPBridge />
       <AppContent />
     </AppProvider>
   );

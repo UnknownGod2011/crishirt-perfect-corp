@@ -1,110 +1,17 @@
 import React, { useState } from "react";
 import { Sparkles, ShoppingCart, Check } from "lucide-react";
 import { useCartState } from "../store/AppContext";
-import { CartItem } from "../store/AppContext";
-
-interface Product {
-  id: number;
-  name: string;
-  category: string;
-  price: string;
-  image?: string;
-  available: boolean;
-}
-
-const products: Product[] = [
-  {
-    id: 1,
-    name: "Golden Treasure Tee",
-    category: "Exclusive Collection",
-    price: "$24.99",
-    image: "/TeeCollection/Tee1.png",
-    available: true,
-  },
-  {
-    id: 2,
-    name: "Retro Gaming Tee",
-    category: "Exclusive Collection",
-    price: "$24.99",
-    image: "/TeeCollection/Tee2.png",
-    available: true,
-  },
-  {
-    id: 3,
-    name: "Chess Master Tee",
-    category: "Exclusive Collection",
-    price: "$24.99",
-    image: "/TeeCollection/Tee3.png",
-    available: true,
-  },
-  {
-    id: 4,
-    name: "Urban Style Hoodie",
-    category: "Exclusive Collection",
-    price: "$24.99",
-    image: "/TeeCollection/Tee4.png",
-    available: true,
-  },
-  {
-    id: 5,
-    name: "Crystal Series Limited Drop",
-    category: "Premium Wear",
-    price: "Coming Soon",
-    available: false,
-  },
-  {
-    id: 6,
-    name: "Aurora Glow Collection",
-    category: "AI-Generated Fits",
-    price: "Coming Soon",
-    available: false,
-  },
-];
+import { COLLECTION_PRODUCTS, createCollectionCartItem, type CollectionProduct } from "../config/collectionCatalog";
 
 const Collection: React.FC = () => {
   const { addToCart } = useCartState();
   const [addedItems, setAddedItems] = useState<Set<number>>(new Set());
 
-  const handleAddToCart = (product: Product) => {
-    // For collection items, create a cart item that represents a complete T-shirt product
-    // not a design to be pasted on a blank T-shirt
-    const cartItem: CartItem = {
-      id: `collection-${product.id}-${Date.now()}`,
-      frontDesign: {
-        imageUrl: null, // No design to paste
-        design: "Complete T-shirt product",
-        alignment: {
-          x: 205,
-          y: 280,
-          width: 150,
-          height: 150,
-          rotation: 0,
-        },
-      },
-      backDesign: {
-        imageUrl: null,
-        design: "No back design",
-      },
-      tshirtColor: "#000000", // Default black
-      material: "Cotton",
-      size: "M", // Default size
-      addedAt: new Date().toISOString(),
-      price: 24.99, // Convert from string price to number
-      // Add collection-specific data
-      collectionItem: {
-        isCollectionItem: true,
-        completeProductImage: product.image || null,
-        productName: product.name,
-        category: product.category,
-      }
-    };
+  const handleAddToCart = (product: CollectionProduct) => {
+    addToCart(createCollectionCartItem(product, 'human'));
 
-    addToCart(cartItem);
-    
-    // Show green tick feedback
     setAddedItems(prev => new Set(prev).add(product.id));
-    
-    // Remove the tick after 2 seconds
+
     setTimeout(() => {
       setAddedItems(prev => {
         const newSet = new Set(prev);
@@ -113,6 +20,7 @@ const Collection: React.FC = () => {
       });
     }, 2000);
   };
+
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-white via-blue-50/40 to-purple-50 overflow-hidden">
       {/* Animated Crystal Background */}
@@ -135,7 +43,7 @@ const Collection: React.FC = () => {
 
         {/* Product Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {products.map((item) =>
+          {COLLECTION_PRODUCTS.map((item) =>
             item.available ? (
               <div
                 key={item.id}
@@ -167,8 +75,8 @@ const Collection: React.FC = () => {
                       disabled={addedItems.has(item.id)}
                       className={`
                         relative flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300
-                        ${addedItems.has(item.id) 
-                          ? 'bg-green-500 text-white scale-110' 
+                        ${addedItems.has(item.id)
+                          ? 'bg-green-500 text-white scale-110'
                           : 'bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800'
                         }
                       `}
