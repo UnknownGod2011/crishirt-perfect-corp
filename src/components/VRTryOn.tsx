@@ -390,6 +390,7 @@ const VRTryOn: React.FC = () => {
 
               <button
                 type="button"
+                aria-label={designPrompt ? `Generate virtual try-on for ${designPrompt}` : 'Generate virtual try-on'}
                 onClick={() => void generateVirtualTryOn()}
                 disabled={!userPhoto || !selectedDesign || loading}
                 className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 px-6 py-3 font-medium text-white transition-all hover:from-purple-700 hover:to-blue-700 disabled:cursor-not-allowed disabled:from-gray-400 disabled:to-gray-400"
