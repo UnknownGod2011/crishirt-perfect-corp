@@ -10,10 +10,11 @@ Keep the existing human-facing CriShirt experience stable while exposing the sam
 - Production branch: `main`
 - Production/current production commit: `88daa417caa5305f81e5554977a13a94a793cdeb`
 - Working branch: `webmcp-agent-native`
-- Branch head before this handoff update: `b78db51cbdff6ad5527f0af2ddb9bf3e6ab6dd26`
-- Compare before this update: 21 commits ahead of `main`, 0 behind; merge base is exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Branch head before this handoff update: `85ff5051949bdc745509c9648102dd31728f0a39`
+- Compare before this update: 22 commits ahead of `main`, 0 behind; merge base is exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Vercel project: `crishirtpc`, linked to `UnknownGod2011/crishirt-perfect-corp`.
-- Exact preview for `b78db51cbdff6ad5527f0af2ddb9bf3e6ab6dd26`: `dpl_9fTzLS2coVuwPgqe94N1AYPPyYF2`, state `READY`.
+- Exact preview for `85ff5051949bdc745509c9648102dd31728f0a39`: `dpl_AzJGPeQjCfxiEyVoMH89SVoHGn9t`, state `READY`.
+- Root of that exact preview returned HTTP 200 during this run.
 - Production remains on `main`; this WebMCP branch has not been promoted to production.
 - Historical failed preview `4dcef318ea8913b0efc906e1450044ad2da4d320` remains superseded by corrective commit `6b7fdfe28c4b5a048beda4436a3ae9948aa86c7d` and subsequent READY previews.
 
@@ -45,8 +46,8 @@ All entry points feature-detect `document.modelContext`; unsupported browsers re
 
 ## Shared state, safety, and privacy
 
-- Workspace mutations accept optional `expectedRevision`; stale calls return deterministic `STALE_STATE` rather than silently overwriting newer state.
-- Perfect Corp generation/refinement and Virtual Try-On propagate the WebMCP execution `AbortSignal` to fetch.
+- Workspace mutations accept optional `expectedRevision`; stale calls return deterministic `STALE_STATE` instead of silently overwriting newer state.
+- Perfect Corp generation/refinement and Virtual Try-On propagate WebMCP execution `AbortSignal` to fetch.
 - Collection catalog/cart behavior is shared between humans and agents through `src/config/collectionCatalog.ts`.
 - Virtual Try-On human and agent execution share the same `generateVirtualTryOn` action.
 - Camera permission, file picking, raw person-photo data, result-image bytes/URLs, and downloads remain human-controlled.
@@ -54,29 +55,27 @@ All entry points feature-detect `document.modelContext`; unsupported browsers re
 
 ## Current WebMCP specification check
 
-Freshly reverified on 2026-09-05 against the official Web Machine Learning Community Group **WebMCP Draft Community Group Report dated 2026-09-04**. This supersedes the previously recorded 2026-08-26 draft date.
+Freshly reverified on 2026-09-05 against the official Web Machine Learning Community Group **WebMCP Draft Community Group Report dated 2026-09-04**.
 
-The current implementation target remains correct: secure-context `document.modelContext`, `registerTool`, JSON Schema `inputSchema`, `ToolAnnotations` (`readOnlyHint`, `untrustedContentHint`, `consequentialHint`), registration cancellation, execution `AbortSignal`, `getTools()`, and `executeTool()`.
-
-The September 4 draft still defines `consequentialHint` for significant real-world or non-reversible effects such as booking or transferring money. It remains inappropriate for the currently exposed reversible CriShirt workspace/cart operations and existing image-generation/try-on actions; the human site has no implemented checkout/payment action to expose.
+The current implementation target remains correct: secure-context `document.modelContext`, `registerTool`, JSON Schema `inputSchema`, tool annotations, registration cancellation, execution `AbortSignal`, `getTools()`, and `executeTool()`.
 
 Actual interactive `document.modelContext.getTools()` plus representative `executeTool()` validation in a genuinely WebMCP-capable browser remains unavailable from this automation environment and is explicitly unclaimed.
 
-## Fresh full-journey audit — 2026-09-05 15:20 IST
+## Fresh full-journey audit — 2026-09-05 16:20 IST
 
 ### Create / edit
 
-Coverage remains strong: a single semantic state read exposes garment, side, design, placement, busy status, cart count, valid options, and revision. Compound configuration avoids selector-by-selector round trips; semantic placement removes visual dragging; generation/refinement reuse the existing Perfect Corp flow and support cancellation.
+Coverage remains strong. One semantic state read exposes garment configuration, front/back design presence and placement, busy status, cart count, valid options, and revision. Compound configuration removes multiple selector round trips; placement is semantic rather than visual dragging; generation/refinement reuse the existing Perfect Corp-backed application flow and are cancellable.
 
-A generation → placement → cart mega-tool remains rejected because it would bundle distinct side effects and make partial-failure recovery less reliable for only a small round-trip saving.
+A generation → placement → cart mega-tool remains rejected because it would combine distinct side effects and weaken partial-failure recovery for only a small round-trip saving.
 
 ### Concurrency / duplicate invocation
 
-A narrow hardening opportunity remains reproducible by inspection: two near-simultaneous WebMCP generation/refinement calls can theoretically both pass the React-backed `isGenerating` / `isRefining` checks before React state propagation reflects the first call.
+The previously identified narrow race remains present by direct source inspection: two near-simultaneous WebMCP generation/refinement calls can theoretically both pass the React-backed `isGenerating` / `isRefining` check before React state propagation reflects the first call.
 
-Preferred fix remains a bridge-local synchronous `useRef` operation lock acquired before the async provider operation and released in `finally`, while retaining current React busy state for the human UI. This should cover both generation and refinement with one shared lock so cross-operation duplicates are rejected deterministically.
+Preferred fix remains a bridge-local synchronous `useRef` operation lock acquired immediately before the provider operation and released in `finally`, shared by generation and refinement so cross-operation duplicates are rejected deterministically.
 
-A clean clone/build was attempted again before editing source, but the execution container still failed DNS resolution for `github.com` (`Could not resolve host: github.com`). Because the required local build/test gate is unavailable, this functional patch remains intentionally unshipped rather than speculative.
+A complete clean clone/build was attempted again before touching source. The execution container still failed DNS resolution for `github.com` (`Could not resolve host: github.com`). Because the required local build/test gate is unavailable, the functional lock patch remains intentionally unshipped rather than speculative.
 
 ### Cart
 
@@ -92,7 +91,7 @@ Covered semantically for Create, Virtual Try-On, Collection, and Cart without re
 
 ### Virtual Try-On
 
-Post-consent handoff is covered. Human photo acquisition remains intentionally human-controlled. Once a photo exists, an agent can inspect readiness, select an eligible existing cart item, invoke the same Perfect Corp action, receive deterministic success/failure state, and cancel execution.
+Post-consent handoff remains covered. Human photo acquisition stays intentionally human-controlled. Once a photo exists, an agent can inspect readiness, select an eligible existing cart item, invoke the same Perfect Corp action, receive deterministic success/failure state, and cancel execution.
 
 ### Camera / AR surfaces
 
@@ -100,14 +99,14 @@ No safe additional semantic action was found. Automating camera acquisition woul
 
 ## Tests and verification performed this run
 
-- Verified exact canonical repository identity and admin/push access.
-- Read `PROGRESS.md` before evaluating any changes.
-- Verified `webmcp-agent-native` head was `b78db51cbdff6ad5527f0af2ddb9bf3e6ab6dd26` before this handoff update.
+- Read `PROGRESS.md` before evaluating changes.
+- Verified the canonical branch head as `85ff5051949bdc745509c9648102dd31728f0a39` before this handoff update.
 - Verified production `main` remains exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
-- Compared branch to `main`: 21 ahead, 0 behind, merge base exactly production baseline.
-- Confirmed exact prior branch-head preview `dpl_9fTzLS2coVuwPgqe94N1AYPPyYF2` is `READY`.
-- Inspected the current generation/refinement implementations and reconfirmed the narrow duplicate-call race shape without modifying source.
-- Reverified the newer official 2026-09-04 WebMCP draft and its current `document.modelContext`, `registerTool`, annotation, schema, cancellation, `getTools()`, and `executeTool()` API shape.
+- Compared branch to `main`: 22 ahead, 0 behind, merge base exactly production baseline.
+- Confirmed exact prior branch-head preview `dpl_AzJGPeQjCfxiEyVoMH89SVoHGn9t` is `READY`.
+- Fetched the exact preview root successfully with HTTP 200.
+- Inspected `src/components/WebMCPBridge.tsx` and reconfirmed the narrow duplicate-call race shape without modifying source.
+- Reverified the official 2026-09-04 WebMCP draft and its current `document.modelContext`, `registerTool`, schema, cancellation, `getTools()`, and `executeTool()` API shape.
 - Re-audited create/edit, cart, collection, navigation, try-on, privacy, unsupported-browser fallback, stale-state, cancellation, duplicate invocation, provider-failure, route-change, and refresh boundaries.
 - Retried a clean local clone/build; container DNS still could not resolve `github.com`.
 
@@ -115,11 +114,10 @@ No functional code change is justified under the available validation conditions
 
 ## Failures found / fixes applied
 
-- No active deployment failure exists; the exact prior branch-head preview is READY.
+- No active deployment failure exists; the exact prior branch-head preview is READY and serves HTTP 200.
 - Historical Virtual Try-On preview failure remains superseded by READY corrective previews.
-- The theoretical duplicate async invocation race remains tracked and intentionally unpatched until a complete build/test path is available.
+- The duplicate async invocation race remains tracked and intentionally unpatched until a complete build/test path is available.
 - Current blocker is transient container DNS resolution for `github.com`; this is a validation-environment limitation, not an application failure.
-- Documentation was corrected to track the newer official WebMCP draft dated 2026-09-04.
 - No production change, rollback, deployment-config change, or unrelated repository action was performed.
 
 ## Remaining opportunities
