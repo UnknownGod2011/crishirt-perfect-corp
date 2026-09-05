@@ -10,10 +10,10 @@ Keep the existing human-facing CriShirt experience stable while exposing the sam
 - Production branch: `main`
 - Production/current production commit: `88daa417caa5305f81e5554977a13a94a793cdeb`
 - Working branch: `webmcp-agent-native`
-- Branch head entering this run: `c0ca549a0b5f98382c6a23841cbd3de3b2cd7dba`
-- Compare entering this run: 28 commits ahead of `main`, 0 behind; merge base remains exactly production baseline `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Branch head entering this run: `6a2564a7b8623520c0af3548b90e934c63e5a144`
+- Compare entering this run: 29 commits ahead of `main`, 0 behind; merge base remains exactly production baseline `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Vercel project: `crishirtpc` (`prj_jAm749oRS01LbAdwec2lKvKZgAEF`), linked to `UnknownGod2011/crishirt-perfect-corp`.
-- Exact preview for `c0ca549a0b5f98382c6a23841cbd3de3b2cd7dba`: `dpl_9brFCVZWQETbW2X5MubMMLCfAHic`, state `READY`; authenticated fetch of the preview root returned HTTP 200 on 2026-09-05.
+- Exact preview for `6a2564a7b8623520c0af3548b90e934c63e5a144`: `dpl_4QqjCBQD1p4D5wAqJ1M8NkeQydQi`, state `READY` as verified on 2026-09-05.
 - Production remains on `main`; this WebMCP branch has not been promoted to production.
 - Historical failed Virtual Try-On preview `4dcef318ea8913b0efc906e1450044ad2da4d320` remains superseded by corrective commit `6b7fdfe28c4b5a048beda4436a3ae9948aa86c7d` and subsequent READY previews.
 
@@ -58,11 +58,11 @@ Freshly reverified on 2026-09-05 against the official Web Machine Learning Commu
 
 The implementation target remains correct: secure-context `document.modelContext`, semantic `registerTool`, JSON Schema `inputSchema`, registration cancellation, execution `AbortSignal`, `getTools()`, and `executeTool()`.
 
-The current spec's `ToolAnnotations` dictionary contains `readOnlyHint`, `untrustedContentHint`, and `consequentialHint`. `consequentialHint` is defined for significant real-world or non-reversible actions such as booking or transferring money. The existing CriShirt WebMCP surface does not perform checkout/payment, account changes, publishing, or other similarly consequential external actions; reversible local cart/workspace mutations and image generation do not justify marking tools consequential merely to increase metadata count. Existing read-only/untrusted annotations remain appropriate by inspection.
+The current spec's `ToolAnnotations` dictionary contains `readOnlyHint`, `untrustedContentHint`, and `consequentialHint`. The existing CriShirt WebMCP surface does not perform checkout/payment, account changes, publishing, or other significant non-reversible external actions, so no consequential annotation change is justified.
 
 The official spec still links the Web Platform Tests result surface at `wpt.fyi/results/webmcp`. No spec change observed this run requires a CriShirt architecture rewrite. Actual interactive `document.modelContext.getTools()` plus representative `executeTool()` validation in a genuinely WebMCP-capable browser remains unavailable from this automation environment and is explicitly unclaimed.
 
-## Fresh full-journey audit — 2026-09-05 22:20 IST
+## Fresh full-journey audit — 2026-09-05 23:24 IST
 
 ### Create / edit
 
@@ -72,11 +72,11 @@ A generation -> placement -> cart mega-tool remains rejected because it combines
 
 ### Concurrency / duplicate invocation
 
-The previously identified narrow race remains present by direct source inspection. `crishirt_generate_design` checks React-backed `stateRef.current.isGenerating/isRefining` before dispatching `SET_GENERATING`; two near-simultaneous WebMCP calls can theoretically enter before React propagation updates `stateRef`. Refinement has the same class of timing window.
+The previously identified narrow race remains present by direct source inspection. `crishirt_generate_design` and `crishirt_refine_design` both read React-backed busy state before their dispatch updates can synchronously propagate to `stateRef`. Two near-simultaneous WebMCP calls can therefore theoretically pass the busy check before React state catches up.
 
-Preferred fix remains a bridge-local synchronous `useRef` operation lock acquired immediately before provider execution and released in `finally`, shared by generation and refinement so same-operation and cross-operation duplicates are rejected deterministically with `WORKSPACE_BUSY`.
+The preferred fix remains a bridge-local synchronous `useRef` operation lock shared by generation and refinement, acquired immediately before provider execution and released in `finally`, so same-operation and cross-operation duplicates return deterministic `WORKSPACE_BUSY`.
 
-A clean clone/build was attempted again before touching functional source. The execution container still failed DNS resolution for `github.com` (`Could not resolve host: github.com`). Because the required complete build/test gate is unavailable, the functional lock patch remains intentionally unshipped rather than speculative.
+This run intentionally did not ship that patch. The automation still lacks a complete independent local clone/build/test path; prior clean-clone attempts fail container DNS resolution for `github.com`. Vercel preview builds are available and healthy, but a deployment build alone does not replace the requested unit/integration validation for a concurrency change. Shipping the race fix without that gate would violate the conservative stability requirement.
 
 ### Cart
 
@@ -102,40 +102,37 @@ No safe additional semantic action is justified. Automating camera acquisition w
 
 No new tool is justified. The 13-tool surface remains coherent: state reads are compact, configuration/generation avoid unnecessary selector round trips, stable IDs are used for collection/cart operations, and side-effect boundaries remain explicit enough for recovery. Adding tiny setter tools or a broad mega-tool would worsen discoverability or failure handling.
 
-The September 4 spec's `consequentialHint` was specifically re-audited this run. None of the currently exposed CriShirt tools crosses the spec's significant real-world/non-reversible threshold; no annotation-only code churn is justified.
-
 ## Tests and verification performed this run
 
 - Read `PROGRESS.md` before evaluating changes.
 - Verified repository identity as `UnknownGod2011/crishirt-perfect-corp` and working branch `webmcp-agent-native`.
-- Verified branch head `c0ca549a0b5f98382c6a23841cbd3de3b2cd7dba` entering this run.
+- Verified branch head `6a2564a7b8623520c0af3548b90e934c63e5a144` entering this run.
 - Verified production `main` remains exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
-- Compared branch to `main`: 28 ahead, 0 behind, merge base exactly production baseline.
-- Confirmed exact branch-head Vercel preview `dpl_9brFCVZWQETbW2X5MubMMLCfAHic` is `READY` and its root returns HTTP 200.
-- Re-inspected `src/components/WebMCPBridge.tsx` and reconfirmed the duplicate-call timing window without modifying source.
-- Reverified the official 2026-09-04 WebMCP draft, including `document.modelContext`, `registerTool`, JSON Schema, all three current annotations, cancellation, `getTools()`, `executeTool()`, and linked WPT coverage.
+- Compared branch to `main`: 29 ahead, 0 behind, merge base exactly production baseline.
+- Confirmed exact branch-head Vercel preview `dpl_4QqjCBQD1p4D5wAqJ1M8NkeQydQi` is `READY`.
+- Re-inspected `src/components/WebMCPBridge.tsx` and reconfirmed the duplicate-call timing window without modifying functional source.
+- Reverified the official 2026-09-04 WebMCP draft and linked WPT surface.
 - Re-audited create/edit, cart, collection, navigation, try-on, privacy, unsupported-browser fallback, stale state, cancellation, duplicate invocation, provider failure, route changes, refresh, payload size, tool count, annotations, and agent round-trip boundaries.
-- Retried a clean local clone/build; container DNS still could not resolve `github.com`.
 
 No functional code change is justified under the available validation conditions. The 13-tool surface remains coherent and production-safe by inspection and prior READY preview evidence.
 
 ## Failures found / fixes applied
 
-- No active deployment failure exists; the exact audited branch-head preview is READY and responds HTTP 200.
+- No active deployment failure exists; the exact audited branch-head preview is READY.
 - Historical Virtual Try-On preview failure remains superseded by READY corrective previews.
 - The duplicate async invocation race remains tracked and intentionally unpatched until a complete build/test path is available.
-- Current blocker is transient container DNS resolution for `github.com`; this is a validation-environment limitation, not an application failure.
+- Current blocker is the absence of a complete independent local clone/build/test path in this automation environment; prior attempts fail transient DNS resolution for `github.com`.
 - No production change, rollback, deployment-config change, or unrelated repository action was performed.
 
 ## Remaining opportunities
 
 1. Highest priority: perform real `document.modelContext.getTools()` discovery plus representative `executeTool()` calls in a WebMCP-capable browser/testing environment.
-2. When a complete clone/build path is available, add and test the narrow shared generation/refinement operation lock.
+2. When a complete clone/build/test path is available, add and test the narrow shared generation/refinement operation lock.
 3. Runtime-test stale revisions, cancellation, provider failures, unsupported-browser fallback, duplicate calls, route changes/refresh, collection availability, shared cart state, and Virtual Try-On deterministic errors.
 4. Continue auditing long-running human-vs-agent races without a broad architecture rewrite unless a concrete overwrite path is reproducible.
 5. Keep schemas/descriptions/annotations compact, accurate, and semantically high leverage; do not add tools or hints merely to increase count.
 6. Do not merge to `main` solely because previews build successfully.
-7. Treat every functional commit as unvalidated until its exact or corrective Vercel preview is confirmed `READY`.
+7. Treat every functional commit as unvalidated until both its build and relevant behavioral checks pass.
 
 ## README
 
@@ -143,8 +140,8 @@ No functional code change is justified under the available validation conditions
 
 ## Latest commit SHA
 
-Latest audited working-branch commit entering this run: `c0ca549a0b5f98382c6a23841cbd3de3b2cd7dba`. This file is updated before the run's documentation commit is created, so the resulting new commit SHA is verified and recorded by the following run rather than attempting an impossible self-referential commit hash.
+Latest audited working-branch commit entering this run: `6a2564a7b8623520c0af3548b90e934c63e5a144`. This file is updated before the run's documentation commit is created, so the resulting new commit SHA is verified and recorded by the following run rather than attempting an impossible self-referential commit hash.
 
 ## Next run
 
-Read this file first. Reverify repository identity, production isolation, branch head/divergence, and exact latest preview state. Check the latest official WebMCP draft for changes. Attempt genuine WebMCP runtime inspection first if a compatible browser/testing surface becomes available. Retry a complete clean clone/build path; only if that succeeds, implement and fully test the narrow duplicate-generation/refinement lock. Otherwise continue the fresh human-versus-agent interaction-cost audit and do not ship speculative source changes.
+Read this file first. Reverify repository identity, production isolation, branch head/divergence, and exact latest preview state. Check the latest official WebMCP draft for changes. Attempt genuine WebMCP runtime inspection first if a compatible browser/testing surface becomes available. Retry a complete clean clone/build/test path; only if that succeeds, implement and fully test the narrow duplicate-generation/refinement lock. Otherwise continue the fresh human-versus-agent interaction-cost audit and do not ship speculative source changes.
