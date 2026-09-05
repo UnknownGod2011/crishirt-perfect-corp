@@ -10,10 +10,10 @@ Keep the existing human-facing CriShirt experience stable while exposing the sam
 - Production branch: `main`
 - Production/current production commit: `88daa417caa5305f81e5554977a13a94a793cdeb`
 - Working branch: `webmcp-agent-native`
-- Branch head entering this run: `6a2564a7b8623520c0af3548b90e934c63e5a144`
-- Compare entering this run: 29 commits ahead of `main`, 0 behind; merge base remains exactly production baseline `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Branch head entering this run: `bba0f2960dc7a95d9798ab177d61369b5e74339d`
+- Compare entering this run: 30 commits ahead of `main`, 0 behind; merge base remains exactly production baseline `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Vercel project: `crishirtpc` (`prj_jAm749oRS01LbAdwec2lKvKZgAEF`), linked to `UnknownGod2011/crishirt-perfect-corp`.
-- Exact preview for `6a2564a7b8623520c0af3548b90e934c63e5a144`: `dpl_4QqjCBQD1p4D5wAqJ1M8NkeQydQi`, state `READY` as verified on 2026-09-05.
+- Exact preview for `bba0f2960dc7a95d9798ab177d61369b5e74339d`: `dpl_9Qwq7RDm5F5WnZd9Qahbp2M1yQAh`, state `READY` as verified on 2026-09-06.
 - Production remains on `main`; this WebMCP branch has not been promoted to production.
 - Historical failed Virtual Try-On preview `4dcef318ea8913b0efc906e1450044ad2da4d320` remains superseded by corrective commit `6b7fdfe28c4b5a048beda4436a3ae9948aa86c7d` and subsequent READY previews.
 
@@ -54,7 +54,7 @@ All entry points feature-detect `document.modelContext`; unsupported browsers re
 
 ## Current WebMCP specification check
 
-Freshly reverified on 2026-09-05 against the official Web Machine Learning Community Group **WebMCP Draft Community Group Report dated 2026-09-04**.
+Freshly reverified on 2026-09-06 against the official Web Machine Learning Community Group **WebMCP Draft Community Group Report dated 2026-09-04**.
 
 The implementation target remains correct: secure-context `document.modelContext`, semantic `registerTool`, JSON Schema `inputSchema`, registration cancellation, execution `AbortSignal`, `getTools()`, and `executeTool()`.
 
@@ -62,7 +62,7 @@ The current spec's `ToolAnnotations` dictionary contains `readOnlyHint`, `untrus
 
 The official spec still links the Web Platform Tests result surface at `wpt.fyi/results/webmcp`. No spec change observed this run requires a CriShirt architecture rewrite. Actual interactive `document.modelContext.getTools()` plus representative `executeTool()` validation in a genuinely WebMCP-capable browser remains unavailable from this automation environment and is explicitly unclaimed.
 
-## Fresh full-journey audit — 2026-09-05 23:24 IST
+## Fresh full-journey audit — 2026-09-06 00:21 IST
 
 ### Create / edit
 
@@ -76,7 +76,7 @@ The previously identified narrow race remains present by direct source inspectio
 
 The preferred fix remains a bridge-local synchronous `useRef` operation lock shared by generation and refinement, acquired immediately before provider execution and released in `finally`, so same-operation and cross-operation duplicates return deterministic `WORKSPACE_BUSY`.
 
-This run intentionally did not ship that patch. The automation still lacks a complete independent local clone/build/test path; prior clean-clone attempts fail container DNS resolution for `github.com`. Vercel preview builds are available and healthy, but a deployment build alone does not replace the requested unit/integration validation for a concurrency change. Shipping the race fix without that gate would violate the conservative stability requirement.
+This run intentionally did not ship that patch. A fresh clean-clone attempt again failed before checkout with `Could not resolve host: github.com`. The connected GitHub API and Vercel previews remain available, but they do not provide the complete independent local unit/integration/build gate requested for a concurrency change. Shipping the race fix without that gate would violate the conservative stability requirement.
 
 ### Cart
 
@@ -106,11 +106,12 @@ No new tool is justified. The 13-tool surface remains coherent: state reads are 
 
 - Read `PROGRESS.md` before evaluating changes.
 - Verified repository identity as `UnknownGod2011/crishirt-perfect-corp` and working branch `webmcp-agent-native`.
-- Verified branch head `6a2564a7b8623520c0af3548b90e934c63e5a144` entering this run.
+- Verified branch head `bba0f2960dc7a95d9798ab177d61369b5e74339d` entering this run.
 - Verified production `main` remains exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
-- Compared branch to `main`: 29 ahead, 0 behind, merge base exactly production baseline.
-- Confirmed exact branch-head Vercel preview `dpl_4QqjCBQD1p4D5wAqJ1M8NkeQydQi` is `READY`.
+- Compared branch to `main`: 30 ahead, 0 behind, merge base exactly production baseline.
+- Confirmed exact branch-head Vercel preview `dpl_9Qwq7RDm5F5WnZd9Qahbp2M1yQAh` is `READY`.
 - Re-inspected `src/components/WebMCPBridge.tsx` and reconfirmed the duplicate-call timing window without modifying functional source.
+- Retried a clean clone of `webmcp-agent-native`; it failed with DNS resolution error for `github.com` before checkout.
 - Reverified the official 2026-09-04 WebMCP draft and linked WPT surface.
 - Re-audited create/edit, cart, collection, navigation, try-on, privacy, unsupported-browser fallback, stale state, cancellation, duplicate invocation, provider failure, route changes, refresh, payload size, tool count, annotations, and agent round-trip boundaries.
 
@@ -121,7 +122,8 @@ No functional code change is justified under the available validation conditions
 - No active deployment failure exists; the exact audited branch-head preview is READY.
 - Historical Virtual Try-On preview failure remains superseded by READY corrective previews.
 - The duplicate async invocation race remains tracked and intentionally unpatched until a complete build/test path is available.
-- Current blocker is the absence of a complete independent local clone/build/test path in this automation environment; prior attempts fail transient DNS resolution for `github.com`.
+- Current blocker is the absence of a complete independent local clone/build/test path in this automation environment; the latest attempt again failed transient DNS resolution for `github.com`.
+- `PROGRESS.md` had been one commit behind the actual branch head at run start; this run corrected the handoff facts.
 - No production change, rollback, deployment-config change, or unrelated repository action was performed.
 
 ## Remaining opportunities
@@ -140,7 +142,7 @@ No functional code change is justified under the available validation conditions
 
 ## Latest commit SHA
 
-Latest audited working-branch commit entering this run: `6a2564a7b8623520c0af3548b90e934c63e5a144`. This file is updated before the run's documentation commit is created, so the resulting new commit SHA is verified and recorded by the following run rather than attempting an impossible self-referential commit hash.
+Latest audited working-branch commit entering this run: `bba0f2960dc7a95d9798ab177d61369b5e74339d`. This file is updated before the run's documentation commit is created, so the resulting new commit SHA is verified and recorded by the following run rather than attempting an impossible self-referential commit hash.
 
 ## Next run
 
