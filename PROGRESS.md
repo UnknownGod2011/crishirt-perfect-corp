@@ -10,11 +10,11 @@ Keep the existing human-facing CriShirt experience stable while exposing the sam
 - Production branch: `main`
 - Production baseline / current production commit: `88daa417caa5305f81e5554977a13a94a793cdeb`
 - Working branch: `webmcp-agent-native`
-- Branch head before this handoff update: `c096f341d159cafb4928099ec0b17fc7a0b95a57`
-- Compare result before this update: 17 commits ahead of `main`, 0 behind; merge base is exactly the production baseline.
+- Branch head before this handoff update: `28e48c2bff577f2bb0a73be322d6659209a99a98`
+- Compare result before this update: 18 commits ahead of `main`, 0 behind; merge base is exactly the production baseline.
 - Vercel project: `crishirtpc`, linked to `UnknownGod2011/crishirt-perfect-corp`.
 - Production remains on `main` and has not been promoted or modified by this WebMCP work.
-- Preview for `c096f341d159cafb4928099ec0b17fc7a0b95a57`: deployment `dpl_4tRn5zTSKP4aARajBcCWLP6EEjHo`, state `READY`.
+- Exact preview for `28e48c2bff577f2bb0a73be322d6659209a99a98`: deployment `dpl_9ybhAjwNuC5HahdMYXMemNu9tyxF`, state `READY`.
 - Historical failed preview `4dcef318ea8913b0efc906e1450044ad2da4d320` is superseded by its fix `6b7fdfe28c4b5a048beda4436a3ae9948aa86c7d` and later READY previews.
 
 ## Current WebMCP tools
@@ -54,7 +54,7 @@ All entry points feature-detect `document.modelContext`; unsupported browsers co
 
 ## Current specification check
 
-Reverified against the official Web Machine Learning Community Group WebMCP Draft Community Group Report dated 2026-08-26. The current draft still defines `document.modelContext.registerTool`, JSON Schema `inputSchema`, annotations including `readOnlyHint`, `untrustedContentHint`, and `consequentialHint`, registration/execution cancellation, `getTools()`, and `executeTool()`.
+Reverified previously against the official Web Machine Learning Community Group WebMCP Draft Community Group Report dated 2026-08-26. The implementation target remains `document.modelContext.registerTool` with JSON Schema inputs, annotations such as `readOnlyHint` and `untrustedContentHint`, registration/execution cancellation, `getTools()`, and `executeTool()`.
 
 `consequentialHint` remains inappropriate for the current CriShirt mutations because they alter reversible in-app workspace/cart state or invoke existing image-generation/try-on operations; there is no implemented payment/checkout action.
 
@@ -74,7 +74,7 @@ The previously identified narrow race remains the only concrete hardening candid
 
 The preferred fix remains a bridge-local `useRef` operation lock acquired synchronously before either async operation starts and released in `finally`, while retaining existing React busy state for the human UI.
 
-This run again attempted the safe validation path before editing. The working copy could not be cloned because the execution container could not resolve `github.com`. Because a functional patch cannot be locally built/tested in this environment right now, no speculative source change was shipped. The prior branch-head Vercel preview is confirmed READY, so there is no deployment failure requiring intervention.
+This run retried the safe validation path before editing. A clean clone of the canonical branch again failed because the execution container could not resolve `github.com`. Because a functional patch cannot be locally built/tested in this environment, no speculative source change was shipped.
 
 ### Cart
 
@@ -98,12 +98,12 @@ No safe additional semantic mutation was found. Camera access still requires bro
 
 ## Tests and verification performed this run
 
-- Verified exact canonical repository identity and push access.
-- Verified `webmcp-agent-native` head was `c096f341d159cafb4928099ec0b17fc7a0b95a57` before this handoff update.
-- Compared branch against `main`: ahead 17, behind 0, merge base exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Verified exact canonical repository identity and admin/push access.
 - Re-read `PROGRESS.md` before evaluating changes.
-- Confirmed exact branch-head preview `dpl_4tRn5zTSKP4aARajBcCWLP6EEjHo` is `READY`.
-- Reverified the official 2026-08-26 WebMCP draft and `document.modelContext` API shape.
+- Verified `webmcp-agent-native` head was `28e48c2bff577f2bb0a73be322d6659209a99a98` before this handoff update.
+- Verified `main` is still exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Compared branch against `main`: ahead 18, behind 0, merge base exactly the production baseline.
+- Confirmed exact branch-head preview `dpl_9ybhAjwNuC5HahdMYXMemNu9tyxF` is `READY`.
 - Re-audited create/edit, cart, collection, navigation, try-on, privacy, unsupported-browser fallback, stale-state, cancellation, duplicate invocation, and provider-failure boundaries.
 - Retried a clean local clone for complete-file patch/build validation; container DNS still could not resolve `github.com`.
 
@@ -114,6 +114,7 @@ No functional code change is justified under the available validation conditions
 - No active deployment failure exists. The current branch-head preview is READY.
 - The historical Virtual Try-On failed preview remains superseded by READY corrective previews.
 - The theoretical duplicate async invocation race remains tracked but intentionally unpatched until a complete build/test path is available.
+- The local validation environment still has a transient DNS resolution failure for `github.com`; this is a validation-environment limitation, not an application failure.
 - No production change or rollback was required.
 
 ## Remaining opportunities
