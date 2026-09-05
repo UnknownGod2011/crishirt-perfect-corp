@@ -10,10 +10,10 @@ Keep the existing human-facing CriShirt experience stable while exposing the sam
 - Production branch: `main`
 - Production/current production commit: `88daa417caa5305f81e5554977a13a94a793cdeb`
 - Working branch: `webmcp-agent-native`
-- Branch head before this handoff update: `0acc9974ce23ed340b14844240f8cf41a5a69655`
-- Compare before this update: 26 commits ahead of `main`, 0 behind; merge base remains exactly production baseline `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Branch head before this handoff update: `209e6a0d51aaa4cb2dbd04027eea6e075fc807de`
+- Compare before this update: 27 commits ahead of `main`, 0 behind; merge base remains exactly production baseline `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Vercel project: `crishirtpc` (`prj_jAm749oRS01LbAdwec2lKvKZgAEF`), linked to `UnknownGod2011/crishirt-perfect-corp`.
-- Exact preview for `0acc9974ce23ed340b14844240f8cf41a5a69655`: `dpl_GeX3EcbRCVuyBtNmNQaFvDaREQAu`, state `READY`.
+- Exact preview for `209e6a0d51aaa4cb2dbd04027eea6e075fc807de`: `dpl_HrG9iataSCyyhiupJYy8So3Bqxih`, state `READY`.
 - Production remains on `main`; this WebMCP branch has not been promoted to production.
 - Historical failed Virtual Try-On preview `4dcef318ea8913b0efc906e1450044ad2da4d320` remains superseded by corrective commit `6b7fdfe28c4b5a048beda4436a3ae9948aa86c7d` and subsequent READY previews.
 
@@ -58,9 +58,9 @@ Freshly reverified on 2026-09-05 against the official Web Machine Learning Commu
 
 The implementation target remains correct: secure-context `document.modelContext`, semantic `registerTool`, JSON Schema `inputSchema`, annotations such as `readOnlyHint` / `untrustedContentHint` where appropriate, registration cancellation, execution `AbortSignal`, `getTools()`, and `executeTool()`.
 
-The official spec links the Web Platform Tests result surface at `wpt.fyi/results/webmcp`; no spec change observed this run requires a CriShirt architecture rewrite. Actual interactive `document.modelContext.getTools()` plus representative `executeTool()` validation in a genuinely WebMCP-capable browser remains unavailable from this automation environment and is explicitly unclaimed.
+The official spec still links the Web Platform Tests result surface at `wpt.fyi/results/webmcp`; no spec change observed this run requires a CriShirt architecture rewrite. Actual interactive `document.modelContext.getTools()` plus representative `executeTool()` validation in a genuinely WebMCP-capable browser remains unavailable from this automation environment and is explicitly unclaimed.
 
-## Fresh full-journey audit — 2026-09-05 20:21 IST
+## Fresh full-journey audit — 2026-09-05 21:20 IST
 
 ### Create / edit
 
@@ -104,10 +104,10 @@ No new tool is justified. The 13-tool surface remains coherent: state reads are 
 
 - Read `PROGRESS.md` before evaluating changes.
 - Verified repository identity as `UnknownGod2011/crishirt-perfect-corp` and working branch `webmcp-agent-native`.
-- Verified branch head `0acc9974ce23ed340b14844240f8cf41a5a69655` before this handoff update.
+- Verified branch head `209e6a0d51aaa4cb2dbd04027eea6e075fc807de` before this handoff update.
 - Verified production `main` remains exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
-- Compared branch to `main`: 26 ahead, 0 behind, merge base exactly production baseline.
-- Confirmed exact prior branch-head Vercel preview `dpl_GeX3EcbRCVuyBtNmNQaFvDaREQAu` is `READY`.
+- Compared branch to `main`: 27 ahead, 0 behind, merge base exactly production baseline.
+- Confirmed exact prior branch-head Vercel preview `dpl_HrG9iataSCyyhiupJYy8So3Bqxih` is `READY`.
 - Re-inspected `src/components/WebMCPBridge.tsx` and reconfirmed the duplicate-call timing window without modifying source.
 - Reverified the official 2026-09-04 WebMCP draft; `document.modelContext`, `registerTool`, schemas, cancellation, `getTools()`, `executeTool()`, and linked WPT coverage remain the correct target.
 - Re-audited create/edit, cart, collection, navigation, try-on, privacy, unsupported-browser fallback, stale state, cancellation, duplicate invocation, provider failure, route changes, refresh, payload size, tool count, and agent round-trip boundaries.
@@ -139,7 +139,7 @@ No functional code change is justified under the available validation conditions
 
 ## Latest commit SHA
 
-This file is updated before the run commit is created, so the exact new commit SHA is recorded by the next run after branch-head verification. The pre-update branch head for this run was `0acc9974ce23ed340b14844240f8cf41a5a69655`.
+This file is updated before the run commit is created, so the exact new commit SHA is recorded by the next run after branch-head verification. The pre-update branch head for this run was `209e6a0d51aaa4cb2dbd04027eea6e075fc807de`.
 
 ## Next run
 
