@@ -10,10 +10,10 @@ Keep the existing human-facing CriShirt experience stable while exposing the sam
 - Production branch: `main`
 - Production/current production commit: `88daa417caa5305f81e5554977a13a94a793cdeb`
 - Working branch: `webmcp-agent-native`
-- Branch head before this handoff update: `209e6a0d51aaa4cb2dbd04027eea6e075fc807de`
-- Compare before this update: 27 commits ahead of `main`, 0 behind; merge base remains exactly production baseline `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Branch head entering this run: `c0ca549a0b5f98382c6a23841cbd3de3b2cd7dba`
+- Compare entering this run: 28 commits ahead of `main`, 0 behind; merge base remains exactly production baseline `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Vercel project: `crishirtpc` (`prj_jAm749oRS01LbAdwec2lKvKZgAEF`), linked to `UnknownGod2011/crishirt-perfect-corp`.
-- Exact preview for `209e6a0d51aaa4cb2dbd04027eea6e075fc807de`: `dpl_HrG9iataSCyyhiupJYy8So3Bqxih`, state `READY`.
+- Exact preview for `c0ca549a0b5f98382c6a23841cbd3de3b2cd7dba`: `dpl_9brFCVZWQETbW2X5MubMMLCfAHic`, state `READY`; authenticated fetch of the preview root returned HTTP 200 on 2026-09-05.
 - Production remains on `main`; this WebMCP branch has not been promoted to production.
 - Historical failed Virtual Try-On preview `4dcef318ea8913b0efc906e1450044ad2da4d320` remains superseded by corrective commit `6b7fdfe28c4b5a048beda4436a3ae9948aa86c7d` and subsequent READY previews.
 
@@ -56,11 +56,13 @@ All entry points feature-detect `document.modelContext`; unsupported browsers re
 
 Freshly reverified on 2026-09-05 against the official Web Machine Learning Community Group **WebMCP Draft Community Group Report dated 2026-09-04**.
 
-The implementation target remains correct: secure-context `document.modelContext`, semantic `registerTool`, JSON Schema `inputSchema`, annotations such as `readOnlyHint` / `untrustedContentHint` where appropriate, registration cancellation, execution `AbortSignal`, `getTools()`, and `executeTool()`.
+The implementation target remains correct: secure-context `document.modelContext`, semantic `registerTool`, JSON Schema `inputSchema`, registration cancellation, execution `AbortSignal`, `getTools()`, and `executeTool()`.
 
-The official spec still links the Web Platform Tests result surface at `wpt.fyi/results/webmcp`; no spec change observed this run requires a CriShirt architecture rewrite. Actual interactive `document.modelContext.getTools()` plus representative `executeTool()` validation in a genuinely WebMCP-capable browser remains unavailable from this automation environment and is explicitly unclaimed.
+The current spec's `ToolAnnotations` dictionary contains `readOnlyHint`, `untrustedContentHint`, and `consequentialHint`. `consequentialHint` is defined for significant real-world or non-reversible actions such as booking or transferring money. The existing CriShirt WebMCP surface does not perform checkout/payment, account changes, publishing, or other similarly consequential external actions; reversible local cart/workspace mutations and image generation do not justify marking tools consequential merely to increase metadata count. Existing read-only/untrusted annotations remain appropriate by inspection.
 
-## Fresh full-journey audit — 2026-09-05 21:20 IST
+The official spec still links the Web Platform Tests result surface at `wpt.fyi/results/webmcp`. No spec change observed this run requires a CriShirt architecture rewrite. Actual interactive `document.modelContext.getTools()` plus representative `executeTool()` validation in a genuinely WebMCP-capable browser remains unavailable from this automation environment and is explicitly unclaimed.
+
+## Fresh full-journey audit — 2026-09-05 22:20 IST
 
 ### Create / edit
 
@@ -100,24 +102,26 @@ No safe additional semantic action is justified. Automating camera acquisition w
 
 No new tool is justified. The 13-tool surface remains coherent: state reads are compact, configuration/generation avoid unnecessary selector round trips, stable IDs are used for collection/cart operations, and side-effect boundaries remain explicit enough for recovery. Adding tiny setter tools or a broad mega-tool would worsen discoverability or failure handling.
 
+The September 4 spec's `consequentialHint` was specifically re-audited this run. None of the currently exposed CriShirt tools crosses the spec's significant real-world/non-reversible threshold; no annotation-only code churn is justified.
+
 ## Tests and verification performed this run
 
 - Read `PROGRESS.md` before evaluating changes.
 - Verified repository identity as `UnknownGod2011/crishirt-perfect-corp` and working branch `webmcp-agent-native`.
-- Verified branch head `209e6a0d51aaa4cb2dbd04027eea6e075fc807de` before this handoff update.
+- Verified branch head `c0ca549a0b5f98382c6a23841cbd3de3b2cd7dba` entering this run.
 - Verified production `main` remains exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
-- Compared branch to `main`: 27 ahead, 0 behind, merge base exactly production baseline.
-- Confirmed exact prior branch-head Vercel preview `dpl_HrG9iataSCyyhiupJYy8So3Bqxih` is `READY`.
+- Compared branch to `main`: 28 ahead, 0 behind, merge base exactly production baseline.
+- Confirmed exact branch-head Vercel preview `dpl_9brFCVZWQETbW2X5MubMMLCfAHic` is `READY` and its root returns HTTP 200.
 - Re-inspected `src/components/WebMCPBridge.tsx` and reconfirmed the duplicate-call timing window without modifying source.
-- Reverified the official 2026-09-04 WebMCP draft; `document.modelContext`, `registerTool`, schemas, cancellation, `getTools()`, `executeTool()`, and linked WPT coverage remain the correct target.
-- Re-audited create/edit, cart, collection, navigation, try-on, privacy, unsupported-browser fallback, stale state, cancellation, duplicate invocation, provider failure, route changes, refresh, payload size, tool count, and agent round-trip boundaries.
+- Reverified the official 2026-09-04 WebMCP draft, including `document.modelContext`, `registerTool`, JSON Schema, all three current annotations, cancellation, `getTools()`, `executeTool()`, and linked WPT coverage.
+- Re-audited create/edit, cart, collection, navigation, try-on, privacy, unsupported-browser fallback, stale state, cancellation, duplicate invocation, provider failure, route changes, refresh, payload size, tool count, annotations, and agent round-trip boundaries.
 - Retried a clean local clone/build; container DNS still could not resolve `github.com`.
 
 No functional code change is justified under the available validation conditions. The 13-tool surface remains coherent and production-safe by inspection and prior READY preview evidence.
 
 ## Failures found / fixes applied
 
-- No active deployment failure exists; the exact prior branch-head preview is READY.
+- No active deployment failure exists; the exact audited branch-head preview is READY and responds HTTP 200.
 - Historical Virtual Try-On preview failure remains superseded by READY corrective previews.
 - The duplicate async invocation race remains tracked and intentionally unpatched until a complete build/test path is available.
 - Current blocker is transient container DNS resolution for `github.com`; this is a validation-environment limitation, not an application failure.
@@ -129,7 +133,7 @@ No functional code change is justified under the available validation conditions
 2. When a complete clone/build path is available, add and test the narrow shared generation/refinement operation lock.
 3. Runtime-test stale revisions, cancellation, provider failures, unsupported-browser fallback, duplicate calls, route changes/refresh, collection availability, shared cart state, and Virtual Try-On deterministic errors.
 4. Continue auditing long-running human-vs-agent races without a broad architecture rewrite unless a concrete overwrite path is reproducible.
-5. Keep schemas/descriptions compact, accurate, and semantically high leverage; do not add tools merely to increase count.
+5. Keep schemas/descriptions/annotations compact, accurate, and semantically high leverage; do not add tools or hints merely to increase count.
 6. Do not merge to `main` solely because previews build successfully.
 7. Treat every functional commit as unvalidated until its exact or corrective Vercel preview is confirmed `READY`.
 
@@ -139,7 +143,7 @@ No functional code change is justified under the available validation conditions
 
 ## Latest commit SHA
 
-This file is updated before the run commit is created, so the exact new commit SHA is recorded by the next run after branch-head verification. The pre-update branch head for this run was `209e6a0d51aaa4cb2dbd04027eea6e075fc807de`.
+Latest audited working-branch commit entering this run: `c0ca549a0b5f98382c6a23841cbd3de3b2cd7dba`. This file is updated before the run's documentation commit is created, so the resulting new commit SHA is verified and recorded by the following run rather than attempting an impossible self-referential commit hash.
 
 ## Next run
 
