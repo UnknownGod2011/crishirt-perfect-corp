@@ -10,10 +10,10 @@ Keep the existing human-facing CriShirt experience stable while exposing the sam
 - Production branch: `main`
 - Production/current production commit: `88daa417caa5305f81e5554977a13a94a793cdeb`
 - Working branch: `webmcp-agent-native`
-- Branch head before this handoff update: `c90f52ddfc049c328225be9035aec65cd35495fe`
-- Compare before this update: 19 commits ahead of `main`, 0 behind; merge base is exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Branch head before this handoff update: `361844dc85ef3b2042dc39381525e83a246936e1`
+- Compare before this update: 20 commits ahead of `main`, 0 behind; merge base is exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Vercel project: `crishirtpc`, linked to `UnknownGod2011/crishirt-perfect-corp`.
-- Exact preview for `c90f52ddfc049c328225be9035aec65cd35495fe`: `dpl_8AAMKFuTpwVj9NmrcKU1WJDXmV6S`, state `READY`.
+- Exact preview for `361844dc85ef3b2042dc39381525e83a246936e1`: `dpl_H797gWCEBgMuQwLbrmEUDVEG7Q9J`, state `READY`.
 - Production remains on `main`; this WebMCP branch has not been promoted to production.
 - Historical failed preview `4dcef318ea8913b0efc906e1450044ad2da4d320` remains superseded by corrective commit `6b7fdfe28c4b5a048beda4436a3ae9948aa86c7d` and subsequent READY previews.
 
@@ -60,7 +60,7 @@ Freshly reverified on 2026-09-05 against the official Web Machine Learning Commu
 
 Actual interactive `document.modelContext.getTools()` plus representative `executeTool()` validation in a genuinely WebMCP-capable browser remains unavailable from this automation environment and is explicitly unclaimed.
 
-## Fresh full-journey audit — 2026-09-05
+## Fresh full-journey audit — 2026-09-05 14:20 IST
 
 ### Create / edit
 
@@ -72,9 +72,9 @@ A generation→placement→cart mega-tool remains rejected because it would bund
 
 The only concrete hardening candidate remains a narrow race: two near-simultaneous WebMCP generation/refinement calls can theoretically both pass the React-backed busy check before React state propagation reflects the first call.
 
-Preferred fix: a bridge-local synchronous `useRef` operation lock, acquired before the async provider operation and released in `finally`, while retaining current React busy state for the human UI.
+Preferred fix remains a bridge-local synchronous `useRef` operation lock, acquired before the async provider operation and released in `finally`, while retaining current React busy state for the human UI.
 
-A clean clone/build was attempted again this run before editing source, but the execution container still failed DNS resolution for `github.com` (`Could not resolve host: github.com`). Because the required build/test gate is unavailable, this functional patch remains intentionally unshipped rather than speculative.
+A clean clone/build was attempted again before editing source, but the execution container still failed DNS resolution for `github.com` (`Could not resolve host: github.com`). Because the required build/test gate is unavailable, this functional patch remains intentionally unshipped rather than speculative.
 
 ### Cart
 
@@ -100,10 +100,10 @@ No safe additional semantic action was found. Automating camera acquisition woul
 
 - Verified the exact canonical repository identity and push/admin access.
 - Read `PROGRESS.md` before evaluating changes.
-- Verified `webmcp-agent-native` head was `c90f52ddfc049c328225be9035aec65cd35495fe` before this handoff update.
+- Verified `webmcp-agent-native` head was `361844dc85ef3b2042dc39381525e83a246936e1` before this handoff update.
 - Verified production `main` remains exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
-- Compared branch to `main`: 19 ahead, 0 behind, merge base exactly production baseline.
-- Confirmed exact prior branch-head preview `dpl_8AAMKFuTpwVj9NmrcKU1WJDXmV6S` is `READY`.
+- Compared branch to `main`: 20 ahead, 0 behind, merge base exactly production baseline.
+- Confirmed exact prior branch-head preview `dpl_H797gWCEBgMuQwLbrmEUDVEG7Q9J` is `READY`.
 - Reverified the official 2026-08-26 WebMCP draft and current `document.modelContext` / `registerTool` API shape.
 - Re-audited create/edit, cart, collection, navigation, try-on, privacy, unsupported-browser fallback, stale-state, cancellation, duplicate invocation, provider-failure, route-change, and refresh boundaries.
 - Retried a clean local clone/build; container DNS still could not resolve `github.com`.
