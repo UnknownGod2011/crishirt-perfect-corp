@@ -37,6 +37,8 @@ The current agent surface is intentionally compact:
 | `crishirt_list_collection` | Read the existing Exclusive Collection as compact structured product data instead of inspecting product cards visually |
 | `crishirt_add_collection_item_to_cart` | Add an available collection product to the same cart state used by the human Collection page |
 | `crishirt_navigate` | Navigate directly among Create, VR Try-On, Collection, and Cart surfaces |
+| `crishirt_get_tryon_state` | Read privacy-safe Virtual Try-On readiness, selected/eligible cart item IDs, busy state, and result readiness without exposing image bytes |
+| `crishirt_run_virtual_tryon` | Run the existing Perfect Corp try-on action using a photo the human already supplied and an optional stable cart item ID |
 
 ### Agent-use philosophy
 
@@ -59,11 +61,20 @@ Common collection flow:
 3. Call `crishirt_add_collection_item_to_cart`.
 4. Call `crishirt_get_cart` to verify the cart.
 
+Common Virtual Try-On handoff:
+
+1. The human uploads or captures their photo in the visible CriShirt UI.
+2. Call `crishirt_get_tryon_state` to confirm photo readiness and inspect eligible cart designs.
+3. Call `crishirt_run_virtual_tryon` with an optional `cartItemId`.
+4. The existing visible Virtual Try-On UI receives the result from the same Perfect Corp request path used by the human button.
+
+Camera permission, file picking, photo capture/upload, raw person-photo transfer, and result download intentionally remain human-controlled. The WebMCP tools expose only semantic readiness and the post-consent action; they never return person-image or result-image bytes.
+
 The Collection page and collection WebMCP tools share the same `collectionCatalog` module and the same cart-item construction helper, preventing the human and agent product definitions from drifting apart.
 
 Mutating workspace tools accept an optional `expectedRevision`. If the human changes the shared workspace before an agent mutation, the tool returns `STALE_STATE` instead of silently applying an edit against stale state.
 
-Long-running Perfect Corp generation and refinement propagate the WebMCP execution `AbortSignal`, so cancelled agent operations can stop their underlying request cleanly.
+Long-running Perfect Corp generation, refinement, and Virtual Try-On propagate the WebMCP execution `AbortSignal`, so cancelled agent operations can stop their underlying request cleanly.
 
 Read surfaces that can include user/provider-generated text are annotated with `untrustedContentHint`, and read-only tools use `readOnlyHint`.
 
@@ -77,6 +88,7 @@ Use a WebMCP-capable browser/build and inspect the page's registered tools throu
 - “Add this apparel to my cart and tell me what is in the cart.”
 - “Show me the available Exclusive Collection products and add the Retro Gaming Tee.”
 - “Take me directly to virtual try-on.”
+- After manually supplying a try-on photo: “Tell me which cart designs are eligible for try-on, then try the latest one.”
 
 The production human site remains independent of WebMCP support. Detailed implementation state, validation evidence, remaining opportunities, and commit handoff notes are maintained in `PROGRESS.md`.
 
@@ -164,7 +176,7 @@ Set `VITE_API_URL` to your Render backend URL in Vercel environment variables.
 
 ## WebMCP Progress Note
 
-The WebMCP work is developed on the `webmcp-agent-native` branch so the existing `main` production deployment remains stable. The first implementation introduced the semantic creation/cart/navigation bridge and revision/cancellation safeguards. Follow-up audits verified Vercel previews and then moved the Exclusive Collection catalog/cart-item creation into shared logic so both humans and agents use the same product definitions. The current feature branch exposes eleven semantic tools. See `PROGRESS.md` for the detailed handoff and validation record.
+The WebMCP work is developed on the `webmcp-agent-native` branch so the existing `main` production deployment remains stable. The first implementation introduced the semantic creation/cart/navigation bridge and revision/cancellation safeguards. Follow-up work moved the Exclusive Collection catalog/cart-item creation into shared logic and added a privacy-preserving Virtual Try-On handoff that reuses the existing human Perfect Corp request path after the human supplies a photo. The current feature branch exposes thirteen semantic tools. See `PROGRESS.md` for the detailed handoff and validation record.
 
 ---
 
