@@ -67,7 +67,7 @@ No primary WebMCP operation depends on CSS selectors, screen coordinates, or DOM
 
 ## Current-spec verification
 
-Rechecked the current WebMCP Community Group draft on 2026-09-05. The feature branch remains aligned with the current imperative API model: `document.modelContext.registerTool`, JSON Schema inputs, `readOnlyHint`, `untrustedContentHint`, registration lifetime cancellation via `AbortSignal`, execution cancellation via the callback `AbortSignal`, plus browser-side `getTools()` / `executeTool()` for runtime inspection.
+Rechecked the current WebMCP Community Group draft on 2026-09-05. The current published draft is dated 2026-08-26 and the feature branch remains aligned with the imperative API model: `document.modelContext.registerTool`, JSON Schema inputs, `readOnlyHint`, `untrustedContentHint`, registration lifetime cancellation via `AbortSignal`, execution cancellation via the callback `AbortSignal`, plus browser-side `getTools()` / `executeTool()` for runtime inspection.
 
 Actual interactive `document.modelContext.getTools()` and representative `executeTool()` validation in a WebMCP-capable browser is still unavailable from this automation environment and remains explicitly unclaimed.
 
@@ -135,6 +135,12 @@ The fix retained the existing prompt state and uses it for the Generate Virtual 
 
 README update commit: `d19ebbb9cec52ccdbdc3ae4d95a381b50f58deba`.
 
+Latest pre-audit branch head: `dd366ad0baa0f9acce14e9261d2814014d97b13a`.
+
+Latest Vercel deployment for that head: `dpl_6aXYpSAUTDBnK3xtDt3yp4PuoHsx`, state `READY`.
+
+The two immediately preceding feature-branch deployments, for `d19ebbb9cec52ccdbdc3ae4d95a381b50f58deba` and `6b7fdfe28c4b5a048beda4436a3ae9948aa86c7d`, are also `READY`. The older failed preview at `4dcef318ea8913b0efc906e1450044ad2da4d320` is therefore superseded and remains useful failure-history evidence rather than a current deployment problem.
+
 Production remains on `main` and has not been promoted or modified by this work.
 
 Interactive WebMCP runtime execution remains the strongest outstanding promotion gate.
@@ -146,6 +152,7 @@ Interactive WebMCP runtime execution remains the strongest outstanding promotion
 3. Re-audit tool descriptions, input schemas, response payload size, side-effect boundaries, and avoid adding tools merely to increase count.
 4. Do not automate camera permission, file selection, raw person-image transfer, or result download through WebMCP.
 5. Do not merge to `main` solely because preview builds pass; runtime WebMCP-capable browser validation remains the strongest promotion gate.
+6. Keep preview-build hygiene strict: never treat a functional change as validated until a succeeding deployment for that exact or later corrective commit is confirmed `READY`.
 
 ## README
 
@@ -153,8 +160,8 @@ Interactive WebMCP runtime execution remains the strongest outstanding promotion
 
 ## Latest audit
 
-2026-09-05: the previous Virtual Try-On tooling blocker was removed because the complete component could be retrieved safely. The post-consent WebMCP handoff was implemented inside `VRTryOn.tsx`, the first build failure was diagnosed rather than hidden, the fix reached a READY Vercel preview, production remained untouched, and the full user journey was re-audited. No additional tool is justified solely for tool-count growth.
+2026-09-05: reverified the canonical repository, both branch heads, and Vercel deployment history after the earlier failed preview alert. `main` remains exactly at `88daa417caa5305f81e5554977a13a94a793cdeb`; `webmcp-agent-native` was 14 commits ahead and 0 behind before this audit-only update. The three deployments following the failed Virtual Try-On preview are all `READY`, including the then-current branch head `dd366ad0baa0f9acce14e9261d2814014d97b13a`. Re-read the current WebMCP draft and re-audited the full user journey. No additional semantic tool, compound mutation, camera automation, payload expansion, or architecture change currently provides enough agent benefit to justify regression risk. This run therefore intentionally makes no functional code change.
 
 ## Next run
 
-Read this file first. Reverify repository identity, branch head, `main` isolation, and current WebMCP behavior. Attempt runtime WebMCP discovery/execution first if a compatible browser/testing surface is available. Otherwise perform a fresh full journey audit and only ship another change if it materially reduces agent observation/click/round-trip cost without weakening human UX, privacy, or state correctness.
+Read this file first. Reverify repository identity, branch head, `main` isolation, and current WebMCP behavior. Attempt runtime WebMCP discovery/execution first if a compatible browser/testing surface is available. Otherwise perform a fresh full journey audit and only ship another change if it materially reduces agent observation/click/round-trip cost without weakening human UX, privacy, state correctness, or preview-build reliability.
