@@ -14,7 +14,7 @@ Production baseline commit: `88daa417caa5305f81e5554977a13a94a793cdeb`
 
 Working branch: `webmcp-agent-native`
 
-Fresh comparison on 2026-09-05: the feature branch is 8 commits ahead and 0 behind `main`. The merge base remains exactly the production baseline. Production configuration has not been changed or promoted by this work.
+Fresh comparison on 2026-09-05: the feature branch is 9 commits ahead and 0 behind `main`. The merge base remains exactly the production baseline. Production configuration has not been changed or promoted by this work.
 
 ## Current WebMCP surface
 
@@ -87,16 +87,16 @@ This remains the only clear high-value uncovered journey.
 
 The privacy/permission boundary is correct and must remain intact. WebMCP should never request camera/file permission autonomously and should never accept or return the raw person-image payload.
 
-A future safe implementation can expose only the post-consent handoff:
+A safe implementation should expose only the post-consent handoff and should use the existing component's exact request path rather than creating a second provider integration:
 
-- read whether a human photo is present without exposing its content;
-- list/select eligible cart items by stable ID;
-- read try-on busy/result readiness state without returning the private photo;
-- invoke the same existing Perfect Corp Clothes Try-On action only after a human photo already exists;
-- forward the tool execution `AbortSignal` into the Perfect Corp fetch;
-- return deterministic errors such as `PHOTO_REQUIRED`, `CART_ITEM_NOT_FOUND`, `TRYON_ALREADY_RUNNING`, and provider failures.
+- `crishirt_get_tryon_state`: read-only; returns `photoPresent`, selected cart item ID, eligible cart item IDs/names, busy state, result readiness, and a deterministic readiness reason. Never returns person-image bytes, data URLs, or result-image bytes.
+- `crishirt_run_virtual_tryon`: mutating; optionally accepts a stable `cartItemId`, requires an already-present human photo, selects that cart item through the same local state transition used by the UI, calls the same Perfect Corp Clothes Try-On request as the human button, forwards the execution `AbortSignal`, and returns only semantic status/metadata.
+- deterministic errors: `PHOTO_REQUIRED`, `CART_ITEM_NOT_FOUND`, `GARMENT_IMAGE_REQUIRED`, `TRYON_ALREADY_RUNNING`, `TRYON_PROVIDER_FAILED`, `TRYON_ABORTED`.
+- camera permission, camera capture, file picker activation, file upload, photo replacement/removal, raw person-photo transfer, and result download remain human-only.
 
-No code was shipped for this path in this audit because the state and request logic are still local to `VRTryOn`. A second, separate bridge that duplicates that request would violate the shared-business-logic requirement and can drift from the human button. The safe implementation requires a small refactor inside the existing component or a shared hook/action so human and agent invoke the exact same state transition and request.
+The implementation should be done as a small shared action/helper inside or immediately adjacent to `VRTryOn`, with both the human button and WebMCP registration invoking that same action. A standalone bridge that duplicates the fetch body remains rejected because it could drift from the visible human flow.
+
+No functional code was shipped in this audit because the available repository connector supports whole-file replacement rather than a safe small patch, and rewriting the entire working `VRTryOn.tsx` from a truncated retrieval would create unnecessary production-risk. This is a tooling constraint, not a product-design blocker. The next code-capable run should implement the above shape only after obtaining the complete file safely.
 
 ### AR camera and photo acquisition
 
@@ -127,8 +127,8 @@ The project currently has no dedicated automated WebMCP test harness in `package
 ## Remaining opportunities
 
 1. Prioritize real WebMCP runtime discovery and representative tool execution in a compatible browser if available.
-2. Implement the safe Virtual Try-On post-photo handoff only through shared existing `VRTryOn` logic.
-3. Do not automate camera permission, file selection, or raw person-image transfer through WebMCP.
+2. Implement the safe Virtual Try-On post-photo handoff only through shared existing `VRTryOn` logic using the concrete two-tool shape above.
+3. Do not automate camera permission, file selection, raw person-image transfer, or result download through WebMCP.
 4. Re-test stale revisions, cancellation, provider failure handling, unsupported-browser no-op behavior, collection availability validation, and shared cart behavior once runtime execution is available.
 5. Continue auditing descriptions, deterministic errors, response payload size, side-effect boundaries, and unnecessary agent round trips.
 6. Do not merge to `main` solely because preview builds pass; runtime WebMCP-capable browser validation remains the strongest promotion gate.
@@ -137,6 +137,10 @@ The project currently has no dedicated automated WebMCP test harness in `package
 
 `README.md` documents the eleven-tool WebMCP surface, agent-use philosophy, revision/cancellation behavior, collection flow, shared collection catalog design, and representative test prompts. Detailed evolving handoff state remains in this file.
 
+## Latest audit
+
+2026-09-05: repository identity, production baseline, branch isolation, and the full `VRTryOn.tsx` behavior were reverified. The branch remains isolated from `main`. The audit converted the Virtual Try-On idea into a concrete two-tool privacy-preserving contract and explicitly rejected an unsafe duplicate provider path. No speculative functional commit was made.
+
 ## Next run
 
-Read this file first. Reverify repository identity, branch head, `main` isolation, and current WebMCP behavior. Attempt runtime verification first if a compatible browser/testing surface becomes available. Otherwise revisit the Virtual Try-On shared-logic refactor and ship it only if the human button and agent tool can invoke exactly the same request/state transitions with no autonomous camera/file access and no raw person-photo exposure. If that cannot be validated safely, perform a fresh journey audit and record a verified no-op rather than shipping speculative code.
+Read this file first. Reverify repository identity, branch head, `main` isolation, and current WebMCP behavior. Attempt runtime verification first if a compatible browser/testing surface becomes available. Otherwise implement the Virtual Try-On two-tool contract only if the complete `VRTryOn.tsx` can be retrieved and modified safely, ensuring the human button and agent tool invoke exactly the same request/state transition. If that cannot be validated safely, perform a fresh journey audit and record a verified no-op rather than shipping speculative code.
