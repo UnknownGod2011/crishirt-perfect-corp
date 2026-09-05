@@ -10,12 +10,12 @@ Keep the existing human-facing CriShirt experience stable while exposing the sam
 - Production branch: `main`
 - Production/current production commit: `88daa417caa5305f81e5554977a13a94a793cdeb`
 - Working branch: `webmcp-agent-native`
-- Branch head entering this run: `bba0f2960dc7a95d9798ab177d61369b5e74339d`
-- Compare entering this run: 30 commits ahead of `main`, 0 behind; merge base remains exactly production baseline `88daa417caa5305f81e5554977a13a94a793cdeb`.
-- Vercel project: `crishirtpc` (`prj_jAm749oRS01LbAdwec2lKvKZgAEF`), linked to `UnknownGod2011/crishirt-perfect-corp`.
-- Exact preview for `bba0f2960dc7a95d9798ab177d61369b5e74339d`: `dpl_9Qwq7RDm5F5WnZd9Qahbp2M1yQAh`, state `READY` as verified on 2026-09-06.
+- Branch head entering this run: `66c1b3cd2a68cc138a035e3d85fc38062b2768b8`
+- Compare entering this run: 31 commits ahead of `main`, 0 behind; merge base remains exactly production baseline `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Vercel project: `crishirtpc` (`prj_jAm749oRS01LbAdwec2lKvKZgAEF`).
+- Exact preview for `66c1b3cd2a68cc138a035e3d85fc38062b2768b8`: `dpl_Abmr1vFgWLj3goTk2Qx2w2iapHeY`, state `READY` as verified on 2026-09-06.
 - Production remains on `main`; this WebMCP branch has not been promoted to production.
-- Historical failed Virtual Try-On preview `4dcef318ea8913b0efc906e1450044ad2da4d320` remains superseded by corrective commit `6b7fdfe28c4b5a048beda4436a3ae9948aa86c7d` and subsequent READY previews.
+- Historical failed Virtual Try-On preview remains superseded by corrective commit `6b7fdfe28c4b5a048beda4436a3ae9948aa86c7d` and subsequent READY previews.
 
 ## Current WebMCP tool surface
 
@@ -58,11 +58,11 @@ Freshly reverified on 2026-09-06 against the official Web Machine Learning Commu
 
 The implementation target remains correct: secure-context `document.modelContext`, semantic `registerTool`, JSON Schema `inputSchema`, registration cancellation, execution `AbortSignal`, `getTools()`, and `executeTool()`.
 
-The current spec's `ToolAnnotations` dictionary contains `readOnlyHint`, `untrustedContentHint`, and `consequentialHint`. The existing CriShirt WebMCP surface does not perform checkout/payment, account changes, publishing, or other significant non-reversible external actions, so no consequential annotation change is justified.
+The current spec continues to define tool annotations including `readOnlyHint`, `untrustedContentHint`, and `consequentialHint`. The existing CriShirt surface does not implement checkout/payment, account changes, publishing, or comparable significant non-reversible external actions, so no consequential annotation change is justified.
 
-The official spec still links the Web Platform Tests result surface at `wpt.fyi/results/webmcp`. No spec change observed this run requires a CriShirt architecture rewrite. Actual interactive `document.modelContext.getTools()` plus representative `executeTool()` validation in a genuinely WebMCP-capable browser remains unavailable from this automation environment and is explicitly unclaimed.
+The official spec still links the Web Platform Tests result surface at `wpt.fyi/results/webmcp`. No new spec change observed this run requires an architecture rewrite. Actual interactive `document.modelContext.getTools()` plus representative `executeTool()` validation in a genuinely WebMCP-capable browser remains unavailable from this automation environment and is explicitly unclaimed.
 
-## Fresh full-journey audit — 2026-09-06 00:21 IST
+## Fresh full-journey audit — 2026-09-06 01:24 IST
 
 ### Create / edit
 
@@ -72,15 +72,15 @@ A generation -> placement -> cart mega-tool remains rejected because it combines
 
 ### Concurrency / duplicate invocation
 
-The previously identified narrow race remains present by direct source inspection. `crishirt_generate_design` and `crishirt_refine_design` both read React-backed busy state before their dispatch updates can synchronously propagate to `stateRef`. Two near-simultaneous WebMCP calls can therefore theoretically pass the busy check before React state catches up.
+The previously identified narrow race remains present by direct source inspection. `crishirt_generate_design` and `crishirt_refine_design` read React-backed `isGenerating`/`isRefining` state and then dispatch their busy flags. Because `stateRef` updates only after the React state change propagates, two near-simultaneous WebMCP calls can theoretically both pass the busy check before the second render/effect updates the ref.
 
-The preferred fix remains a bridge-local synchronous `useRef` operation lock shared by generation and refinement, acquired immediately before provider execution and released in `finally`, so same-operation and cross-operation duplicates return deterministic `WORKSPACE_BUSY`.
+The preferred fix remains a bridge-local synchronous `useRef` operation lock shared by generation and refinement, acquired immediately before provider execution and released in `finally`, so same-operation and cross-operation duplicates deterministically return `WORKSPACE_BUSY`.
 
-This run intentionally did not ship that patch. A fresh clean-clone attempt again failed before checkout with `Could not resolve host: github.com`. The connected GitHub API and Vercel previews remain available, but they do not provide the complete independent local unit/integration/build gate requested for a concurrency change. Shipping the race fix without that gate would violate the conservative stability requirement.
+This run intentionally did not ship that functional patch. A fresh clean clone again failed before checkout with `Could not resolve host: github.com`. The connected GitHub API and Vercel previews remain available, but they do not provide the independent local unit/integration/build gate requested for a concurrency change. Shipping the race fix without that gate would violate the conservative stability requirement.
 
 ### Cart
 
-Human cart supports reading items/total and removing items; WebMCP covers those actions. There is no human quantity/update behavior to expose. The visible Checkout button has no implemented checkout behavior, so no agent checkout/payment tool is invented.
+Human cart supports reading items/total and removing items; WebMCP covers those actions. There is no human quantity/update behavior to expose. The visible Checkout control has no implemented checkout behavior, so no agent checkout/payment tool is invented.
 
 ### Exclusive Collection
 
@@ -106,10 +106,10 @@ No new tool is justified. The 13-tool surface remains coherent: state reads are 
 
 - Read `PROGRESS.md` before evaluating changes.
 - Verified repository identity as `UnknownGod2011/crishirt-perfect-corp` and working branch `webmcp-agent-native`.
-- Verified branch head `bba0f2960dc7a95d9798ab177d61369b5e74339d` entering this run.
+- Verified branch head `66c1b3cd2a68cc138a035e3d85fc38062b2768b8` entering this run.
 - Verified production `main` remains exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
-- Compared branch to `main`: 30 ahead, 0 behind, merge base exactly production baseline.
-- Confirmed exact branch-head Vercel preview `dpl_9Qwq7RDm5F5WnZd9Qahbp2M1yQAh` is `READY`.
+- Compared branch to `main`: 31 ahead, 0 behind, merge base exactly production baseline.
+- Confirmed exact branch-head Vercel preview `dpl_Abmr1vFgWLj3goTk2Qx2w2iapHeY` is `READY`.
 - Re-inspected `src/components/WebMCPBridge.tsx` and reconfirmed the duplicate-call timing window without modifying functional source.
 - Retried a clean clone of `webmcp-agent-native`; it failed with DNS resolution error for `github.com` before checkout.
 - Reverified the official 2026-09-04 WebMCP draft and linked WPT surface.
@@ -120,10 +120,9 @@ No functional code change is justified under the available validation conditions
 ## Failures found / fixes applied
 
 - No active deployment failure exists; the exact audited branch-head preview is READY.
-- Historical Virtual Try-On preview failure remains superseded by READY corrective previews.
 - The duplicate async invocation race remains tracked and intentionally unpatched until a complete build/test path is available.
 - Current blocker is the absence of a complete independent local clone/build/test path in this automation environment; the latest attempt again failed transient DNS resolution for `github.com`.
-- `PROGRESS.md` had been one commit behind the actual branch head at run start; this run corrected the handoff facts.
+- `PROGRESS.md` was one documentation commit behind the actual branch head at run start; this run refreshes the durable handoff facts.
 - No production change, rollback, deployment-config change, or unrelated repository action was performed.
 
 ## Remaining opportunities
@@ -142,7 +141,7 @@ No functional code change is justified under the available validation conditions
 
 ## Latest commit SHA
 
-Latest audited working-branch commit entering this run: `bba0f2960dc7a95d9798ab177d61369b5e74339d`. This file is updated before the run's documentation commit is created, so the resulting new commit SHA is verified and recorded by the following run rather than attempting an impossible self-referential commit hash.
+Latest audited working-branch commit entering this run: `66c1b3cd2a68cc138a035e3d85fc38062b2768b8`. This file is updated before the run's documentation commit is created, so the resulting new commit SHA is verified and recorded by the following run rather than attempting an impossible self-referential commit hash.
 
 ## Next run
 
