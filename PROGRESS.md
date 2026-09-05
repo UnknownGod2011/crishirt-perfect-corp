@@ -4,21 +4,20 @@
 
 Keep the existing human-facing CriShirt experience stable while exposing the same legitimate user capabilities to AI agents through semantic WebMCP tools. Do not expand into Shopify, login, Supabase, SerpApi, new commerce, or unrelated UI work.
 
-## Canonical repository and isolation
+## Canonical repository and deployment facts
 
-Repository: `UnknownGod2011/crishirt-perfect-corp`
+- Repository: `UnknownGod2011/crishirt-perfect-corp`
+- Production branch: `main`
+- Production baseline: `88daa417caa5305f81e5554977a13a94a793cdeb`
+- Working branch: `webmcp-agent-native`
+- Branch head before this handoff update: `0ff4a69e1a880f83817b2ce9c9fbea2c92f5d0ab`
+- Compare result before this update: 15 commits ahead of `main`, 0 behind; merge base is exactly the production baseline.
+- Vercel project: `crishirtpc`, linked to `UnknownGod2011/crishirt-perfect-corp`.
+- Production remains on `main` and has not been promoted or modified by this WebMCP work.
+- Preview for `0ff4a69e1a880f83817b2ce9c9fbea2c92f5d0ab`: deployment `dpl_4zmPfwQbGnbstf1hqfdgxxKhrVRt`, state `READY`.
+- Historical failed preview `4dcef318ea8913b0efc906e1450044ad2da4d320` is superseded by its fix `6b7fdfe28c4b5a048beda4436a3ae9948aa86c7d` and later READY previews.
 
-Production branch: `main`
-
-Production baseline commit: `88daa417caa5305f81e5554977a13a94a793cdeb`
-
-Working branch: `webmcp-agent-native`
-
-Production remains untouched. Vercel project `crishirtpc` is linked to `UnknownGod2011/crishirt-perfect-corp`; the production deployment still points at `main` commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
-
-## Current WebMCP surface
-
-The feature branch now exposes thirteen semantic tools.
+## Current WebMCP tools
 
 Main bridge: `src/components/WebMCPBridge.tsx`
 
@@ -42,126 +41,82 @@ Virtual Try-On integration: `src/components/VRTryOn.tsx`
 12. `crishirt_get_tryon_state`
 13. `crishirt_run_virtual_tryon`
 
-All WebMCP entry points feature-detect `document.modelContext`; unsupported browsers continue through the existing human UI without depending on WebMCP.
+All entry points feature-detect `document.modelContext`; unsupported browsers continue through the existing human UI.
 
-## Shared-state and safety behavior
+## Shared state, safety, and privacy
 
-Workspace mutations can accept `expectedRevision`; stale mutations return deterministic `STALE_STATE` rather than silently overwriting newer human state.
+- Workspace mutations accept optional `expectedRevision`; stale calls return deterministic `STALE_STATE` instead of silently overwriting newer state.
+- Perfect Corp generation/refinement and Virtual Try-On propagate the WebMCP execution `AbortSignal` to fetch.
+- Collection products and collection cart-item creation are shared between the human page and WebMCP bridge through `src/config/collectionCatalog.ts`.
+- Virtual Try-On human and agent execution share the same `generateVirtualTryOn` action.
+- Camera permission, file picking, raw person-photo data, result-image bytes/URLs, and downloads remain human-controlled.
+- No primary tool is a DOM-click, CSS-selector, or coordinate wrapper.
 
-Perfect Corp generation, refinement, and Virtual Try-On forward the WebMCP execution `AbortSignal` to their underlying fetch requests.
+## Current specification check
 
-Exclusive Collection products are defined once in `src/config/collectionCatalog.ts`; the human Collection page and WebMCP bridge use the same catalog and cart-item creation logic.
+Rechecked the official WebMCP Community Group draft on 2026-09-05. The published draft is dated 2026-08-26 and still specifies `document.modelContext.registerTool`, JSON Schema `inputSchema`, `readOnlyHint`, `untrustedContentHint`, `consequentialHint`, registration cancellation, execution cancellation, `getTools()`, and `executeTool()`.
 
-Virtual Try-On now uses one shared `generateVirtualTryOn` action inside `VRTryOn.tsx`. Both the visible human button and `crishirt_run_virtual_tryon` invoke that same action, so the provider request body and state transitions cannot drift into separate human-versus-agent implementations.
+`consequentialHint` is intended for significant real-world or non-reversible actions. Current CriShirt WebMCP mutations only alter reversible in-app workspace/cart state or invoke existing image-generation/try-on operations; there is no implemented payment/checkout action. No current tool is therefore being marked consequential solely for annotation coverage.
 
-The WebMCP try-on boundary is intentionally privacy-preserving:
+Actual interactive `document.modelContext.getTools()` plus representative `executeTool()` validation in a WebMCP-capable browser remains unavailable from this automation environment and is explicitly unclaimed.
 
-- camera permission remains human-controlled;
-- browser file picking remains human-controlled;
-- raw person-photo data is never returned by a WebMCP tool;
-- generated result-image bytes/URLs are not returned by the WebMCP tools;
-- result download remains human-controlled;
-- agents may only inspect semantic readiness, select an already-existing eligible cart design, and invoke the post-consent Perfect Corp action.
+## Fresh full-journey audit — 2026-09-05
 
-No primary WebMCP operation depends on CSS selectors, screen coordinates, or DOM clicking.
+### Create / edit
 
-## Current-spec verification
+Coverage remains strong. One read gives garment, side, design, placement, busy, cart-count, valid-option, and revision state. Compound configure and generate calls remove selector round trips. Semantic placement removes visual dragging. Generation/refinement reuse current provider routes and cancellation.
 
-Rechecked the current WebMCP Community Group draft on 2026-09-05. The current published draft is dated 2026-08-26 and the feature branch remains aligned with the imperative API model: `document.modelContext.registerTool`, JSON Schema inputs, `readOnlyHint`, `untrustedContentHint`, registration lifetime cancellation via `AbortSignal`, execution cancellation via the callback `AbortSignal`, plus browser-side `getTools()` / `executeTool()` for runtime inspection.
-
-Actual interactive `document.modelContext.getTools()` and representative `executeTool()` validation in a WebMCP-capable browser is still unavailable from this automation environment and remains explicitly unclaimed.
-
-## Fresh full journey audit
-
-### Create workspace
-
-Strong coverage. An agent can read garment/design/cart state in one compact call, configure multiple garment properties semantically, generate/refine through the existing Perfect Corp routes, position artwork precisely without visual dragging, and add the result to the existing cart.
-
-A generation-plus-placement-plus-cart mega-action remains intentionally rejected. It would save only a few calls while hiding distinct side effects and making partial-failure recovery worse.
+A generation→placement→cart mega-tool remains rejected: it would hide multiple distinct side effects and make partial-failure recovery worse for only a small round-trip saving.
 
 ### Cart
 
-Strong coverage. Agents can inspect the current cart and remove stable item IDs. Collection additions use the same cart model as the human app.
+The human cart currently supports reading items/total and removing items. Those actions are covered. There is no human quantity/update control. The visible Checkout button has no implemented checkout behavior, so no WebMCP checkout/payment tool should be invented.
 
 ### Exclusive Collection
 
-Strong coverage. Agents can inspect the static collection without visually scanning cards and can add an available product directly by stable ID. Human and agent paths share the same catalog and cart-item builder.
+Covered through shared catalog logic: read compact products and add an available product by stable ID. No duplicated agent-only catalog.
 
 ### Navigation
 
-Strong coverage. Agents can directly navigate to Create, Virtual Try-On, Collection, and Cart without link discovery.
+Covered for Create, Virtual Try-On, Collection, and Cart without link discovery.
 
 ### Virtual Try-On
 
-The high-value post-consent handoff is now implemented.
+Post-consent agent handoff is covered. Human photo acquisition remains permission-sensitive and intentionally not agentized. The agent can inspect readiness, choose an eligible existing cart item, invoke the same Perfect Corp action, receive deterministic semantic success/failure state, and cancel execution.
 
-Human acquisition flow remains unchanged:
+### AR/camera surfaces
 
-1. human uploads a torso/full-body image or grants camera permission and captures one;
-2. the app stores that photo only in the existing local component state;
-3. the human may continue selecting a cart design and clicking Generate Virtual Try-On exactly as before.
+No safe additional semantic mutation was found. Camera access still requires browser permission and direct human acquisition; automating it would weaken the intentional privacy boundary.
 
-Agent handoff:
+## Tests and verification performed this run
 
-1. `crishirt_get_tryon_state` returns `photoPresent`, selected cart item ID, eligible cart item IDs/names, busy state, result readiness, and a deterministic readiness reason;
-2. `crishirt_run_virtual_tryon` optionally accepts a stable `cartItemId`;
-3. it requires an already-present human photo and an eligible existing cart design;
-4. it invokes the same `generateVirtualTryOn` action as the visible human button;
-5. the execution `AbortSignal` reaches the Perfect Corp fetch;
-6. the tool returns semantic success/failure metadata only.
+- Verified exact canonical repository identity and push access.
+- Verified working branch `webmcp-agent-native` exists and head was `0ff4a69e1a880f83817b2ce9c9fbea2c92f5d0ab` before this update.
+- Compared branch against `main`: ahead 15, behind 0, merge base exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Re-read `WebMCPBridge.tsx`, `CollectionWebMCPBridge.tsx`, `VRTryOn.tsx`, and the human cart implementation.
+- Verified latest pre-run Vercel preview for the branch head is `READY`.
+- Re-read the official 2026-08-26 WebMCP draft and checked the current annotations/cancellation model.
+- Re-audited invalid-input, missing-design, busy-state, stale-state, cancellation, provider-error, unsupported-browser, cart, collection, navigation, and try-on boundaries from the code paths.
 
-Deterministic try-on errors include:
+No functional code change is justified this run. The 13-tool surface remains coherent; adding another tool now would either duplicate existing state, automate a permission-sensitive action, expose an unimplemented human action, or combine side effects in a way that reduces recoverability.
 
-- `PHOTO_REQUIRED`
-- `CART_ITEM_NOT_FOUND`
-- `GARMENT_IMAGE_REQUIRED`
-- `TRYON_ALREADY_RUNNING`
-- `TRYON_PROVIDER_FAILED`
-- `TRYON_ABORTED`
+## Failures found / fixes applied
 
-### AR camera and photo acquisition
-
-Intentionally not agentized. Camera capture uses `navigator.mediaDevices.getUserMedia` and photo upload uses browser file selection. These remain permission-sensitive human actions.
-
-## Validation status
-
-Functional Virtual Try-On implementation commit: `4dcef318ea8913b0efc906e1450044ad2da4d320`.
-
-That first preview build correctly failed because TypeScript's unused-local check found `designPrompt` was no longer read after the refactor. The failure was not ignored or promoted.
-
-Fix commit: `6b7fdfe28c4b5a048beda4436a3ae9948aa86c7d`.
-
-The fix retained the existing prompt state and uses it for the Generate Virtual Try-On button's accessible label. Vercel then rebuilt the same feature branch successfully; deployment `dpl_5wCzGvCqghbp9QLBgb7qfSVxssq2` reached `READY` after running the repository build.
-
-README update commit: `d19ebbb9cec52ccdbdc3ae4d95a381b50f58deba`.
-
-Latest pre-audit branch head: `dd366ad0baa0f9acce14e9261d2814014d97b13a`.
-
-Latest Vercel deployment for that head: `dpl_6aXYpSAUTDBnK3xtDt3yp4PuoHsx`, state `READY`.
-
-The two immediately preceding feature-branch deployments, for `d19ebbb9cec52ccdbdc3ae4d95a381b50f58deba` and `6b7fdfe28c4b5a048beda4436a3ae9948aa86c7d`, are also `READY`. The older failed preview at `4dcef318ea8913b0efc906e1450044ad2da4d320` is therefore superseded and remains useful failure-history evidence rather than a current deployment problem.
-
-Production remains on `main` and has not been promoted or modified by this work.
-
-Interactive WebMCP runtime execution remains the strongest outstanding promotion gate.
+No new functional failure was found this run. The previously reported failed Virtual Try-On preview remains historical and superseded by READY corrective previews. No production change or rollback was required.
 
 ## Remaining opportunities
 
-1. Prioritize real WebMCP runtime discovery with `document.modelContext.getTools()` and representative `executeTool()` calls in a compatible browser if a usable environment becomes available.
-2. Re-test stale revisions, cancellation, provider failure handling, unsupported-browser no-op behavior, collection availability validation, shared cart behavior, and Virtual Try-On deterministic errors in that runtime.
-3. Re-audit tool descriptions, input schemas, response payload size, side-effect boundaries, and avoid adding tools merely to increase count.
-4. Do not automate camera permission, file selection, raw person-image transfer, or result download through WebMCP.
-5. Do not merge to `main` solely because preview builds pass; runtime WebMCP-capable browser validation remains the strongest promotion gate.
-6. Keep preview-build hygiene strict: never treat a functional change as validated until a succeeding deployment for that exact or later corrective commit is confirmed `READY`.
+1. Highest priority: run real `document.modelContext.getTools()` discovery and representative `executeTool()` calls in a WebMCP-capable browser when such an environment becomes available.
+2. In that runtime, explicitly test stale revisions, cancellation, provider failures, unsupported-browser fallback, collection availability, shared cart state, route changes/page refresh, duplicate calls, and all Virtual Try-On deterministic errors.
+3. Continue auditing long-running generation/refinement for human-vs-agent state races; do not add a risky architectural revision system unless a concrete overwrite path is reproducible.
+4. Keep schemas/descriptions compact and accurate; do not add tools merely to increase count.
+5. Do not merge to `main` solely because preview builds pass.
+6. Treat every new functional commit as unvalidated until its exact or corrective Vercel preview is confirmed `READY`.
 
 ## README
 
-`README.md` now documents the thirteen-tool WebMCP surface, agent-use philosophy, revision/cancellation behavior, collection flow, Virtual Try-On privacy boundary, shared human/agent try-on action, and representative test prompts. Detailed evolving handoff state remains in this file.
-
-## Latest audit
-
-2026-09-05: reverified the canonical repository, both branch heads, and Vercel deployment history after the earlier failed preview alert. `main` remains exactly at `88daa417caa5305f81e5554977a13a94a793cdeb`; `webmcp-agent-native` was 14 commits ahead and 0 behind before this audit-only update. The three deployments following the failed Virtual Try-On preview are all `READY`, including the then-current branch head `dd366ad0baa0f9acce14e9261d2814014d97b13a`. Re-read the current WebMCP draft and re-audited the full user journey. No additional semantic tool, compound mutation, camera automation, payload expansion, or architecture change currently provides enough agent benefit to justify regression risk. This run therefore intentionally makes no functional code change.
+`README.md` documents the 13-tool surface, agent-use philosophy, revision/cancellation behavior, collection flow, Virtual Try-On privacy boundary, shared human/agent actions, and representative testing guidance. Keep detailed run history here rather than expanding README.
 
 ## Next run
 
-Read this file first. Reverify repository identity, branch head, `main` isolation, and current WebMCP behavior. Attempt runtime WebMCP discovery/execution first if a compatible browser/testing surface is available. Otherwise perform a fresh full journey audit and only ship another change if it materially reduces agent observation/click/round-trip cost without weakening human UX, privacy, state correctness, or preview-build reliability.
+Read this file first. Reverify repository identity, `main` isolation, branch head, and latest preview status. Attempt genuine WebMCP runtime inspection first if a compatible browser/testing surface becomes available. Otherwise perform another fresh end-to-end human-versus-agent interaction-cost audit and only ship code that materially improves speed/reliability without weakening current human behavior, privacy, state correctness, or build safety.
