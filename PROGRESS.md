@@ -10,11 +10,11 @@ Keep the existing human-facing CriShirt experience stable while exposing the sam
 - Production branch: `main`
 - Production baseline: `88daa417caa5305f81e5554977a13a94a793cdeb`
 - Working branch: `webmcp-agent-native`
-- Branch head before this handoff update: `0ff4a69e1a880f83817b2ce9c9fbea2c92f5d0ab`
-- Compare result before this update: 15 commits ahead of `main`, 0 behind; merge base is exactly the production baseline.
+- Branch head before this handoff update: `8de6a0e84b580c304bd66de01bc2f83099f1fd01`
+- Compare result before this update: 16 commits ahead of `main`, 0 behind; merge base is exactly the production baseline.
 - Vercel project: `crishirtpc`, linked to `UnknownGod2011/crishirt-perfect-corp`.
 - Production remains on `main` and has not been promoted or modified by this WebMCP work.
-- Preview for `0ff4a69e1a880f83817b2ce9c9fbea2c92f5d0ab`: deployment `dpl_4zmPfwQbGnbstf1hqfdgxxKhrVRt`, state `READY`.
+- Preview for `8de6a0e84b580c304bd66de01bc2f83099f1fd01`: deployment `dpl_Gu3Fj31kKJaRHjBA3Pw361w1zaxr`, state `READY`.
 - Historical failed preview `4dcef318ea8913b0efc906e1450044ad2da4d320` is superseded by its fix `6b7fdfe28c4b5a048beda4436a3ae9948aa86c7d` and later READY previews.
 
 ## Current WebMCP tools
@@ -54,7 +54,7 @@ All entry points feature-detect `document.modelContext`; unsupported browsers co
 
 ## Current specification check
 
-Rechecked the official WebMCP Community Group draft on 2026-09-05. The published draft is dated 2026-08-26 and still specifies `document.modelContext.registerTool`, JSON Schema `inputSchema`, `readOnlyHint`, `untrustedContentHint`, `consequentialHint`, registration cancellation, execution cancellation, `getTools()`, and `executeTool()`.
+The official WebMCP Community Group draft last verified in this work is dated 2026-08-26 and specifies `document.modelContext.registerTool`, JSON Schema `inputSchema`, `readOnlyHint`, `untrustedContentHint`, `consequentialHint`, registration cancellation, execution cancellation, `getTools()`, and `executeTool()`.
 
 `consequentialHint` is intended for significant real-world or non-reversible actions. Current CriShirt WebMCP mutations only alter reversible in-app workspace/cart state or invoke existing image-generation/try-on operations; there is no implemented payment/checkout action. No current tool is therefore being marked consequential solely for annotation coverage.
 
@@ -67,6 +67,14 @@ Actual interactive `document.modelContext.getTools()` plus representative `execu
 Coverage remains strong. One read gives garment, side, design, placement, busy, cart-count, valid-option, and revision state. Compound configure and generate calls remove selector round trips. Semantic placement removes visual dragging. Generation/refinement reuse current provider routes and cancellation.
 
 A generation→placement→cart mega-tool remains rejected: it would hide multiple distinct side effects and make partial-failure recovery worse for only a small round-trip saving.
+
+### Concurrency / duplicate invocation audit
+
+A possible narrow race was identified for near-simultaneous WebMCP generation/refinement invocations: each tool checks React-backed `isGenerating` / `isRefining` before dispatching the busy state, and React state propagation is not synchronous. Two calls arriving in the same short window could theoretically both pass the check before `stateRef` reflects the first dispatch.
+
+A small bridge-local in-memory operation lock would likely harden this without changing human behavior, but no functional change was shipped in this run because the available safe repository-edit path would require replacing the full bridge file and the local clone fallback was unavailable due network/DNS resolution in the execution environment. This is not worth risking a working 456-line bridge for a theoretical race without complete local build validation.
+
+Next functional run should implement this only if the full file can be safely edited and built, using a `useRef`-backed WebMCP operation lock that is acquired before async generation/refinement begins and released in `finally`, while retaining the existing React busy-state check for human-visible state.
 
 ### Cart
 
@@ -91,27 +99,29 @@ No safe additional semantic mutation was found. Camera access still requires bro
 ## Tests and verification performed this run
 
 - Verified exact canonical repository identity and push access.
-- Verified working branch `webmcp-agent-native` exists and head was `0ff4a69e1a880f83817b2ce9c9fbea2c92f5d0ab` before this update.
-- Compared branch against `main`: ahead 15, behind 0, merge base exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
-- Re-read `WebMCPBridge.tsx`, `CollectionWebMCPBridge.tsx`, `VRTryOn.tsx`, and the human cart implementation.
-- Verified latest pre-run Vercel preview for the branch head is `READY`.
-- Re-read the official 2026-08-26 WebMCP draft and checked the current annotations/cancellation model.
-- Re-audited invalid-input, missing-design, busy-state, stale-state, cancellation, provider-error, unsupported-browser, cart, collection, navigation, and try-on boundaries from the code paths.
+- Verified working branch `webmcp-agent-native` exists and head was `8de6a0e84b580c304bd66de01bc2f83099f1fd01` before this update.
+- Compared branch against `main`: ahead 16, behind 0, merge base exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Re-read `PROGRESS.md` before evaluating changes.
+- Re-inspected the main WebMCP bridge registration/state flow and specifically audited generation/refinement busy-state behavior.
+- Verified the exact pre-run branch-head Vercel preview `dpl_Gu3Fj31kKJaRHjBA3Pw361w1zaxr` is `READY`.
+- Re-audited create/edit, cart, collection, navigation, try-on, privacy, unsupported-browser fallback, stale-state, cancellation, duplicate invocation, and provider-failure boundaries.
+- Attempted to obtain a complete local working copy for safe patch/build validation; the execution environment could not resolve `github.com`, so no speculative functional edit was made.
 
-No functional code change is justified this run. The 13-tool surface remains coherent; adding another tool now would either duplicate existing state, automate a permission-sensitive action, expose an unimplemented human action, or combine side effects in a way that reduces recoverability.
+No functional code change is justified under the available validation conditions this run. The 13-tool surface remains coherent and production-safe.
 
 ## Failures found / fixes applied
 
-No new functional failure was found this run. The previously reported failed Virtual Try-On preview remains historical and superseded by READY corrective previews. No production change or rollback was required.
+No new deployed functional failure was found. One theoretical duplicate async invocation race is now explicitly tracked for a later safe patch. The previously reported failed Virtual Try-On preview remains historical and superseded by READY corrective previews. No production change or rollback was required.
 
 ## Remaining opportunities
 
 1. Highest priority: run real `document.modelContext.getTools()` discovery and representative `executeTool()` calls in a WebMCP-capable browser when such an environment becomes available.
-2. In that runtime, explicitly test stale revisions, cancellation, provider failures, unsupported-browser fallback, collection availability, shared cart state, route changes/page refresh, duplicate calls, and all Virtual Try-On deterministic errors.
-3. Continue auditing long-running generation/refinement for human-vs-agent state races; do not add a risky architectural revision system unless a concrete overwrite path is reproducible.
-4. Keep schemas/descriptions compact and accurate; do not add tools merely to increase count.
-5. Do not merge to `main` solely because preview builds pass.
-6. Treat every new functional commit as unvalidated until its exact or corrective Vercel preview is confirmed `READY`.
+2. Safely harden duplicate generation/refinement invocation with a bridge-local operation lock only when full-file edit plus build validation is available.
+3. In runtime validation, explicitly test stale revisions, cancellation, provider failures, unsupported-browser fallback, collection availability, shared cart state, route changes/page refresh, duplicate calls, and all Virtual Try-On deterministic errors.
+4. Continue auditing long-running generation/refinement for human-vs-agent state races; do not add a risky architectural revision system unless a concrete overwrite path is reproducible.
+5. Keep schemas/descriptions compact and accurate; do not add tools merely to increase count.
+6. Do not merge to `main` solely because preview builds pass.
+7. Treat every new functional commit as unvalidated until its exact or corrective Vercel preview is confirmed `READY`.
 
 ## README
 
@@ -119,4 +129,4 @@ No new functional failure was found this run. The previously reported failed Vir
 
 ## Next run
 
-Read this file first. Reverify repository identity, `main` isolation, branch head, and latest preview status. Attempt genuine WebMCP runtime inspection first if a compatible browser/testing surface becomes available. Otherwise perform another fresh end-to-end human-versus-agent interaction-cost audit and only ship code that materially improves speed/reliability without weakening current human behavior, privacy, state correctness, or build safety.
+Read this file first. Reverify repository identity, `main` isolation, branch head, and latest preview status. Attempt genuine WebMCP runtime inspection first if a compatible browser/testing surface becomes available. If safe complete-file editing/build validation is available, implement and test the narrow duplicate-generation/refinement lock; otherwise continue the fresh end-to-end human-versus-agent interaction-cost audit and do not ship speculative code.
