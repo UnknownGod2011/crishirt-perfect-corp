@@ -8,13 +8,13 @@ Keep the existing human-facing CriShirt experience stable while exposing the sam
 
 - Repository: `UnknownGod2011/crishirt-perfect-corp`
 - Production branch: `main`
-- Production baseline: `88daa417caa5305f81e5554977a13a94a793cdeb`
+- Production baseline / current production commit: `88daa417caa5305f81e5554977a13a94a793cdeb`
 - Working branch: `webmcp-agent-native`
-- Branch head before this handoff update: `8de6a0e84b580c304bd66de01bc2f83099f1fd01`
-- Compare result before this update: 16 commits ahead of `main`, 0 behind; merge base is exactly the production baseline.
+- Branch head before this handoff update: `c096f341d159cafb4928099ec0b17fc7a0b95a57`
+- Compare result before this update: 17 commits ahead of `main`, 0 behind; merge base is exactly the production baseline.
 - Vercel project: `crishirtpc`, linked to `UnknownGod2011/crishirt-perfect-corp`.
 - Production remains on `main` and has not been promoted or modified by this WebMCP work.
-- Preview for `8de6a0e84b580c304bd66de01bc2f83099f1fd01`: deployment `dpl_Gu3Fj31kKJaRHjBA3Pw361w1zaxr`, state `READY`.
+- Preview for `c096f341d159cafb4928099ec0b17fc7a0b95a57`: deployment `dpl_4tRn5zTSKP4aARajBcCWLP6EEjHo`, state `READY`.
 - Historical failed preview `4dcef318ea8913b0efc906e1450044ad2da4d320` is superseded by its fix `6b7fdfe28c4b5a048beda4436a3ae9948aa86c7d` and later READY previews.
 
 ## Current WebMCP tools
@@ -54,9 +54,9 @@ All entry points feature-detect `document.modelContext`; unsupported browsers co
 
 ## Current specification check
 
-The official WebMCP Community Group draft last verified in this work is dated 2026-08-26 and specifies `document.modelContext.registerTool`, JSON Schema `inputSchema`, `readOnlyHint`, `untrustedContentHint`, `consequentialHint`, registration cancellation, execution cancellation, `getTools()`, and `executeTool()`.
+Reverified against the official Web Machine Learning Community Group WebMCP Draft Community Group Report dated 2026-08-26. The current draft still defines `document.modelContext.registerTool`, JSON Schema `inputSchema`, annotations including `readOnlyHint`, `untrustedContentHint`, and `consequentialHint`, registration/execution cancellation, `getTools()`, and `executeTool()`.
 
-`consequentialHint` is intended for significant real-world or non-reversible actions. Current CriShirt WebMCP mutations only alter reversible in-app workspace/cart state or invoke existing image-generation/try-on operations; there is no implemented payment/checkout action. No current tool is therefore being marked consequential solely for annotation coverage.
+`consequentialHint` remains inappropriate for the current CriShirt mutations because they alter reversible in-app workspace/cart state or invoke existing image-generation/try-on operations; there is no implemented payment/checkout action.
 
 Actual interactive `document.modelContext.getTools()` plus representative `executeTool()` validation in a WebMCP-capable browser remains unavailable from this automation environment and is explicitly unclaimed.
 
@@ -66,23 +66,23 @@ Actual interactive `document.modelContext.getTools()` plus representative `execu
 
 Coverage remains strong. One read gives garment, side, design, placement, busy, cart-count, valid-option, and revision state. Compound configure and generate calls remove selector round trips. Semantic placement removes visual dragging. Generation/refinement reuse current provider routes and cancellation.
 
-A generation→placement→cart mega-tool remains rejected: it would hide multiple distinct side effects and make partial-failure recovery worse for only a small round-trip saving.
+A generation→placement→cart mega-tool remains rejected because it would hide multiple distinct side effects and make partial-failure recovery worse for only a small round-trip saving.
 
 ### Concurrency / duplicate invocation audit
 
-A possible narrow race was identified for near-simultaneous WebMCP generation/refinement invocations: each tool checks React-backed `isGenerating` / `isRefining` before dispatching the busy state, and React state propagation is not synchronous. Two calls arriving in the same short window could theoretically both pass the check before `stateRef` reflects the first dispatch.
+The previously identified narrow race remains the only concrete hardening candidate: two near-simultaneous WebMCP generation/refinement calls can theoretically both pass the React-backed busy-state check before state propagation reflects the first dispatch.
 
-A small bridge-local in-memory operation lock would likely harden this without changing human behavior, but no functional change was shipped in this run because the available safe repository-edit path would require replacing the full bridge file and the local clone fallback was unavailable due network/DNS resolution in the execution environment. This is not worth risking a working 456-line bridge for a theoretical race without complete local build validation.
+The preferred fix remains a bridge-local `useRef` operation lock acquired synchronously before either async operation starts and released in `finally`, while retaining existing React busy state for the human UI.
 
-Next functional run should implement this only if the full file can be safely edited and built, using a `useRef`-backed WebMCP operation lock that is acquired before async generation/refinement begins and released in `finally`, while retaining the existing React busy-state check for human-visible state.
+This run again attempted the safe validation path before editing. The working copy could not be cloned because the execution container could not resolve `github.com`. Because a functional patch cannot be locally built/tested in this environment right now, no speculative source change was shipped. The prior branch-head Vercel preview is confirmed READY, so there is no deployment failure requiring intervention.
 
 ### Cart
 
-The human cart currently supports reading items/total and removing items. Those actions are covered. There is no human quantity/update control. The visible Checkout button has no implemented checkout behavior, so no WebMCP checkout/payment tool should be invented.
+The human cart supports reading items/total and removing items, and WebMCP covers those actions. There is no human quantity/update control. The visible Checkout button has no implemented checkout behavior, so no WebMCP checkout/payment tool is invented.
 
 ### Exclusive Collection
 
-Covered through shared catalog logic: read compact products and add an available product by stable ID. No duplicated agent-only catalog.
+Covered through shared catalog logic: read compact products and add an available product by stable ID. No duplicated agent-only catalog exists.
 
 ### Navigation
 
@@ -99,19 +99,22 @@ No safe additional semantic mutation was found. Camera access still requires bro
 ## Tests and verification performed this run
 
 - Verified exact canonical repository identity and push access.
-- Verified working branch `webmcp-agent-native` exists and head was `8de6a0e84b580c304bd66de01bc2f83099f1fd01` before this update.
-- Compared branch against `main`: ahead 16, behind 0, merge base exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Verified `webmcp-agent-native` head was `c096f341d159cafb4928099ec0b17fc7a0b95a57` before this handoff update.
+- Compared branch against `main`: ahead 17, behind 0, merge base exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Re-read `PROGRESS.md` before evaluating changes.
-- Re-inspected the main WebMCP bridge registration/state flow and specifically audited generation/refinement busy-state behavior.
-- Verified the exact pre-run branch-head Vercel preview `dpl_Gu3Fj31kKJaRHjBA3Pw361w1zaxr` is `READY`.
+- Confirmed exact branch-head preview `dpl_4tRn5zTSKP4aARajBcCWLP6EEjHo` is `READY`.
+- Reverified the official 2026-08-26 WebMCP draft and `document.modelContext` API shape.
 - Re-audited create/edit, cart, collection, navigation, try-on, privacy, unsupported-browser fallback, stale-state, cancellation, duplicate invocation, and provider-failure boundaries.
-- Attempted to obtain a complete local working copy for safe patch/build validation; the execution environment could not resolve `github.com`, so no speculative functional edit was made.
+- Retried a clean local clone for complete-file patch/build validation; container DNS still could not resolve `github.com`.
 
 No functional code change is justified under the available validation conditions this run. The 13-tool surface remains coherent and production-safe.
 
 ## Failures found / fixes applied
 
-No new deployed functional failure was found. One theoretical duplicate async invocation race is now explicitly tracked for a later safe patch. The previously reported failed Virtual Try-On preview remains historical and superseded by READY corrective previews. No production change or rollback was required.
+- No active deployment failure exists. The current branch-head preview is READY.
+- The historical Virtual Try-On failed preview remains superseded by READY corrective previews.
+- The theoretical duplicate async invocation race remains tracked but intentionally unpatched until a complete build/test path is available.
+- No production change or rollback was required.
 
 ## Remaining opportunities
 
@@ -129,4 +132,4 @@ No new deployed functional failure was found. One theoretical duplicate async in
 
 ## Next run
 
-Read this file first. Reverify repository identity, `main` isolation, branch head, and latest preview status. Attempt genuine WebMCP runtime inspection first if a compatible browser/testing surface becomes available. If safe complete-file editing/build validation is available, implement and test the narrow duplicate-generation/refinement lock; otherwise continue the fresh end-to-end human-versus-agent interaction-cost audit and do not ship speculative code.
+Read this file first. Reverify repository identity, `main` isolation, branch head, and latest preview status. Attempt genuine WebMCP runtime inspection first if a compatible browser/testing surface becomes available. Retry a complete local clone/build path; only if that succeeds, implement and test the narrow duplicate-generation/refinement lock. Otherwise continue the fresh human-versus-agent interaction-cost audit and do not ship speculative code.
