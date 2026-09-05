@@ -4,12 +4,32 @@ import { useCartState } from '../store/AppContext';
 import ARTryOn from './ARTryOn';
 import SkinAnalysisPanel from './SkinAnalysisPanel';
 
+type ToolInput = Record<string, unknown>;
+type ToolExecutionOptions = { signal: AbortSignal };
+type WebMCPTool = {
+  name: string;
+  title?: string;
+  description: string;
+  inputSchema?: Record<string, unknown>;
+  annotations?: { readOnlyHint?: boolean; untrustedContentHint?: boolean };
+  execute: (input: ToolInput, options: ToolExecutionOptions) => Promise<unknown> | unknown;
+};
+type ModelContextLike = {
+  registerTool: (tool: WebMCPTool, options?: { signal?: AbortSignal }) => Promise<void>;
+};
+
+type TryOnResult =
+  | { success: true; cartItemId: string; resultReady: true; usedDemoFallback: boolean }
+  | { success: false; errorCode: string; message: string };
+
 const API_URL = () =>
   import.meta.env.VITE_API_URL ||
   (['localhost', '127.0.0.1', '::1'].includes(window.location.hostname) ? 'http://localhost:5000' : '');
 
 const getErrorMessage = (error: unknown, fallback: string) =>
   error instanceof Error ? error.message : fallback;
+
+const asString = (value: unknown) => (typeof value === 'string' ? value.trim() : '');
 
 const VRTryOn: React.FC = () => {
   const [userPhoto, setUserPhoto] = useState<string | null>(null);
@@ -26,18 +46,55 @@ const VRTryOn: React.FC = () => {
   const selectedCartItem = cartItems.find((item) => item.id === selectedCartItemId);
   const arColor = selectedCartItem?.tshirtColor || localStorage.getItem('tshirtColor') || '#111827';
 
+  const cartItemsRef = useRef(cartItems);
+  const userPhotoRef = useRef(userPhoto);
+  const selectedCartItemIdRef = useRef(selectedCartItemId);
+  const loadingRef = useRef(loading);
+
+  useEffect(() => {
+    cartItemsRef.current = cartItems;
+  }, [cartItems]);
+
+  useEffect(() => {
+    userPhotoRef.current = userPhoto;
+  }, [userPhoto]);
+
+  useEffect(() => {
+    selectedCartItemIdRef.current = selectedCartItemId;
+  }, [selectedCartItemId]);
+
+  useEffect(() => {
+    loadingRef.current = loading;
+  }, [loading]);
+
+  const getCartDesign = (item: (typeof cartItems)[number]) =>
+    item.frontDesign?.snapshotUrl ||
+    item.frontDesign?.imageUrl ||
+    item.backDesign?.snapshotUrl ||
+    item.backDesign?.imageUrl ||
+    null;
+
+  const getCartPrompt = (item: (typeof cartItems)[number]) =>
+    item.frontDesign?.design || item.backDesign?.design || 'Custom design';
+
+  const selectCartItem = (item: (typeof cartItems)[number]) => {
+    const design = getCartDesign(item);
+    if (!design) return false;
+    setSelectedDesign(design);
+    setDesignPrompt(getCartPrompt(item));
+    setSelectedCartItemId(item.id);
+    setTryOnResult(null);
+    setTryOnNote(null);
+    return true;
+  };
+
   useEffect(() => {
     if (cartItems.length === 0) return;
     const latest = cartItems[cartItems.length - 1];
-    const design =
-      latest.frontDesign?.snapshotUrl ||
-      latest.frontDesign?.imageUrl ||
-      latest.backDesign?.snapshotUrl ||
-      latest.backDesign?.imageUrl;
-    const prompt = latest.frontDesign?.design || latest.backDesign?.design || 'Custom design';
+    const design = getCartDesign(latest);
     if (design) {
       setSelectedDesign(design);
-      setDesignPrompt(prompt);
+      setDesignPrompt(getCartPrompt(latest));
       setSelectedCartItemId(latest.id);
     }
   }, [cartItems]);
@@ -81,13 +138,37 @@ const VRTryOn: React.FC = () => {
     }
   };
 
-  const generateVirtualTryOn = async () => {
-    if (!userPhoto || !selectedDesign) {
-      setError('Please upload your try-on photo and select a cart design first.');
-      return;
+  const generateVirtualTryOn = async (options?: { signal?: AbortSignal; cartItemId?: string }): Promise<TryOnResult> => {
+    const photo = userPhotoRef.current;
+    if (!photo) {
+      const message = 'Please upload your try-on photo first.';
+      setError(message);
+      return { success: false, errorCode: 'PHOTO_REQUIRED', message };
+    }
+    if (loadingRef.current) {
+      return { success: false, errorCode: 'TRYON_ALREADY_RUNNING', message: 'A virtual try-on is already running.' };
     }
 
+    const items = cartItemsRef.current;
+    const requestedId = options?.cartItemId || selectedCartItemIdRef.current;
+    const item = requestedId ? items.find((candidate) => candidate.id === requestedId) : undefined;
+    if (!item) {
+      const message = requestedId ? 'The requested cart item was not found.' : 'Please select a cart design first.';
+      setError(message);
+      return { success: false, errorCode: 'CART_ITEM_NOT_FOUND', message };
+    }
+
+    const design = getCartDesign(item);
+    if (!design) {
+      const message = 'The selected cart item does not have a usable garment image.';
+      setError(message);
+      return { success: false, errorCode: 'GARMENT_IMAGE_REQUIRED', message };
+    }
+
+    if (item.id !== selectedCartItemIdRef.current) selectCartItem(item);
+
     setLoading(true);
+    loadingRef.current = true;
     setError(null);
 
     try {
@@ -96,10 +177,11 @@ const VRTryOn: React.FC = () => {
       const response = await fetch(`${base}/api/perfect/clothes-tryon`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        signal: options?.signal,
         body: JSON.stringify({
-          personImage: userPhoto,
-          garmentImage: selectedDesign,
-          apparelName: selectedCartItem?.apparelName || designPrompt || 'Custom apparel',
+          personImage: photo,
+          garmentImage: design,
+          apparelName: item.apparelName || getCartPrompt(item) || 'Custom apparel',
           garmentCategory: 'upper_body',
         }),
       });
@@ -113,12 +195,92 @@ const VRTryOn: React.FC = () => {
           ? 'Demo mode is active. Set PERFECT_DEMO_MODE=false with valid credentials for live Perfect Corp output.'
           : 'Powered by Perfect Corp AI Clothes Try-On.',
       );
+      return {
+        success: true,
+        cartItemId: item.id,
+        resultReady: true,
+        usedDemoFallback: Boolean(result.usedDemoFallback),
+      };
     } catch (err: unknown) {
-      setError(getErrorMessage(err, 'Failed to generate virtual try-on.'));
+      const aborted = options?.signal?.aborted || (err instanceof DOMException && err.name === 'AbortError');
+      const message = aborted ? 'Virtual try-on was cancelled.' : getErrorMessage(err, 'Failed to generate virtual try-on.');
+      setError(message);
+      return {
+        success: false,
+        errorCode: aborted ? 'TRYON_ABORTED' : 'TRYON_PROVIDER_FAILED',
+        message,
+      };
     } finally {
       setLoading(false);
+      loadingRef.current = false;
     }
   };
+
+  useEffect(() => {
+    const modelContext = (document as Document & { modelContext?: ModelContextLike }).modelContext;
+    if (!modelContext?.registerTool) return;
+
+    const registrationController = new AbortController();
+    const register = (tool: WebMCPTool) => {
+      void modelContext.registerTool(tool, { signal: registrationController.signal }).catch((registrationError) => {
+        console.warn(`[WebMCP] Failed to register ${tool.name}`, registrationError);
+      });
+    };
+
+    register({
+      name: 'crishirt_get_tryon_state',
+      title: 'Read virtual try-on readiness',
+      description: 'Read privacy-safe Virtual Try-On readiness after the human has chosen or captured a photo. Returns only semantic state and eligible cart item IDs; it never exposes person-photo or generated-result image bytes.',
+      inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+      annotations: { readOnlyHint: true, untrustedContentHint: true },
+      execute: async () => {
+        const items = cartItemsRef.current;
+        const eligibleItems = items
+          .filter((item) => Boolean(getCartDesign(item)))
+          .map((item) => ({ id: item.id, name: item.apparelName || getCartPrompt(item) }));
+        const photoPresent = Boolean(userPhotoRef.current);
+        const selectedId = selectedCartItemIdRef.current;
+        const selectedEligible = Boolean(selectedId && eligibleItems.some((item) => item.id === selectedId));
+        const busy = loadingRef.current;
+        const readinessReason = busy
+          ? 'TRYON_ALREADY_RUNNING'
+          : !photoPresent
+            ? 'PHOTO_REQUIRED'
+            : eligibleItems.length === 0
+              ? 'GARMENT_IMAGE_REQUIRED'
+              : !selectedEligible
+                ? 'CART_ITEM_NOT_FOUND'
+                : 'READY';
+        return {
+          success: true,
+          photoPresent,
+          selectedCartItemId: selectedId,
+          eligibleCartItems: eligibleItems,
+          busy,
+          resultReady: Boolean(tryOnResult),
+          readinessReason,
+          humanActionRequired: !photoPresent ? 'Upload or capture a try-on photo in the visible CriShirt UI.' : null,
+        };
+      },
+    });
+
+    register({
+      name: 'crishirt_run_virtual_tryon',
+      title: 'Run virtual try-on',
+      description: 'Run the existing Perfect Corp virtual try-on using a photo the human has already supplied and an existing cart design. Optionally provide a cart item ID to select it semantically. This tool never requests camera/file permission and never returns raw person or result image data.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          cartItemId: { type: 'string', minLength: 1, description: 'Optional stable cart item ID from crishirt_get_tryon_state.' },
+        },
+        additionalProperties: false,
+      },
+      annotations: { untrustedContentHint: true },
+      execute: async (input, { signal }) => generateVirtualTryOn({ signal, cartItemId: asString(input.cartItemId) || undefined }),
+    });
+
+    return () => registrationController.abort();
+  }, [tryOnResult]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 py-8">
@@ -195,26 +357,15 @@ const VRTryOn: React.FC = () => {
                 {cartItems.length > 0 ? (
                   <div className="max-h-56 space-y-2 overflow-y-auto">
                     {cartItems.map((item) => {
-                      const design =
-                        item.frontDesign?.snapshotUrl ||
-                        item.frontDesign?.imageUrl ||
-                        item.backDesign?.snapshotUrl ||
-                        item.backDesign?.imageUrl;
-                      const prompt = item.frontDesign?.design || item.backDesign?.design || 'Custom design';
+                      const design = getCartDesign(item);
+                      const prompt = getCartPrompt(item);
                       const isSelected = selectedCartItemId === item.id;
                       return (
                         <button
                           type="button"
                           key={item.id}
                           className={`w-full rounded-lg border p-3 text-left transition-all ${isSelected ? 'border-blue-500 bg-blue-50' : 'border-gray-200 bg-white hover:border-gray-300'}`}
-                          onClick={() => {
-                            if (!design) return;
-                            setSelectedDesign(design);
-                            setDesignPrompt(prompt);
-                            setSelectedCartItemId(item.id);
-                            setTryOnResult(null);
-                            setTryOnNote(null);
-                          }}
+                          onClick={() => selectCartItem(item)}
                         >
                           <div className="flex items-center gap-3">
                             {design && <img src={design} alt="Cart design" className="h-12 w-12 rounded border bg-white object-contain" />}
@@ -239,7 +390,7 @@ const VRTryOn: React.FC = () => {
 
               <button
                 type="button"
-                onClick={generateVirtualTryOn}
+                onClick={() => void generateVirtualTryOn()}
                 disabled={!userPhoto || !selectedDesign || loading}
                 className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 px-6 py-3 font-medium text-white transition-all hover:from-purple-700 hover:to-blue-700 disabled:cursor-not-allowed disabled:from-gray-400 disabled:to-gray-400"
               >
