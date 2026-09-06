@@ -29,7 +29,7 @@ The current agent surface is intentionally compact:
 | `crishirt_get_workspace_state` | Read garment settings, front/back design state, placement, busy state, cart count, route, and a revision token in one compact response |
 | `crishirt_configure_workspace` | Change garment type, color, material, size, and active front/back side without multiple selector clicks |
 | `crishirt_set_design_placement` | Move, resize, or rotate existing artwork semantically instead of dragging on the canvas |
-| `crishirt_generate_design` | Generate Perfect Corp-backed artwork and optionally configure garment settings in the same call |
+| `crishirt_generate_design` | Generate Perfect Corp-backed artwork and optionally configure garment settings in the same cancellable call |
 | `crishirt_refine_design` | Refine the current artwork through the existing Perfect Corp route without copying image URLs between tools |
 | `crishirt_add_current_design_to_cart` | Add the current configured apparel and artwork to the same cart model used by the human app |
 | `crishirt_get_cart` | Read a compact semantic cart summary |
@@ -74,7 +74,7 @@ The Collection page and collection WebMCP tools share the same `collectionCatalo
 
 Mutating workspace tools accept an optional `expectedRevision`. If the human changes the shared workspace before an agent mutation, the tool returns `STALE_STATE` instead of silently applying an edit against stale state.
 
-The current WebMCP draft defines tool execution with the input object as its standard callback argument and uses `AbortSignal` on tool registration lifetime. CriShirt normalizes its older signal-aware handlers so standards-style one-argument execution works, while still forwarding an execution signal when a browser implementation supplies one. Provider requests also inherit the registration lifecycle signal so route/component teardown aborts outstanding work.
+Long-running Perfect Corp generation, refinement, and Virtual Try-On propagate the WebMCP execution `AbortSignal`, so cancelled agent operations can stop their underlying request cleanly.
 
 Read surfaces that can include user/provider-generated text are annotated with `untrustedContentHint`, and read-only tools use `readOnlyHint`.
 
@@ -176,7 +176,7 @@ Set `VITE_API_URL` to your Render backend URL in Vercel environment variables.
 
 ## WebMCP Progress Note
 
-The WebMCP work is developed on the `webmcp-agent-native` branch so the existing `main` production deployment remains stable. The implementation exposes semantic creation/cart/navigation, revision safeguards, shared Exclusive Collection logic, and a privacy-preserving Virtual Try-On handoff that reuses the existing human Perfect Corp request path after the human supplies a photo. A small execution compatibility adapter keeps the older signal-aware handlers callable by the current draft's one-argument tool callback while preserving lifecycle cancellation and optional implementation-specific execution signals. The current feature branch exposes thirteen semantic tools. See `PROGRESS.md` for the detailed handoff and validation record.
+The WebMCP work is developed on the `webmcp-agent-native` branch so the existing `main` production deployment remains stable. The first implementation introduced the semantic creation/cart/navigation bridge and revision/cancellation safeguards. Follow-up work moved the Exclusive Collection catalog/cart-item creation into shared logic and added a privacy-preserving Virtual Try-On handoff that reuses the existing human Perfect Corp request path after the human supplies a photo. The current feature branch exposes thirteen semantic tools. See `PROGRESS.md` for the detailed handoff and validation record.
 
 ---
 
