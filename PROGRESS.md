@@ -10,10 +10,10 @@ Keep the existing human-facing CriShirt experience stable while exposing the sam
 - Production branch: `main`
 - Production/current production commit: `88daa417caa5305f81e5554977a13a94a793cdeb`
 - Working branch: `webmcp-agent-native`
-- Branch head entering this run: `4bd53af0fcdb9bb4b1854c1d19a4730b6ec3e6b4`
-- Compare entering this run: 36 commits ahead of `main`, 0 behind; merge base remains exactly production baseline `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Branch head entering this run: `d84f1b77d361eb6ed84578a5d31b37b94d6b3ed6`
+- Compare entering this run: 37 commits ahead of `main`, 0 behind; merge base remains exactly production baseline `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Vercel project: `crishirtpc` (`prj_jAm749oRS01LbAdwec2lKvKZgAEF`).
-- Exact preview for `4bd53af0fcdb9bb4b1854c1d19a4730b6ec3e6b4`: `dpl_3Z6Sqowmh3hC9Lp7Qqv51BDAshs4`, state `READY` as verified on 2026-09-06.
+- Exact preview for `d84f1b77d361eb6ed84578a5d31b37b94d6b3ed6`: `dpl_3Z83pt9oD5mZkMp2ZCjqHQtEyQfn`, state `READY` as verified on 2026-09-06.
 - Production remains on `main`; this WebMCP branch has not been promoted to production.
 - No production deployment configuration was changed this run.
 
@@ -58,11 +58,9 @@ Freshly reverified on 2026-09-06 against the official Web Machine Learning Commu
 
 The implementation target remains correct: secure-context `document.modelContext`, semantic `registerTool`, JSON Schema `inputSchema`, registration cancellation, execution `AbortSignal`, `getTools()`, and `executeTool()`.
 
-The current specification still defines tool annotations including `readOnlyHint`, `untrustedContentHint`, and `consequentialHint`. CriShirt currently exposes no checkout/payment, account mutation, publishing, or comparable significant irreversible external action, so no consequential annotation change is justified.
-
 No newly observed specification change requires an architecture rewrite.
 
-## Fresh full-journey audit — 2026-09-06 06:19 IST
+## Fresh full-journey audit — 2026-09-06 07:20 IST
 
 ### Create / edit
 
@@ -72,23 +70,21 @@ A generation -> placement -> cart mega-tool remains rejected because it would co
 
 ### Concurrency / duplicate invocation
 
-Direct source inspection again confirms the narrow generation/refinement timing window: both tools consult React-backed busy state, then dispatch the busy flag. `stateRef` updates after React propagation, so two near-simultaneous tool calls can theoretically pass the busy check before the next render updates the ref.
+Direct source inspection again confirms the narrow generation/refinement timing window: both tools consult React-backed busy state, then dispatch the busy flag. `stateRef` updates after React propagation, so two near-simultaneous calls can theoretically pass the busy check before the next render updates the ref.
 
-The same class of propagation window remains relevant to rapid cart mutations. Two near-simultaneous `crishirt_add_current_design_to_cart` calls can theoretically reuse one `expectedRevision` before React state/revision propagation, producing duplicate items. Immediate retries of configuration, placement, or remove mutations can also pass the same optimistic revision gate before propagation, although their practical impact is often idempotent or a duplicate success response.
+The same propagation window remains relevant to rapid cart mutations. Two near-simultaneous `crishirt_add_current_design_to_cart` calls can theoretically reuse one `expectedRevision` before React state/revision propagation, producing duplicate items. Immediate retries of configuration, placement, or remove mutations can also pass the same optimistic revision gate before propagation, although their practical impact is often idempotent or a duplicate success response.
 
 The preferred hardening remains deliberately small: a synchronous local operation/mutation guard or immediate revision claim, with generation/refinement sharing an async operation lock and cart-changing operations receiving deterministic retry behavior. A state-management rewrite remains unjustified.
 
-This run did not ship that functional change because the requested independent clean clone/build/integration path remains unavailable: `git clone` failed before checkout with `Could not resolve host: github.com`.
+This run did not ship that functional change because the requested independent clean clone/build/integration path remains unavailable: a fresh `git clone --branch webmcp-agent-native --single-branch` again failed before checkout with `Could not resolve host: github.com`.
 
 ### Cart
 
 Human cart behavior currently supports inspection and removal; WebMCP covers both, plus the existing add flow. There is no human quantity-update behavior to expose. The visible Checkout control has no implemented checkout behavior, so no agent checkout/payment tool is invented.
 
-Retry safety remains a higher-value improvement than adding cart capability.
-
 ### Exclusive Collection
 
-Covered through shared catalog logic with compact semantic listing and add-to-cart by stable product ID. No agent-only catalog copy exists. Collection add-to-cart should be included in future duplicate-invocation runtime tests.
+Covered through shared catalog logic with compact semantic listing and add-to-cart by stable product ID. No agent-only catalog copy exists. Collection add-to-cart remains in the future duplicate-invocation runtime-test set.
 
 ### Navigation
 
@@ -110,13 +106,14 @@ No new tool is justified. The 13-tool surface remains coherent and high leverage
 
 - Read `PROGRESS.md` before considering changes.
 - Verified repository identity as `UnknownGod2011/crishirt-perfect-corp`.
-- Verified working branch `webmcp-agent-native` and exact entering head `4bd53af0fcdb9bb4b1854c1d19a4730b6ec3e6b4`.
+- Verified working branch `webmcp-agent-native` and exact entering head `d84f1b77d361eb6ed84578a5d31b37b94d6b3ed6`.
 - Verified production `main` remains `88daa417caa5305f81e5554977a13a94a793cdeb`.
-- Compared branch to production: 36 commits ahead, 0 behind, merge base exactly the production baseline.
-- Confirmed Vercel deployment `dpl_3Z6Sqowmh3hC9Lp7Qqv51BDAshs4` for exact commit `4bd53af0...` is `READY`.
+- Compared branch to production: 37 commits ahead, 0 behind, merge base exactly the production baseline.
+- Confirmed Vercel deployment `dpl_3Z83pt9oD5mZkMp2ZCjqHQtEyQfn` for exact commit `d84f1b77...` is `READY`.
 - Re-inspected `src/components/WebMCPBridge.tsx`, including state revision handling, generation/refinement busy checks, cancellation, and semantic tool registration.
 - Reconfirmed the duplicate-call timing window and optimistic-revision limitation for near-simultaneous mutations.
-- Retried a clean local clone; it failed before checkout with DNS resolution error for `github.com`, so no functional concurrency patch was shipped.
+- Checked for an existing `.github/workflows` CI path on the branch; none exists to substitute for the independent local build/integration gate.
+- Retried a fresh clean local clone; it failed before checkout with DNS resolution error for `github.com`, so no functional concurrency patch was shipped.
 - Reverified the official WebMCP draft dated 2026-09-04 and its `document.modelContext` / `registerTool` API surface.
 - Re-audited create/edit, cart, collection, navigation, try-on, privacy boundary, unsupported-browser fallback, stale state, cancellation, duplicate invocation, provider failure, route changes, refresh, payload size, tool count, and agent round-trip boundaries.
 
@@ -145,7 +142,7 @@ No new tool is justified. The 13-tool surface remains coherent and high leverage
 
 ## Latest commit SHA
 
-Latest audited working-branch commit entering this run: `4bd53af0fcdb9bb4b1854c1d19a4730b6ec3e6b4`. This file is updated before the run's documentation commit is created, so the resulting new commit SHA is verified and recorded by the following run rather than attempting a self-referential commit hash.
+Latest audited working-branch commit entering this run: `d84f1b77d361eb6ed84578a5d31b37b94d6b3ed6`. This file is updated before the run's documentation commit is created, so the resulting new commit SHA is verified and recorded by the following run rather than attempting a self-referential commit hash.
 
 ## Next run
 
