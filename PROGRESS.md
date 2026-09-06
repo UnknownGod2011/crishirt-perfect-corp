@@ -8,11 +8,12 @@ Keep the existing human-facing CriShirt experience stable while exposing the sam
 - Production branch: `main`
 - Production commit: `88daa417caa5305f81e5554977a13a94a793cdeb`
 - Working branch: `webmcp-agent-native`
-- Branch head entering this run: `c3cbf4e3c0349fe3a893c4ab293525384fc5a40a`
-- Compare entering this run: 52 commits ahead of `main`, 0 behind; merge base exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Branch head entering this run: `22d594f42be8d74cb3e5c625c65f45569b341678`
+- Compare entering this run: 53 commits ahead of `main`, 0 behind; merge base exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Production remains on `main`; this WebMCP branch has not been promoted.
 - Vercel project: `crishirtpc` (`prj_jAm749oRS01LbAdwec2lKvKZgAEF`).
-- Exact entering deployment for `c3cbf4e3...`: `dpl_73TzCCAaYCSnb8H9NMgGj5BWLfT8`, state `READY`.
+- Exact entering deployment for `22d594f4...`: `dpl_GRVT3JsSHkTBKzHvYFVescmmMZZD`, state `READY`.
+- Vercel metadata ties that deployment to repository `UnknownGod2011/crishirt-perfect-corp`, branch `webmcp-agent-native`, and SHA `22d594f42be8d74cb3e5c625c65f45569b341678`.
 - Vercel build logs confirm `tsc -b && vite build` succeeded, 2020 modules transformed, and deployment completed.
 - No production deployment configuration, environment variables, auth, database, commerce, or unrelated UI were changed.
 
@@ -57,15 +58,15 @@ Current draft facts relevant to CriShirt:
 - `ModelContextExecuteToolOptions.signal` cancels one execution.
 - `ModelContextRegisterToolOptions.signal` separately controls registration lifetime.
 - `getTools()` and `executeTool()` are the in-page discovery/execution APIs.
-- `ToolAnnotations` currently contains `readOnlyHint`, `untrustedContentHint`, and `consequentialHint`.
-- The draft defines `consequentialHint` for significant real-world or non-reversible actions (for example, booking or transferring money). None of CriShirt's current exposed actions meet that high-stakes definition: cart edits are reversible, navigation/workspace edits are local state, and generation/try-on only operate inside the existing design workflow. Therefore no `consequentialHint: true` source change is justified.
+- `ToolAnnotations` contains `readOnlyHint`, `untrustedContentHint`, and `consequentialHint`.
+- No currently exposed CriShirt action warrants `consequentialHint: true`: workspace edits, generation/refinement, reversible cart changes, navigation, and try-on remain inside the existing product workflow and are not significant real-world/non-reversible actions.
 
 No spec-driven source correction is needed this run.
 
 ## Fresh full-journey audit — 2026-09-06
 
 ### Repository / production isolation
-Repository identity, branch identity, production baseline, branch divergence, and exact preview were rechecked before mutation. The branch remains 0 commits behind production and scoped to WebMCP-only work.
+Repository identity, branch identity, production baseline, divergence, exact preview, and deployment source metadata were rechecked before mutation. The branch remains 0 commits behind production and scoped to WebMCP-only work.
 
 ### Create / edit
 `crishirt_get_workspace_state` still collapses garment state, front/back design presence, placement, busy state, cart count, valid options, route, and revision into one compact observation. `crishirt_configure_workspace` and `crishirt_set_design_placement` continue to replace multiple visual interactions with semantic shared-state mutations.
@@ -75,41 +76,41 @@ No new compound create/edit tool is justified. Combining generation, placement, 
 ### Generation / refinement
 `crishirt_generate_design` and `crishirt_refine_design` still propagate the execution `AbortSignal` directly to provider fetches and emit deterministic cancellation/provider errors.
 
-The immediate overlap window remains: both check React-backed `isGenerating` / `isRefining` before dispatching the busy transition, so two extremely close invocations can theoretically pass the check before React state propagation. The smallest safe future fix remains a synchronous shared operation guard acquired before provider execution and released in `finally`.
+The immediate overlap window remains: both check React-backed `isGenerating` / `isRefining` before dispatching the busy transition, so two extremely close invocations can theoretically pass the check before React state propagation. The smallest future fix remains a synchronous shared operation guard acquired before provider execution and released in `finally`.
 
-No code change was made because this alters live shared-state semantics and there is still no behavioral WebMCP execution harness available in this runtime to verify duplicate rejection, cancellation cleanup, provider-failure cleanup, and release behavior.
+No code change was made because this alters shared-state semantics and actual browser-side WebMCP execution is still unavailable in this runtime to verify duplicate rejection, cancellation cleanup, provider-failure cleanup, and release behavior.
 
 ### Cart / revision correctness
-`expectedRevision` still prevents ordinary stale overwrites in the workspace bridge, but same-tick cart mutations can theoretically validate the same revision before React state propagation advances `revisionRef`. Collection add-to-cart also intentionally shares the human cart state and can be duplicated by a literal repeated call, just as repeated human adds can.
+`expectedRevision` prevents ordinary stale overwrites in the workspace bridge, but same-tick cart mutations can theoretically validate the same revision before React state propagation advances `revisionRef`. Collection add-to-cart intentionally mirrors repeated human adds, so naive idempotency could incorrectly block legitimate duplicate purchases.
 
-A focused reservation/idempotency mechanism remains preferable to a global architecture rewrite. It should only be introduced once repeated-call semantics can be exercised behaviorally so legitimate intentional duplicates are not accidentally blocked. No cart change was shipped this run.
+A focused reservation/idempotency mechanism remains preferable to a global state rewrite, but it should only be introduced once retry/repeated-call semantics can be exercised behaviorally.
 
 ### Navigation / collection / Virtual Try-On
-Coverage still matches existing stable human capabilities: direct navigation, collection inspection and cart add, cart inspection/removal, try-on state inspection, and execution after a human supplies the person photo. No checkout, quantity update, raw-photo, camera, file-picker, or download tool is justified because the corresponding safe shared human capability is absent or intentionally human-controlled.
+Coverage still matches existing stable human capabilities: direct navigation, collection inspection and cart add, cart inspection/removal, try-on state inspection, and execution after a human supplies the person photo. No checkout, quantity-update, raw-photo, camera, file-picker, or download tool is justified because the corresponding safe shared human capability is absent or intentionally human-controlled.
 
-Virtual Try-On continues to use a synchronous `loadingRef` guard, so it does not share the same immediate duplicate-execution shape as generation/refinement.
+Virtual Try-On continues to use a synchronous loading ref guard and therefore does not share the same immediate duplicate-execution shape as generation/refinement.
 
 ### Schemas, annotations, payloads, recovery
-The 13-tool surface remains coherent and high leverage. Inputs are bounded to existing product capabilities, read tools use `readOnlyHint`, untrusted output surfaces use `untrustedContentHint` where appropriate, responses are compact, and failures remain deterministic and structured.
+The 13-tool surface remains coherent and high leverage. Inputs are bounded to existing product capabilities, read tools use `readOnlyHint`, untrusted output surfaces use `untrustedContentHint` where appropriate, responses are compact, and failures are deterministic and structured.
 
-The current spec's `consequentialHint` was specifically re-audited. Marking ordinary local configuration, reversible cart edits, generation, refinement, try-on, or navigation as consequential would overstate the semantics and could create unnecessary confirmation friction for agents. No annotation expansion is justified.
+No additional tiny wrapper, larger payload, DOM-derived interface, or annotation expansion is justified by this audit.
 
 ## Tests and verification performed this run
 - Read `PROGRESS.md` before editing.
 - Verified canonical repository and working branch.
 - Verified production `main` remains `88daa417caa5305f81e5554977a13a94a793cdeb`.
-- Verified working branch entered at `c3cbf4e3c0349fe3a893c4ab293525384fc5a40a`.
-- Compared branch against production: 52 commits ahead, 0 behind, merge base exactly production.
-- Verified exact Vercel preview `dpl_73TzCCAaYCSnb8H9NMgGj5BWLfT8` is `READY` and is tied to the correct GitHub repo/branch/SHA.
-- Read its Vercel build logs: `tsc -b && vite build` succeeded, 2020 modules transformed, deployment completed.
-- Reverified the official 2026-09-04 WebMCP draft, including callback options, execution cancellation, registration cancellation, `getTools()`, `executeTool()`, and all three current annotation hints.
-- Re-inspected the main workspace bridge and collection bridge for tool shape, state/revision handling, schemas, annotations, deterministic errors, and shared human/agent state.
+- Verified working branch entered at `22d594f42be8d74cb3e5c625c65f45569b341678`.
+- Compared branch against production: 53 commits ahead, 0 behind, merge base exactly production.
+- Verified exact Vercel preview `dpl_GRVT3JsSHkTBKzHvYFVescmmMZZD` is `READY` and tied to the correct repo/branch/SHA.
+- Read Vercel build logs: `tsc -b && vite build` succeeded, 2020 modules transformed, deployment completed.
+- Reverified the official 2026-09-04 WebMCP draft, including callback options, execution cancellation, registration cancellation, `getTools()`, `executeTool()`, and current annotation hints.
+- Re-inspected the main workspace bridge and collection bridge for semantic tool shape, state/revision handling, schemas, annotations, deterministic errors, cancellation propagation, and shared human/agent state.
 - No functional source change was made, so no new product build was required before this documentation-only audit commit; the entering functional tree is independently confirmed READY on Vercel.
 
 ## Failures found / fixes applied
 - No new functional regression found.
-- Existing WebMCP execution/cancellation contract remains aligned with the current draft.
-- No misuse requiring `consequentialHint` was found; leaving it unset is semantically correct for the existing exposed product actions.
+- Existing WebMCP callback/cancellation contract remains aligned with the current draft.
+- No annotation misuse or missing high-leverage semantic capability was found.
 - Remaining: generation/refinement synchronous overlap candidate.
 - Remaining: same-revision/retry cart mutation window.
 - Environment limitation: actual browser-side `document.modelContext.getTools()` / `executeTool()` execution remains unavailable in this runtime.
@@ -126,7 +127,7 @@ The current spec's `consequentialHint` was specifically re-audited. Marking ordi
 `README.md` remains concise and accurate. Its WebMCP section describes the semantic tool philosophy, thirteen capabilities, privacy boundary, revision handling, testing approach, and per-execution cancellation semantics. Detailed run history remains here.
 
 ## Latest commit SHA
-Branch head entering this run: `c3cbf4e3c0349fe3a893c4ab293525384fc5a40a`.
+Branch head entering this run: `22d594f42be8d74cb3e5c625c65f45569b341678`.
 
 This file is updated before the audit commit is created, so the resulting commit SHA is intentionally recorded by the next run rather than attempting a self-referential hash.
 
