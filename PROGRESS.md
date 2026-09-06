@@ -8,12 +8,12 @@ Keep the existing human-facing CriShirt experience stable while exposing the sam
 - Production branch: `main`
 - Production commit: `88daa417caa5305f81e5554977a13a94a793cdeb`
 - Working branch: `webmcp-agent-native`
-- Branch head entering this run: `105c6a132ae007758693dbc7ed6a8cee713af3c3`
-- Compare entering this run: 56 commits ahead of `main`, 0 behind; merge base exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Branch head entering this run: `7c88d64af76181c8652fd2fd1be251262b1b0da4`
+- Compare entering this run: 57 commits ahead of `main`, 0 behind; merge base exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Production remains on `main`; this WebMCP branch has not been promoted.
 - Vercel project: `crishirtpc` (`prj_jAm749oRS01LbAdwec2lKvKZgAEF`).
-- Exact entering deployment for `105c6a132...`: `dpl_7uuH5ksZU6WtyzBq2AmwrGtH73kA`, state `READY`.
-- Vercel metadata ties that deployment to repository `UnknownGod2011/crishirt-perfect-corp`, branch `webmcp-agent-native`, and SHA `105c6a132ae007758693dbc7ed6a8cee713af3c3`.
+- Exact entering deployment for `7c88d64...`: `dpl_HZr5R2rjez3nPTKCd9gx1WVCDHFM`, state `READY`.
+- Vercel metadata ties that deployment to repository `UnknownGod2011/crishirt-perfect-corp`, branch `webmcp-agent-native`, and SHA `7c88d64af76181c8652fd2fd1be251262b1b0da4`.
 - Entering preview build ran `tsc -b && vite build`, transformed 2020 modules, and completed successfully.
 - No production deployment configuration, environment variables, auth, database, commerce, or unrelated UI were changed.
 
@@ -51,21 +51,19 @@ All WebMCP entry points feature-detect `document.modelContext`, so unsupported b
 Reverified on 2026-09-07 against the official Web Machine Learning Community Group WebMCP Draft Community Group Report dated 2026-09-04.
 
 Current draft facts relevant to CriShirt:
-- `document.modelContext` is the imperative API surface and is exposed in secure contexts.
+- `document.modelContext` is the imperative API surface.
 - `registerTool(tool, options)` is the semantic registration path.
-- `ToolExecuteCallback` receives `(inputObject, options)` and its execution options carry an `AbortSignal`.
-- `ModelContextExecuteToolOptions.signal` cancels one execution.
-- `ModelContextRegisterToolOptions.signal` separately controls registration lifetime.
+- `ToolExecuteCallback` receives `(inputObject, options)` and execution options carry an `AbortSignal`.
+- Registration lifetime cancellation is separate from per-execution cancellation.
 - `getTools()` and `executeTool()` are the in-page discovery/execution APIs.
 - Current tool annotations include `readOnlyHint`, `untrustedContentHint`, and `consequentialHint`.
-- No currently exposed CriShirt action warrants `consequentialHint: true`; adding it to reversible workspace/cart/navigation/try-on actions would add confirmation friction without matching the draft's intended risk signal.
 
 No spec-driven source correction is needed this run.
 
 ## Fresh full-journey audit — 2026-09-07
 
 ### Repository / production isolation
-Repository identity, branch identity, production baseline, divergence, exact preview, and deployment source metadata were rechecked before mutation. The branch remains 0 commits behind production and scoped to WebMCP-only work.
+Repository identity, branch identity, production baseline, divergence, exact preview, and deployment source metadata were rechecked before mutation. The working branch remains 0 commits behind production and scoped to WebMCP-only work.
 
 ### Create / edit
 `crishirt_get_workspace_state` still collapses garment state, front/back design presence and placement, busy state, cart count, valid product options, route, and revision into one compact observation. `crishirt_configure_workspace` and `crishirt_set_design_placement` continue to replace multiple visual interactions with semantic shared-state mutations.
@@ -73,55 +71,55 @@ Repository identity, branch identity, production baseline, divergence, exact pre
 No new compound create/edit tool is justified. Combining generation, placement, and cart mutation would save few calls while obscuring partial failure and recovery.
 
 ### Generation / refinement
-`crishirt_generate_design` and `crishirt_refine_design` still use the shared application state, propagate the execution `AbortSignal` directly to provider fetches, and return deterministic cancellation/provider errors.
+`crishirt_generate_design` and `crishirt_refine_design` still use shared application state, propagate the WebMCP execution `AbortSignal` into provider fetches, and return deterministic cancellation/provider errors.
 
-The immediate overlap window remains: both check React-backed `isGenerating` / `isRefining` before dispatching the busy transition, so two extremely close executions can theoretically pass the check before React state propagation. A bridge-local lock would stop only agent/agent overlap and would not by itself protect the human/agent path. Shipping that partial lock would therefore overstate shared-state correctness.
-
-No functional change was made because the correct fix should guard the same underlying human and agent action path and needs behavioral execution coverage for duplicate rejection, cancellation cleanup, provider-failure cleanup, and release behavior.
+The immediate overlap window remains: both check React-backed `isGenerating` / `isRefining` before dispatching the busy transition, so two extremely close executions can theoretically pass before React state propagation. A bridge-local lock would protect only agent/agent overlap, not the human/agent path. The correct fix should guard the same underlying action path used by humans and agents and should be behaviorally tested for duplicate rejection, cancellation cleanup, provider-failure cleanup, and release behavior before shipping.
 
 ### Cart / revision correctness
 `expectedRevision` prevents ordinary stale workspace mutations, but same-tick cart mutations can theoretically validate the same revision before React state propagation advances `revisionRef`. Collection add-to-cart intentionally mirrors repeated human adds, so naive idempotency could incorrectly block legitimate duplicate purchases.
 
-A focused reservation/idempotency mechanism remains preferable to a global state rewrite, but it should only be introduced once retry/repeated-call semantics can be exercised behaviorally.
+The shared collection factory also uses timestamp-based cart item IDs; this matches the existing human flow and should not be changed independently for agents without reproducing repeated/same-tick behavior first.
 
 ### Navigation / collection
 Coverage still matches existing stable human capabilities: direct navigation, collection inspection and cart add, cart inspection/removal, and shared catalog/cart construction. No DOM wrapper or visual interpretation is required for these legitimate actions.
 
 ### Virtual Try-On
-Virtual Try-On continues to use a synchronous `loadingRef` guard before awaiting the provider request, so it does not share the same immediate duplicate-execution shape as generation/refinement. The privacy boundary also remains correct: the human supplies the photo; tools expose only readiness, eligible cart IDs, and the post-consent execution action.
+Virtual Try-On still uses a synchronous `loadingRef` guard before awaiting the provider request, so duplicate execution is rejected immediately. The privacy boundary remains correct: a human supplies the photo; WebMCP exposes only readiness, eligible cart IDs, and the post-consent execution action.
 
-A new low-risk ergonomics candidate was identified during this audit: the WebMCP registration effect in `VRTryOn.tsx` currently depends on `tryOnResult`. Completing a try-on changes `tryOnResult`, which causes cleanup of the existing registration controller and re-registration of both try-on tools. That produces unnecessary `toolchange` churn and can unregister the tool immediately after the execution that produced the result. A better shape would keep a `tryOnResultRef`, register the tools once for the component lifetime, and read result readiness from the ref.
+The registration-stability opportunity remains valid: the WebMCP registration effect in `VRTryOn.tsx` depends on `tryOnResult`, so completion changes `tryOnResult`, aborts the current registration controller, and re-registers both try-on tools. That creates unnecessary `toolchange` churn and may transiently invalidate a discovered tool immediately after execution. A small ref-based implementation would avoid that while keeping `resultReady` current.
 
-This candidate was **not shipped** in this run because the local runtime still cannot resolve `github.com`, so a clean checkout and full `tsc -b && vite build` validation could not be performed before committing functional code. The change is small, but the project rule is to avoid committing unvalidated functional work.
+This functional change was **not shipped** because the required clean checkout/build gate still cannot run in the current local runtime. A fresh `git clone --branch webmcp-agent-native --single-branch https://github.com/UnknownGod2011/crishirt-perfect-corp.git` failed before mutation with `Could not resolve host: github.com`. The project rule is to avoid committing unvalidated functional work.
 
 ### Schemas, annotations, payloads, recovery
-The 13-tool surface remains coherent and high leverage. Inputs are bounded to existing product capabilities, read tools use `readOnlyHint`, untrusted prompt/cart/try-on surfaces use `untrustedContentHint` where appropriate, responses are compact, and failures are deterministic and structured.
+The 13-tool surface remains coherent and high leverage. Inputs remain bounded to existing product capabilities, read tools use `readOnlyHint`, untrusted prompt/cart/try-on surfaces are annotated where appropriate, responses are compact, and failures are deterministic and structured.
 
-No additional tiny wrapper, larger payload, DOM-derived interface, or product capability is justified by this audit.
+No additional tiny wrapper, DOM-derived interface, or product capability is justified by this audit.
 
 ## Tests and verification performed this run
 - Read `PROGRESS.md` before editing.
 - Verified canonical repository and working branch.
 - Verified production `main` remains `88daa417caa5305f81e5554977a13a94a793cdeb`.
-- Verified working branch entered at `105c6a132ae007758693dbc7ed6a8cee713af3c3`.
-- Compared branch against production: 56 commits ahead, 0 behind, merge base exactly production.
-- Verified exact Vercel preview `dpl_7uuH5ksZU6WtyzBq2AmwrGtH73kA` is `READY` and tied to the correct repo/branch/SHA.
+- Verified working branch entered at `7c88d64af76181c8652fd2fd1be251262b1b0da4`.
+- Compared branch against production: 57 commits ahead, 0 behind, merge base exactly production.
+- Inspected the recursive repository tree for the entering commit.
+- Verified exact Vercel preview `dpl_HZr5R2rjez3nPTKCd9gx1WVCDHFM` is `READY` and tied to the correct repo/branch/SHA.
 - Verified the entering Vercel build ran `tsc -b && vite build`, transformed 2020 modules, and completed successfully.
-- Reverified the official 2026-09-04 WebMCP draft, including `Document.modelContext`, imperative registration, execution/registration cancellation, `getTools()`, `executeTool()`, and current annotation hints.
-- Re-inspected the main WebMCP bridge, collection bridge, Virtual Try-On registration/execution path, README WebMCP section, and production diff scope.
-- Reconfirmed collection tools share human catalog/cart logic.
-- Reconfirmed Virtual Try-On synchronously sets `loadingRef.current = true` before awaiting its provider call.
-- Attempted a fresh clean checkout to validate a possible Virtual Try-On registration-churn fix; checkout failed before mutation with `Could not resolve host: github.com`.
+- Reverified the official 2026-09-04 WebMCP draft.
+- Re-inspected `WebMCPBridge.tsx`, `CollectionWebMCPBridge.tsx`, `collectionCatalog.ts`, `VRTryOn.tsx`, and App-level bridge mounting/navigation.
+- Reconfirmed generation/refinement signal propagation and structured errors.
+- Reconfirmed collection tools share human catalog/cart construction logic.
+- Reconfirmed Virtual Try-On sets `loadingRef.current = true` synchronously before the provider request.
+- Attempted a fresh clean checkout for a build-capable validation environment; checkout failed before mutation with `Could not resolve host: github.com`.
 - No functional source change was made, so no unvalidated functional commit was created.
 
 ## Failures found / fixes applied
 - No new functional regression found.
 - Existing WebMCP callback/cancellation contract remains aligned with the current draft.
 - No missing high-leverage semantic capability was found.
-- New candidate: avoid Virtual Try-On tool re-registration after `tryOnResult` changes by using a live result ref and component-lifetime registration. Not shipped because the required build gate could not be run locally.
-- Remaining: generation/refinement synchronous overlap candidate; a bridge-only lock would be incomplete for human/agent races.
-- Remaining: same-revision/retry cart mutation window.
-- Environment limitation: clean local GitHub checkout fails DNS resolution, and actual browser-side `document.modelContext.getTools()` / `executeTool()` execution is not available through the current browser tool surface.
+- Remaining candidate: avoid Virtual Try-On tool re-registration after `tryOnResult` changes by using a live result ref and component-lifetime registration.
+- Remaining candidate: generation/refinement same-tick overlap; a bridge-only lock would be incomplete for human/agent races.
+- Remaining candidate: same-revision/retry cart mutation window without breaking legitimate duplicate adds.
+- Environment limitation: clean local GitHub checkout still fails DNS resolution, and actual browser-side `document.modelContext.getTools()` / `executeTool()` execution is not available through the current browser tool surface.
 
 ## Remaining opportunities
 1. When a build-capable checkout is available, implement and validate the small Virtual Try-On registration-stability improvement: keep `tryOnResult` in a ref and avoid re-registering tools on result changes.
@@ -136,7 +134,7 @@ No additional tiny wrapper, larger payload, DOM-derived interface, or product ca
 `README.md` remains concise and accurate. Its WebMCP section describes the semantic tool philosophy, thirteen capabilities, privacy boundary, revision handling, testing approach, and per-execution cancellation semantics. Detailed run history remains here.
 
 ## Latest commit SHA
-Branch head entering this run: `105c6a132ae007758693dbc7ed6a8cee713af3c3`.
+Branch head entering this run: `7c88d64af76181c8652fd2fd1be251262b1b0da4`.
 
 This file is updated before the audit commit is created, so the resulting commit SHA is intentionally recorded by the next run rather than attempting a self-referential hash.
 
