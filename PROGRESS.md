@@ -10,13 +10,14 @@ Keep the existing human-facing CriShirt experience stable while exposing the sam
 - Production branch: `main`
 - Production commit: `88daa417caa5305f81e5554977a13a94a793cdeb`
 - Working branch: `webmcp-agent-native`
-- Branch head entering this audit: `df9a8555ffce5099bf353f3ae83fc8d3aee10cd4`
-- Compare entering this audit: 46 commits ahead of `main`, 0 behind; merge base is exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Validated functional WebMCP commit this run: `b62570f9c4c8e4e3277710c0c26d98f375d547db`
+- Compare after the functional commit: 47 commits ahead of `main`, 0 behind; merge base remains exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Vercel project: `crishirtpc` (`prj_jAm749oRS01LbAdwec2lKvKZgAEF`).
-- Exact preview for `df9a8555ffce5099bf353f3ae83fc8d3aee10cd4`: deployment `dpl_G1fV84xMDEnVJwoGTF1otpHJ3sz9`, state `READY`, verified 2026-09-06.
-- Build logs for that exact preview confirm `npm install` followed by `tsc -b && vite build`; Vite transformed 2020 modules and completed successfully.
+- Exact preview for `b62570f9c4c8e4e3277710c0c26d98f375d547db`: deployment `dpl_BVfTABDF8WgThjkyQ9Ur4sYuC3Dy`, state `READY`, verified 2026-09-06.
+- Exact preview build ran `npm install` followed by `tsc -b && vite build`; Vite transformed 2021 modules and completed successfully in 4.49s.
+- The exact preview root returned HTTP 200 after deployment.
 - Production remains on `main`; this WebMCP branch has not been promoted.
-- No production deployment configuration, environment variable, commerce, auth, database, or unrelated UI change was made in this audit.
+- No production deployment configuration, environment variable, commerce, auth, database, or unrelated UI change was made in this run.
 
 ## Current WebMCP tool surface
 
@@ -55,23 +56,23 @@ All WebMCP entry points feature-detect `document.modelContext`, so unsupported b
 
 ## Current official WebMCP specification check
 
-Freshly reverified on 2026-09-06 against the official Web Machine Learning Community Group WebMCP Draft Community Group Report dated 2026-09-04.
+Reverified on 2026-09-06 against the official Web Machine Learning Community Group WebMCP Draft Community Group Report dated 2026-09-04.
 
-Important correction found in this audit: the current draft defines `ToolExecuteCallback` as a callback receiving only the tool input object. The draft's `AbortSignal` is part of `ModelContextRegisterToolOptions` and unregisters the tool when aborted. The current draft does not define a standard second execution-options argument carrying an execution `AbortSignal`.
+Important correction from this run: the current draft defines `ToolExecuteCallback` as a callback receiving only the tool input object. The draft's `AbortSignal` is part of `ModelContextRegisterToolOptions` and unregisters the tool when aborted. The current draft does not define a standard second execution-options argument carrying an execution `AbortSignal`.
 
-The existing CriShirt generation, refinement, and Virtual Try-On callbacks had been written as `(input, { signal })`. A standards-conforming host calling those callbacks with only `input` could therefore throw while destructuring the missing second argument before reaching application logic.
+Before this run, CriShirt generation, refinement, and Virtual Try-On callbacks were written as `(input, { signal })`. A standards-conforming host calling those callbacks with only `input` could therefore throw while destructuring the missing second argument before reaching application logic.
 
 ## Fresh full-journey audit — 2026-09-06 16:20 IST
 
 ### Repository / production isolation
 
-Repository identity, write access, branch identity, production baseline, divergence, and the exact entering preview were verified before mutation. The working branch remains isolated from production and 0 commits behind `main`.
+Repository identity, write access, branch identity, production baseline, divergence, and the exact entering preview were verified before mutation. The working branch remained isolated from production and 0 commits behind `main` throughout the run.
 
 The branch diff remains scoped to WebMCP bridge/integration work, shared collection catalog extraction required for human/agent parity, README WebMCP documentation, and this durable progress log. No unrelated repository or production configuration was modified.
 
-### Standards execution compatibility — fixed this audit
+### Standards execution compatibility — fixed and validated
 
-Source inspection of `WebMCPBridge.tsx` and `VRTryOn.tsx` revealed that three provider-backed tools depended on a non-standard required second execution argument: `crishirt_generate_design`, `crishirt_refine_design`, and `crishirt_run_virtual_tryon`.
+Source inspection of `WebMCPBridge.tsx` and `VRTryOn.tsx` found that three provider-backed tools depended on a non-standard required second execution argument: `crishirt_generate_design`, `crishirt_refine_design`, and `crishirt_run_virtual_tryon`.
 
 A deliberately small compatibility layer was added at startup rather than rewriting provider/UI logic:
 
@@ -81,8 +82,9 @@ A deliberately small compatibility layer was added at startup rather than rewrit
 - If a browser implementation supplies a second execution object with a signal, that more specific signal is preserved.
 - The adapter is feature-detected, idempotent, and a no-op when `document.modelContext` is unavailable.
 - Existing Perfect Corp request bodies, result handling, UI state, cart state, routes, and human controls are unchanged.
+- README wording now describes the current draft accurately instead of claiming a standardized per-execution `AbortSignal`.
 
-README wording was updated to describe the current draft accurately instead of claiming a standardized per-execution `AbortSignal`.
+The change is validated at build/deployment level by exact preview `dpl_BVfTABDF8WgThjkyQ9Ur4sYuC3Dy`, which is READY, passed `tsc -b && vite build`, transformed 2021 modules, and serves HTTP 200.
 
 ### Create / edit
 
@@ -94,7 +96,7 @@ No new compound create tool is justified. Bundling generation, placement, and ca
 
 The previously identified near-simultaneous generation/refinement overlap remains. Both tools still rely on React-propagated busy flags before a provider call, so two very close calls can theoretically pass the initial busy check before state propagation.
 
-The smallest future fix remains a synchronous shared in-memory operation guard acquired before the provider call and released in `finally`. It was not mixed into this standards-compatibility fix because concurrency semantics should be reproduced and tested independently.
+The smallest future fix remains a synchronous shared in-memory operation guard acquired before the provider call and released in `finally`. It was not mixed into the standards-compatibility fix because concurrency semantics should be reproduced and tested independently.
 
 ### Revision / cart race
 
@@ -124,26 +126,28 @@ The 13-tool surface remains coherent and high-leverage. Inputs are bounded to ex
 
 No new tiny wrappers, payload expansion, or tool-count increase is justified in this audit.
 
-## Tests and verification performed this audit
+## Tests and verification performed this run
 
 - Read `PROGRESS.md` before considering changes.
 - Verified canonical repository `UnknownGod2011/crishirt-perfect-corp` and write access.
-- Verified working branch `webmcp-agent-native` at exact entering head `df9a8555ffce5099bf353f3ae83fc8d3aee10cd4`.
+- Verified working branch `webmcp-agent-native` entered at `df9a8555ffce5099bf353f3ae83fc8d3aee10cd4`.
 - Verified production `main` remains `88daa417caa5305f81e5554977a13a94a793cdeb`.
-- Compared branch against production: 46 commits ahead, 0 behind, merge base exactly the production baseline.
-- Verified exact entering Vercel deployment `dpl_G1fV84xMDEnVJwoGTF1otpHJ3sz9` is `READY`.
-- Verified its build executed `tsc -b && vite build` successfully and transformed 2020 modules.
+- Compared branch against production before mutation: 46 commits ahead, 0 behind, merge base exactly the production baseline.
+- Verified exact entering Vercel deployment `dpl_G1fV84xMDEnVJwoGTF1otpHJ3sz9` was READY and its full build passed.
 - Reverified the official WebMCP draft and specifically its `ToolExecuteCallback` and `ModelContextRegisterToolOptions` IDL.
 - Re-inspected the main WebMCP bridge, collection bridge, Virtual Try-On integration, README, and startup entry point.
 - Reproduced the compatibility failure in a focused JavaScript harness: the old required second-argument destructuring throws `TypeError` when invoked with one argument.
-- Verified the compatibility adapter with a focused harness: one-argument execution succeeds and the registration signal reaches the legacy handler.
+- Verified the compatibility adapter in a focused harness: one-argument execution succeeds and the registration signal reaches the legacy handler.
 - Verified the new compatibility helper and startup hook parse/transpile with TypeScript using `tsc --noCheck --jsx react-jsx --module esnext --target es2022 --skipLibCheck`; exit code 0.
+- Created one coherent functional commit `b62570f9c4c8e4e3277710c0c26d98f375d547db` touching only `src/webmcp/executeCompat.ts`, `src/main.tsx`, README, and PROGRESS.
+- Verified that functional commit's exact Vercel deployment `dpl_BVfTABDF8WgThjkyQ9Ur4sYuC3Dy` reached READY.
+- Verified the exact post-change build ran `tsc -b && vite build`, transformed 2021 modules, and completed successfully.
+- Verified the exact post-change preview root returns HTTP 200.
 - Retried a clean local clone; the runtime still fails before checkout with `Could not resolve host: github.com`.
-- Full post-change production build and exact preview status must be verified on the commit produced by this audit before considering the source change fully validated.
 
 ## Failures found / fixes applied
 
-- Fixed: provider-backed tool callbacks could fail under standards-style one-argument execution because they destructured a missing second argument.
+- Fixed and validated: provider-backed tool callbacks could fail under standards-style one-argument execution because they destructured a missing second argument.
 - Fixed: README overstated a standardized per-execution WebMCP `AbortSignal`; wording now matches the current draft.
 - Preserved: registration-lifecycle cancellation still reaches provider fetches, and implementation-specific execution signals remain compatible when present.
 - Remaining: generation/refinement synchronous overlap candidate.
@@ -154,24 +158,23 @@ No new tiny wrappers, payload expansion, or tool-count increase is justified in 
 
 ## Remaining opportunities
 
-1. Verify the exact preview for this audit commit reaches `READY` and confirm `tsc -b && vite build` succeeds before treating the source change as validated.
-2. Execute real `document.modelContext.getTools()` discovery and representative tool calls in a WebMCP-capable browser/testing surface when available.
-3. Reproduce simultaneous generation/refinement, then add the smallest synchronous shared operation guard and verify duplicate rejection, failure cleanup, cancellation/lifecycle cleanup, and release.
-4. Reproduce same-revision duplicate cart mutation, then add focused revision reservation/duplicate protection without rewriting global state.
-5. Add lightweight tests for stale revisions, same-revision mutations, provider failure, unsupported-browser fallback, collection availability, route refresh, shared cart state, and Virtual Try-On errors when a safe harness is available.
-6. Continue auditing schemas, descriptions, annotations, payload size, round trips, and recovery behavior without growing the tool surface unnecessarily.
-7. Do not merge to `main` solely because a preview builds successfully.
+1. Execute real `document.modelContext.getTools()` discovery and representative standards-style tool calls in a WebMCP-capable browser/testing surface when available.
+2. Reproduce simultaneous generation/refinement, then add the smallest synchronous shared operation guard and verify duplicate rejection, failure cleanup, lifecycle cleanup, and release.
+3. Reproduce same-revision duplicate cart mutation, then add focused revision reservation/duplicate protection without rewriting global state.
+4. Add lightweight tests for stale revisions, same-revision mutations, provider failure, unsupported-browser fallback, collection availability, route refresh, shared cart state, and Virtual Try-On errors when a safe harness is available.
+5. Continue auditing schemas, descriptions, annotations, payload size, round trips, and recovery behavior without growing the tool surface unnecessarily.
+6. Do not merge to `main` solely because a preview builds successfully.
 
 ## README
 
-`README.md` remains concise and was corrected in this audit to describe the current WebMCP callback and cancellation semantics accurately. Detailed run history remains here in `PROGRESS.md`.
+`README.md` remains concise and was corrected in this run to describe the current WebMCP callback and cancellation semantics accurately. Detailed run history remains here in `PROGRESS.md`.
 
 ## Latest commit SHA
 
-Latest audited working-branch commit entering this audit: `df9a8555ffce5099bf353f3ae83fc8d3aee10cd4`.
+Latest validated functional WebMCP commit: `b62570f9c4c8e4e3277710c0c26d98f375d547db`.
 
-This file is updated before the audit commit is created, so the resulting commit SHA is intentionally recorded by the following run rather than attempting a self-referential hash.
+This file is being committed as a durable post-validation handoff, so that documentation commit's SHA will be recorded by the next run rather than attempting a self-referential hash.
 
 ## Next run
 
-Read this file first. Reverify repository/branch/production isolation and the exact preview for the commit produced by this audit. If the preview is not `READY` or the full build fails, revert only this audit's compatibility/startup/docs change. If it is healthy, attempt real browser-side standards-style tool execution. Then independently target the generation/refinement overlap with a reproducible test before changing concurrency semantics.
+Read this file first. Reverify repository/branch/production isolation and confirm the documentation-only handoff commit's preview is healthy. Attempt real browser-side standards-style tool execution if a capable surface becomes available. Then independently target the generation/refinement overlap with a reproducible test before changing concurrency semantics.
