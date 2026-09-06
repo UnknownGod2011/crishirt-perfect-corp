@@ -8,11 +8,12 @@ Keep the existing human-facing CriShirt experience stable while exposing the sam
 - Production branch: `main`
 - Production commit: `88daa417caa5305f81e5554977a13a94a793cdeb`
 - Working branch: `webmcp-agent-native`
-- Branch head entering this run: `bb95e070d9ec4bd27ceaf17efc34359a58551bf1`
-- Compare entering this run: 49 commits ahead of `main`, 0 behind; merge base exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Branch head entering this run: `3cedc551c8287d2accc3d7422115dee58e5fb243`
+- Compare entering this run: 50 commits ahead of `main`, 0 behind; merge base exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Production remains on `main`; this WebMCP branch has not been promoted.
 - Vercel project: `crishirtpc` (`prj_jAm749oRS01LbAdwec2lKvKZgAEF`).
-- Exact entering deployment for `bb95e070...`: `dpl_7gKUzRgZdfQVUx8Ne5L2SwL5VzQ5`, state `READY`.
+- Exact entering deployment for `3cedc551...`: `dpl_9KMEFr29N9aTjpuBvkb8oQpXSUV1`, state `READY`.
+- Vercel build logs confirm `tsc -b && vite build` succeeded, 2020 modules transformed, and deployment completed.
 - No production deployment configuration, environment variables, auth, database, commerce, or unrelated UI were changed.
 
 ## Current WebMCP tool surface
@@ -57,29 +58,29 @@ Current draft facts still relevant to CriShirt:
 - `ModelContextRegisterToolOptions.signal` separately controls registration lifetime.
 - `getTools()` and `executeTool()` are the in-page discovery/execution APIs.
 
-The previous run's correction remains standards-aligned; no compatibility shim is present or needed.
+The execution-cancellation correction remains standards-aligned; no compatibility shim is present or needed.
 
 ## Fresh full-journey audit — 2026-09-06
 
 ### Repository / production isolation
-Repository identity, branch identity, production baseline, and divergence were rechecked before any mutation. Branch remains 0 commits behind production and scoped to WebMCP-only work.
+Repository identity, branch identity, production baseline, branch divergence, and exact preview were rechecked before mutation. The branch remains 0 commits behind production and scoped to WebMCP-only work.
 
 ### Create / edit
 `crishirt_get_workspace_state` still collapses garment state, front/back design presence, placement, busy state, cart count, valid options, route, and revision into one compact observation. `crishirt_configure_workspace` and `crishirt_set_design_placement` continue to replace multiple visual interactions with semantic shared-state mutations.
 
-No new compound create/edit tool is justified. Combining generation, placement, and cart mutation would reduce only a small number of calls while obscuring partial failure and recovery.
+No new compound create/edit tool is justified. Combining generation, placement, and cart mutation would save only a small number of calls while obscuring partial failure and recovery.
 
 ### Generation / refinement
 `crishirt_generate_design` and `crishirt_refine_design` still propagate the execution `AbortSignal` directly to provider fetches and emit deterministic cancellation/provider errors.
 
-The previously identified immediate overlap window remains: both check React-backed `isGenerating` / `isRefining` before dispatching the busy transition, so two extremely close invocations can theoretically pass the check before React state propagation. The smallest safe future fix remains a synchronous shared operation ref/guard acquired before provider execution and released in `finally`.
+The immediate overlap window remains: both check React-backed `isGenerating` / `isRefining` before dispatching the busy transition, so two extremely close invocations can theoretically pass the check before React state propagation. The smallest safe future fix remains a synchronous shared operation guard acquired before provider execution and released in `finally`.
 
-No code change was made this run because this concurrency change alters live shared-state semantics and there is still no behavioral WebMCP execution harness available here to reproduce and verify duplicate rejection, cancellation cleanup, provider failure cleanup, and release behavior.
+No code change was made because this alters live shared-state semantics and there is still no behavioral WebMCP execution harness available in this runtime to verify duplicate rejection, cancellation cleanup, provider-failure cleanup, and release behavior.
 
 ### Cart / revision correctness
-`expectedRevision` still prevents ordinary stale overwrites, but same-tick cart mutations can theoretically validate the same revision before React state propagation advances `revisionRef`. A focused reservation/idempotency mechanism remains preferable to a global architecture rewrite.
+`expectedRevision` still prevents ordinary stale overwrites in the workspace bridge, but same-tick cart mutations can theoretically validate the same revision before React state propagation advances `revisionRef`. The collection add-to-cart bridge also intentionally shares the same human cart state rather than maintaining a second agent cart.
 
-No cart change was shipped without a reproducible behavior test.
+A focused reservation/idempotency mechanism remains preferable to a global architecture rewrite. No cart change was shipped without reproducible behavioral verification.
 
 ### Navigation / collection / Virtual Try-On
 Coverage still matches existing stable human capabilities: direct navigation, collection inspection and cart add, cart inspection/removal, try-on state inspection, and execution after a human supplies the person photo. No checkout, quantity update, raw-photo, camera, file-picker, or download tool is justified because the corresponding safe shared human capability is absent or intentionally human-controlled.
@@ -87,27 +88,27 @@ Coverage still matches existing stable human capabilities: direct navigation, co
 Virtual Try-On continues to use a synchronous `loadingRef` guard, so it does not share the same immediate duplicate-execution shape as generation/refinement.
 
 ### Schemas, annotations, payloads, recovery
-The 13-tool surface remains coherent and high leverage. Inputs are bounded to existing product capabilities, read tools use `readOnlyHint`, untrusted text surfaces use `untrustedContentHint`, responses are compact, and failures remain deterministic and structured. No additional tiny wrapper or payload expansion is justified in this audit.
+The 13-tool surface remains coherent and high leverage. Inputs are bounded to existing product capabilities, read tools use `readOnlyHint`, untrusted text surfaces use `untrustedContentHint` where appropriate, responses are compact, and failures remain deterministic and structured. No additional tiny wrapper or payload expansion is justified in this audit.
 
 ## Tests and verification performed this run
 - Read `PROGRESS.md` before editing.
 - Verified canonical repository and working branch.
 - Verified production `main` remains `88daa417caa5305f81e5554977a13a94a793cdeb`.
-- Verified working branch entered at `bb95e070d9ec4bd27ceaf17efc34359a58551bf1`.
-- Compared branch against production: 49 commits ahead, 0 behind, merge base exactly production.
-- Verified exact Vercel preview for `bb95e070...` is `READY`.
+- Verified working branch entered at `3cedc551c8287d2accc3d7422115dee58e5fb243`.
+- Compared branch against production: 50 commits ahead, 0 behind, merge base exactly production.
+- Verified exact Vercel preview `dpl_9KMEFr29N9aTjpuBvkb8oQpXSUV1` is `READY`.
+- Read its Vercel build logs: `tsc -b && vite build` succeeded, 2020 modules transformed, deployment completed.
 - Reverified the official 2026-09-04 WebMCP draft, including callback options, execution cancellation, registration cancellation, `getTools()`, and `executeTool()`.
-- Re-inspected the main workspace bridge generation/refinement, placement, cart, navigation and state/revision behavior.
-- Retried a clean local clone; this runtime still fails before checkout with `Could not resolve host: github.com`.
-- No functional source change was made, so no new product build was required for this audit-only commit; the entering functional commit was already independently confirmed READY on Vercel.
+- Re-inspected the main workspace bridge and collection bridge for state/revision, generation/refinement, placement, cart, navigation, schemas, annotations, and error behavior.
+- Retried the browser validation path: the `agent-browser` executable is still not installed in this runtime (`command not found`).
+- No functional source change was made, so no new product build was required for this audit-only commit; the entering functional tree is independently confirmed READY on Vercel.
 
 ## Failures found / fixes applied
 - No new functional regression found.
-- Previous execution-cancellation correction remains valid and deployed successfully on its preview.
+- Previous execution-cancellation correction remains valid and deployed successfully on preview.
 - Remaining: generation/refinement synchronous overlap candidate.
 - Remaining: same-revision cart mutation window.
-- Environment limitation: clean local checkout remains blocked by DNS resolution for `github.com`.
-- Environment limitation: actual browser-side `document.modelContext.getTools()` / `executeTool()` execution is still unavailable in this runtime.
+- Environment limitation: actual browser-side `document.modelContext.getTools()` / `executeTool()` execution is still unavailable because the browser automation executable is absent.
 
 ## Remaining opportunities
 1. Execute real `document.modelContext.getTools()` discovery and representative `executeTool()` calls in a WebMCP-capable browser/testing surface when available.
@@ -121,7 +122,7 @@ The 13-tool surface remains coherent and high leverage. Inputs are bounded to ex
 `README.md` remains concise. Its WebMCP section describes the semantic tool philosophy, thirteen capabilities, privacy boundary, revision handling, testing approach, and per-execution cancellation semantics. Detailed run history remains here.
 
 ## Latest commit SHA
-Branch head entering this run: `bb95e070d9ec4bd27ceaf17efc34359a58551bf1`.
+Branch head entering this run: `3cedc551c8287d2accc3d7422115dee58e5fb243`.
 
 This file is updated before the audit commit is created, so the resulting commit SHA is intentionally recorded by the next run rather than attempting a self-referential hash.
 
