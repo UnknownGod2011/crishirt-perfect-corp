@@ -10,10 +10,10 @@ Keep the existing human-facing CriShirt experience stable while exposing the sam
 - Production branch: `main`
 - Production/current production commit: `88daa417caa5305f81e5554977a13a94a793cdeb`
 - Working branch: `webmcp-agent-native`
-- Branch head entering this run: `c0439284ec20e3e84e8c67e7102046d3d6735e23`
-- Compare entering this run: 38 commits ahead of `main`, 0 behind; merge base remains exactly production baseline `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Branch head entering this run: `57903f8f3a8839178af6035f42cd6def8143fbac`
+- Compare entering this run: 39 commits ahead of `main`, 0 behind; merge base remains exactly production baseline `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Vercel project: `crishirtpc` (`prj_jAm749oRS01LbAdwec2lKvKZgAEF`).
-- Exact preview for `c0439284ec20e3e84e8c67e7102046d3d6735e23`: deployment `dpl_sgFfTZ5NrKp4EtsZPyTC5qhiiDf1`, state `READY` as verified on 2026-09-06.
+- Exact preview for `57903f8f3a8839178af6035f42cd6def8143fbac`: deployment `dpl_J7UQhycAVmRR5AJ4sTc4q87DdcpU`, state `READY` as verified on 2026-09-06.
 - Authenticated fetch of that exact preview root returned HTTP 200 on 2026-09-06.
 - Production remains on `main`; this WebMCP branch has not been promoted to production.
 - No production deployment configuration was changed this run.
@@ -42,7 +42,7 @@ Virtual Try-On integration: `src/components/VRTryOn.tsx`
 12. `crishirt_get_tryon_state`
 13. `crishirt_run_virtual_tryon`
 
-All entry points feature-detect `document.modelContext`; unsupported browsers retain the existing human UI flow.
+All WebMCP entry points feature-detect `document.modelContext`; unsupported browsers retain the existing human UI flow.
 
 ## Shared state, safety, and privacy
 
@@ -61,58 +61,65 @@ The implementation target remains correct: secure-context `document.modelContext
 
 No newly observed specification change requires an architecture rewrite or additional tool surface.
 
-## Fresh full-journey audit — 2026-09-06 08:19 IST
+## Fresh full-journey audit — 2026-09-06 09:22 IST
+
+### Repository / deployment isolation
+
+The repository identity, working branch, full recursive tree, branch divergence, and production baseline were rechecked before considering changes. The branch remains isolated from production and the latest exact branch-head preview is healthy. No unrelated repository, branch, deployment target, environment variable, or production configuration was touched.
 
 ### Create / edit
 
-Coverage remains strong. `crishirt_get_workspace_state` exposes garment configuration, front/back design presence and placement, busy state, cart count, valid options, route, and a revision token in one semantic read. Compound workspace configuration removes repeated visual selector interactions. Placement is semantic rather than drag-based. Generation and refinement reuse the existing Perfect Corp-backed application paths and support cancellation.
+Coverage remains strong. `crishirt_get_workspace_state` exposes garment configuration, front/back design presence and placement, busy state, cart count, valid product options, route, and a revision token in one semantic read. `crishirt_configure_workspace` replaces multiple visual selector interactions with one structured mutation. `crishirt_set_design_placement` replaces drag/resize/rotate interpretation with bounded semantic coordinates. Generation and refinement reuse the site's existing Perfect Corp-backed application paths and propagate cancellation.
 
-A generation -> placement -> cart mega-tool remains rejected because it would combine distinct side effects and make partial-failure recovery less clear for only a small round-trip reduction.
+A generation -> placement -> cart mega-tool remains rejected because it would combine distinct side effects, obscure partial-failure recovery, and create a larger blast radius for only a small round-trip reduction.
 
 ### Concurrency / duplicate invocation
 
-Direct source inspection again confirms the narrow generation/refinement timing window. Both tools consult React-backed `isGenerating` / `isRefining`, then dispatch the busy flag. `stateRef` updates only after React state propagation, so two near-simultaneous WebMCP calls can theoretically pass the busy check before the next render updates the ref.
+Direct source inspection again confirms the narrow generation/refinement timing window. Both tools consult React-backed busy state before dispatching the busy flag; `stateRef` updates only after React state propagation. Two near-simultaneous WebMCP calls can therefore theoretically pass the busy check before the next render updates the ref.
 
-The same propagation window remains relevant to rapid mutations guarded only by `expectedRevision`. Two near-simultaneous `crishirt_add_current_design_to_cart` calls can theoretically reuse the same expected revision before React state/revision propagation and produce duplicate cart items. Immediate retries of configuration, placement, or removal can similarly pass the same optimistic revision gate before propagation, although several of those outcomes are effectively idempotent.
+The same propagation limitation applies to optimistic revision checks. Two near-simultaneous mutations can theoretically validate the same `expectedRevision` before React state/revision propagation. The most important concrete case remains duplicate add-to-cart, including both current-design and collection add paths; repeated configuration, placement, or removal can also pass the same revision window, although several outcomes are effectively idempotent.
 
-The preferred hardening remains deliberately small: a synchronous local operation/mutation guard or immediate revision claim, with generation/refinement sharing an async operation lock and cart-changing operations receiving deterministic duplicate/retry behavior. A broad state-management rewrite is still unjustified.
+The preferred hardening remains deliberately small: a synchronous in-memory operation/mutation guard or immediate revision claim, with generation/refinement sharing an async operation lock and cart-changing operations receiving deterministic duplicate/retry behavior. A broad state-management rewrite remains unjustified.
 
-This run did not ship that functional change because the required independent clean clone/build/integration gate remains unavailable. A fresh `git clone --branch webmcp-agent-native --single-branch https://github.com/UnknownGod2011/crishirt-perfect-corp.git` failed before checkout with `Could not resolve host: github.com`.
+This run did **not** ship that functional change because the required independent clean clone/build/integration gate is still unavailable. A fresh `git clone --branch webmcp-agent-native --single-branch https://github.com/UnknownGod2011/crishirt-perfect-corp.git` failed before checkout with `Could not resolve host: github.com`.
 
 ### Cart
 
-Human cart behavior currently supports inspection and removal; WebMCP covers both plus the existing add flow. There is no working human quantity-update behavior to expose, so no quantity tool is invented. The visible Checkout control has no implemented checkout/payment behavior, so no agent checkout/payment tool is added.
+Human cart behavior currently supports inspection and removal; WebMCP covers both plus the site's existing add flow. There is no working human quantity-update behavior to expose, so no quantity tool is invented. The visible Checkout control has no implemented checkout/payment behavior, so no agent checkout/payment tool is added.
 
 ### Exclusive Collection
 
-Covered through shared catalog logic with compact semantic listing and add-to-cart by stable product ID. No agent-only catalog copy exists. Collection add-to-cart remains in the future duplicate-invocation runtime-test set.
+Coverage remains compact and shared. `crishirt_list_collection` returns structured product IDs, availability, category, display price, and image path without forcing card inspection. `crishirt_add_collection_item_to_cart` calls the same shared collection/cart logic used by the human page. Its rapid duplicate-invocation behavior remains in the future runtime-test set.
 
 ### Navigation
 
-Covered semantically for Create, Virtual Try-On, Collection, and Cart without requiring agents to discover or click visual links.
+Create, Virtual Try-On, Collection, and Cart are semantically navigable without visual link discovery. No additional route tool is justified because the remaining UI surfaces do not expose stable user journeys that need separate agent-only navigation.
 
 ### Virtual Try-On
 
-Post-consent handoff remains covered. Photo acquisition stays intentionally human-controlled. Once a photo is available, an agent can inspect readiness, select an eligible existing cart item, invoke the same Perfect Corp action, receive deterministic success/failure state, and cancel execution.
+The privacy boundary remains correct. `crishirt_get_tryon_state` reveals readiness and eligible cart item IDs without exposing person-photo or generated-result bytes. `crishirt_run_virtual_tryon` reuses the same `generateVirtualTryOn` application action after the human has supplied a photo, propagates cancellation, and returns deterministic provider/cancellation errors. Camera/file permission and raw photo acquisition remain intentionally human-controlled.
 
-### Camera / AR privacy boundary
+### Tool ergonomics / schemas / payload / round trips
 
-No additional semantic automation is justified because automating camera acquisition or raw-photo transfer would weaken the intended user permission/privacy boundary and would expand beyond the current legitimate human workflow.
+The 13-tool surface remains coherent and high leverage. Read tools already return compact structured state suitable for planning; tiny setter wrappers would increase tool-discovery burden, while broader mega-tools would hide state transitions and make partial failures harder to recover from. Existing JSON Schemas remain bounded around current product capabilities rather than inventing agent-only functionality.
 
-### Tool ergonomics / payload / round trips
+### Unsupported browser / refresh / route changes
 
-No new tool is justified this run. The 13-tool surface remains coherent and high leverage. Tiny setter wrappers would increase discovery burden; broad mega-tools would hide state transitions and make partial failures harder to recover from. Current read tools already return compact structured state sufficient for planning follow-up actions.
+All bridges feature-detect `document.modelContext`, so the normal website remains usable when WebMCP is unavailable. Tools are registered from React-mounted bridges and registration lifetime is tied to component lifecycle through abort controllers. No safe additional source change was identified here without runtime browser validation.
 
 ## Tests and verification performed this run
 
 - Read `PROGRESS.md` before considering changes.
-- Verified repository identity as `UnknownGod2011/crishirt-perfect-corp`.
-- Verified working branch `webmcp-agent-native` and exact entering head `c0439284ec20e3e84e8c67e7102046d3d6735e23`.
+- Verified repository identity as `UnknownGod2011/crishirt-perfect-corp` and confirmed push/admin access only to the intended repository.
+- Verified working branch `webmcp-agent-native` and exact entering head `57903f8f3a8839178af6035f42cd6def8143fbac`.
 - Verified production `main` remains exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
-- Compared branch to production: 38 commits ahead, 0 behind, merge base exactly the production baseline.
-- Confirmed Vercel deployment `dpl_sgFfTZ5NrKp4EtsZPyTC5qhiiDf1` for exact commit `c0439284...` is `READY`.
-- Authenticated-fetch tested the exact preview root and received HTTP 200.
-- Re-inspected `src/components/WebMCPBridge.tsx`, including revision handling, generation/refinement busy checks, cancellation, semantic tool registration, cart add/remove, and navigation.
+- Compared branch to production: 39 commits ahead, 0 behind, merge base exactly the production baseline.
+- Inspected the full recursive branch tree before editing.
+- Confirmed Vercel deployment `dpl_J7UQhycAVmRR5AJ4sTc4q87DdcpU` for exact commit `57903f8f...` is `READY`.
+- Authenticated-fetch tested that exact preview root and received HTTP 200.
+- Re-inspected `src/components/WebMCPBridge.tsx`, including revision handling, generation/refinement busy checks, cancellation, semantic registration, workspace read/configuration/placement, cart operations, and navigation.
+- Re-inspected `src/components/CollectionWebMCPBridge.tsx`, including compact collection listing, shared catalog lookup, availability checks, and add-to-cart behavior.
+- Re-inspected `src/components/VRTryOn.tsx`, including privacy-safe state reporting, shared human/agent try-on execution, cancellation, busy handling, and deterministic errors.
 - Reconfirmed the duplicate-call timing window and optimistic-revision limitation for near-simultaneous mutations.
 - Retried a fresh clean local clone; it failed before checkout with DNS resolution error for `github.com`, so no functional concurrency patch was shipped.
 - Reverified the official WebMCP draft dated 2026-09-04 and its `document.modelContext` / `registerTool` API surface.
@@ -141,9 +148,15 @@ No new tool is justified this run. The 13-tool surface remains coherent and high
 
 `README.md` currently documents the 13-tool surface, agent-use philosophy, revision/cancellation behavior, collection flow, Virtual Try-On privacy boundary, shared human/agent actions, and representative testing guidance. No README change was justified in this run; detailed run history belongs here in `PROGRESS.md`.
 
+## Recent audit history
+
+- `57903f8f3a8839178af6035f42cd6def8143fbac` — prior no-op audit; exact preview later verified `READY` and HTTP 200.
+- `c0439284ec20e3e84e8c67e7102046d3d6735e23` — previous audit documenting the persistent build-validation blocker.
+- Earlier WebMCP implementation commits on this branch introduced and hardened the current 13-tool semantic surface while leaving production `main` unchanged.
+
 ## Latest commit SHA
 
-Latest audited working-branch commit entering this run: `c0439284ec20e3e84e8c67e7102046d3d6735e23`. This file is updated before the run's documentation commit is created, so the resulting new commit SHA is verified and recorded by the following run rather than attempting a self-referential commit hash.
+Latest audited working-branch commit entering this run: `57903f8f3a8839178af6035f42cd6def8143fbac`. This file is updated before the run's documentation commit is created, so the resulting new commit SHA is verified and recorded by the following run rather than attempting a self-referential commit hash.
 
 ## Next run
 
