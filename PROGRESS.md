@@ -8,11 +8,11 @@ Keep the existing human-facing CriShirt experience stable while exposing the sam
 - Production branch: `main`
 - Production commit: `88daa417caa5305f81e5554977a13a94a793cdeb`
 - Working branch: `webmcp-agent-native`
-- Branch head entering this run: `3cedc551c8287d2accc3d7422115dee58e5fb243`
-- Compare entering this run: 50 commits ahead of `main`, 0 behind; merge base exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Branch head entering this run: `009c54fbce160b27a596b974a516d6da22b76961`
+- Compare entering this run: 51 commits ahead of `main`, 0 behind; merge base exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Production remains on `main`; this WebMCP branch has not been promoted.
 - Vercel project: `crishirtpc` (`prj_jAm749oRS01LbAdwec2lKvKZgAEF`).
-- Exact entering deployment for `3cedc551...`: `dpl_9KMEFr29N9aTjpuBvkb8oQpXSUV1`, state `READY`.
+- Exact entering deployment for `009c54fb...`: `dpl_7njYg95DFAncksxw8zCx7CENsycQ`, state `READY`.
 - Vercel build logs confirm `tsc -b && vite build` succeeded, 2020 modules transformed, and deployment completed.
 - No production deployment configuration, environment variables, auth, database, commerce, or unrelated UI were changed.
 
@@ -53,12 +53,12 @@ Current draft facts still relevant to CriShirt:
 - `document.modelContext` is the imperative API surface.
 - `registerTool(tool, options)` is the semantic registration path.
 - `ToolExecuteCallbackOptions` has required `AbortSignal signal`.
-- `ToolExecuteCallback` is `(inputObject, options)`.
+- `ToolExecuteCallback` receives `(inputObject, options)`.
 - `ModelContextExecuteToolOptions.signal` cancels one execution.
 - `ModelContextRegisterToolOptions.signal` separately controls registration lifetime.
 - `getTools()` and `executeTool()` are the in-page discovery/execution APIs.
 
-The execution-cancellation correction remains standards-aligned; no compatibility shim is present or needed.
+No spec-driven source correction is needed this run.
 
 ## Fresh full-journey audit — 2026-09-06
 
@@ -68,7 +68,7 @@ Repository identity, branch identity, production baseline, branch divergence, an
 ### Create / edit
 `crishirt_get_workspace_state` still collapses garment state, front/back design presence, placement, busy state, cart count, valid options, route, and revision into one compact observation. `crishirt_configure_workspace` and `crishirt_set_design_placement` continue to replace multiple visual interactions with semantic shared-state mutations.
 
-No new compound create/edit tool is justified. Combining generation, placement, and cart mutation would save only a small number of calls while obscuring partial failure and recovery.
+No new compound create/edit tool is justified. Combining generation, placement, and cart mutation would save few calls while obscuring partial failure and recovery.
 
 ### Generation / refinement
 `crishirt_generate_design` and `crishirt_refine_design` still propagate the execution `AbortSignal` directly to provider fetches and emit deterministic cancellation/provider errors.
@@ -78,7 +78,7 @@ The immediate overlap window remains: both check React-backed `isGenerating` / `
 No code change was made because this alters live shared-state semantics and there is still no behavioral WebMCP execution harness available in this runtime to verify duplicate rejection, cancellation cleanup, provider-failure cleanup, and release behavior.
 
 ### Cart / revision correctness
-`expectedRevision` still prevents ordinary stale overwrites in the workspace bridge, but same-tick cart mutations can theoretically validate the same revision before React state propagation advances `revisionRef`. The collection add-to-cart bridge also intentionally shares the same human cart state rather than maintaining a second agent cart.
+`expectedRevision` still prevents ordinary stale overwrites in the workspace bridge, but same-tick cart mutations can theoretically validate the same revision before React state propagation advances `revisionRef`.
 
 A focused reservation/idempotency mechanism remains preferable to a global architecture rewrite. No cart change was shipped without reproducible behavioral verification.
 
@@ -94,21 +94,21 @@ The 13-tool surface remains coherent and high leverage. Inputs are bounded to ex
 - Read `PROGRESS.md` before editing.
 - Verified canonical repository and working branch.
 - Verified production `main` remains `88daa417caa5305f81e5554977a13a94a793cdeb`.
-- Verified working branch entered at `3cedc551c8287d2accc3d7422115dee58e5fb243`.
-- Compared branch against production: 50 commits ahead, 0 behind, merge base exactly production.
-- Verified exact Vercel preview `dpl_9KMEFr29N9aTjpuBvkb8oQpXSUV1` is `READY`.
+- Verified working branch entered at `009c54fbce160b27a596b974a516d6da22b76961`.
+- Compared branch against production: 51 commits ahead, 0 behind, merge base exactly production.
+- Verified exact Vercel preview `dpl_7njYg95DFAncksxw8zCx7CENsycQ` is `READY`.
 - Read its Vercel build logs: `tsc -b && vite build` succeeded, 2020 modules transformed, deployment completed.
 - Reverified the official 2026-09-04 WebMCP draft, including callback options, execution cancellation, registration cancellation, `getTools()`, and `executeTool()`.
-- Re-inspected the main workspace bridge and collection bridge for state/revision, generation/refinement, placement, cart, navigation, schemas, annotations, and error behavior.
-- Retried the browser validation path: the `agent-browser` executable is still not installed in this runtime (`command not found`).
+- Re-inspected the main workspace bridge and README for tool shape, state/revision handling, generation/refinement cancellation, schemas, annotations, and error behavior.
+- Retried local/browser validation prerequisites: `agent-browser` is still absent and direct GitHub access from the container still fails DNS resolution (`Could not resolve host: github.com`).
 - No functional source change was made, so no new product build was required for this audit-only commit; the entering functional tree is independently confirmed READY on Vercel.
 
 ## Failures found / fixes applied
 - No new functional regression found.
-- Previous execution-cancellation correction remains valid and deployed successfully on preview.
+- Existing WebMCP execution/cancellation contract remains aligned with the current draft.
 - Remaining: generation/refinement synchronous overlap candidate.
 - Remaining: same-revision cart mutation window.
-- Environment limitation: actual browser-side `document.modelContext.getTools()` / `executeTool()` execution is still unavailable because the browser automation executable is absent.
+- Environment limitation: actual browser-side `document.modelContext.getTools()` / `executeTool()` execution remains unavailable because the browser automation executable is absent.
 
 ## Remaining opportunities
 1. Execute real `document.modelContext.getTools()` discovery and representative `executeTool()` calls in a WebMCP-capable browser/testing surface when available.
@@ -119,10 +119,10 @@ The 13-tool surface remains coherent and high leverage. Inputs are bounded to ex
 6. Do not merge to `main` solely because a preview builds successfully.
 
 ## README
-`README.md` remains concise. Its WebMCP section describes the semantic tool philosophy, thirteen capabilities, privacy boundary, revision handling, testing approach, and per-execution cancellation semantics. Detailed run history remains here.
+`README.md` remains concise and accurate. Its WebMCP section describes the semantic tool philosophy, thirteen capabilities, privacy boundary, revision handling, testing approach, and per-execution cancellation semantics. Detailed run history remains here.
 
 ## Latest commit SHA
-Branch head entering this run: `3cedc551c8287d2accc3d7422115dee58e5fb243`.
+Branch head entering this run: `009c54fbce160b27a596b974a516d6da22b76961`.
 
 This file is updated before the audit commit is created, so the resulting commit SHA is intentionally recorded by the next run rather than attempting a self-referential hash.
 
