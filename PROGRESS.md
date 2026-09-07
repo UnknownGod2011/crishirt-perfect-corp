@@ -8,11 +8,11 @@ Keep the existing human-facing CriShirt experience stable while exposing the sam
 - Production branch: `main`
 - Production commit: `88daa417caa5305f81e5554977a13a94a793cdeb`
 - Working branch: `webmcp-agent-native`
-- Branch head entering this run: `277af5304eb8ee67f1db299d68911355bfb68b97`
-- Compare entering this run: 82 commits ahead of `main`, 0 behind; merge base exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Branch head entering this run: `44c686397f78a45b2b0221b3ca07c5dfcce03dd0`
+- Compare entering this run: 83 commits ahead of `main`, 0 behind; merge base exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Production remains on `main`; this WebMCP branch has not been promoted.
 - Vercel project remains `crishirtpc` (`prj_jAm749oRS01LbAdwec2lKvKZgAEF`).
-- Entering preview deployment `dpl_GWApAcD6mzecBz4GsBT6RiPpbSiv` is `READY`, tied to the canonical repository, `webmcp-agent-native`, and entering commit `277af5304eb8ee67f1db299d68911355bfb68b97`.
+- Entering preview deployment `dpl_8jzdU5SY3HarEpHY9jZH3fNHB8MA` is `READY`, tied to the canonical repository, `webmcp-agent-native`, and entering commit `44c686397f78a45b2b0221b3ca07c5dfcce03dd0`.
 - Its verified build cloned the canonical branch and successfully ran `npm install` followed by `tsc -b && vite build`; Vite transformed 2020 modules and completed normally.
 - No production deployment configuration, environment variables, auth, database, commerce, or unrelated UI were changed in this run.
 
@@ -61,7 +61,7 @@ No new spec-driven tool-surface correction is required this run.
 ## Fresh full-journey audit — 2026-09-08
 
 ### Repository / production isolation
-Verified canonical repository identity, default branch, working branch, exact entering head, production baseline, divergence, merge base, recursive repository tree, and current preview deployment before considering mutation. Production `main` remains untouched.
+Verified canonical repository identity, default branch, exact working branch head, production baseline, divergence, merge base, and recursive repository tree before considering mutation. Production `main` remains untouched.
 
 ### Create / edit / state recovery
 `crishirt_get_workspace_state` remains the compact semantic recovery primitive for route, garment configuration, front/back design presence and placement, busy state, cart count, valid product choices, and revision. Existing configuration, placement, navigation, generation, and refinement tools cover the stable human Create journey without selector micro-tools.
@@ -73,7 +73,7 @@ Generation and refinement remain semantically exposed through the existing provi
 Semantic placement remains materially better than agent-side dragging: one bounded action updates x/y/width/height/rotation on the same front/back state used by the visible editor. No DOM drag wrappers are justified.
 
 ### Cart / collection
-Current-design cart add, compact cart inspection, removal, collection listing, and collection add-to-cart remain covered using shared state/catalog. Intentional duplicate adds are valid existing behavior, so naive idempotency remains unsafe. The shared reducer confirms cart mutations remain the same underlying state used by the human UI.
+Current-design cart add, compact cart inspection, removal, collection listing, and collection add-to-cart remain covered using shared state/catalog. Intentional duplicate adds are valid existing behavior, so naive idempotency remains unsafe.
 
 ### Navigation / recovery
 `crishirt_navigate` maps only to existing Create, Virtual Try-On, Collection, and Cart destinations. No new navigation surface is justified.
@@ -97,14 +97,14 @@ The bridges still return early when `document.modelContext` or `registerTool` is
 ## Tests and verification performed this run
 - Read `PROGRESS.md` before editing.
 - Verified canonical repository identity, default branch, and push/admin access.
-- Verified `webmcp-agent-native` entered at `277af5304eb8ee67f1db299d68911355bfb68b97`.
+- Verified `webmcp-agent-native` entered at `44c686397f78a45b2b0221b3ca07c5dfcce03dd0`.
 - Verified `main` remains `88daa417caa5305f81e5554977a13a94a793cdeb`.
-- Compared working branch against production: 82 commits ahead, 0 behind, merge base exactly production.
+- Compared working branch against production: 83 commits ahead, 0 behind, merge base exactly production.
 - Enumerated the recursive repository tree at the exact branch head.
 - Reverified the official 2026-09-04 WebMCP draft and its current `document.modelContext` / `registerTool` / `getTools()` / `executeTool()` / execution `AbortSignal` API shape.
-- Re-read `src/components/WebMCPBridge.tsx`, `src/components/CollectionWebMCPBridge.tsx`, `src/components/VRTryOn.tsx`, and shared `src/store/AppContext.tsx` around semantic registration, shared state, revision handling, cancellation, cart behavior, and error paths.
+- Re-read `src/components/VRTryOn.tsx` around semantic registration, result state, shared refs, cancellation, and error paths.
 - Confirmed the Virtual Try-On registration effect still depends on `[tryOnResult]`.
-- Confirmed entering Vercel deployment `dpl_GWApAcD6mzecBz4GsBT6RiPpbSiv` is `READY` for the exact canonical branch head.
+- Confirmed entering Vercel deployment `dpl_8jzdU5SY3HarEpHY9jZH3fNHB8MA` is `READY` for the exact canonical branch head.
 - Inspected its build log: canonical clone succeeded, `npm install` succeeded, and `tsc -b && vite build` completed successfully with 2020 modules transformed.
 - Retried a clean local clone of `webmcp-agent-native`; it failed with `Could not resolve host: github.com`.
 - No functional source change was made, so no unvalidated behavior was committed.
@@ -128,7 +128,7 @@ The bridges still return early when `document.modelContext` or `registerTool` is
 7. Do not merge to `main` solely because a preview builds successfully.
 
 ## Latest commit SHA
-Branch head entering this run: `277af5304eb8ee67f1db299d68911355bfb68b97`.
+Branch head entering this run: `44c686397f78a45b2b0221b3ca07c5dfcce03dd0`.
 
 This file is updated before the audit commit is created, so the resulting commit SHA is intentionally recorded by the next run rather than attempting a self-referential hash.
 
