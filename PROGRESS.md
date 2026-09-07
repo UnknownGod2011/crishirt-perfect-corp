@@ -8,11 +8,11 @@ Keep the existing human-facing CriShirt experience stable while exposing the sam
 - Production branch: `main`
 - Production commit: `88daa417caa5305f81e5554977a13a94a793cdeb`
 - Working branch: `webmcp-agent-native`
-- Branch head entering this run: `ef6d9225ba7aa1d4fcf1fa75ece756b8a7b062eb`
-- Compare entering this run: 70 commits ahead of `main`, 0 behind; merge base exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Branch head entering this run: `4fddfa8ee36392a97aebb634c5f3c16af55f07ef`
+- Compare entering this run: 71 commits ahead of `main`, 0 behind; merge base exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Production remains on `main`; this WebMCP branch has not been promoted.
 - Vercel project remains `crishirtpc` (`prj_jAm749oRS01LbAdwec2lKvKZgAEF`).
-- Entering preview deployment `dpl_F8VejHSq1rL5kyJxSDdvCmDDWwqy` is `READY` and is tied to the correct repository, branch, and commit.
+- Entering preview deployment `dpl_4cXACPcT79CDaC96vzvKu2EWkc1o` is `READY` and is tied to the exact canonical repository, `webmcp-agent-native`, and entering commit.
 - No production deployment configuration, environment variables, auth, database, commerce, or unrelated UI were changed in this run.
 
 ## Current WebMCP tool surface
@@ -84,7 +84,7 @@ The privacy boundary remains correct: the human supplies the photo; WebMCP expos
 
 The strongest narrow improvement remains registration stability. `VRTryOn.tsx` still registers both Try-On tools in an effect whose dependency is `[tryOnResult]`. Successful try-on completion or clearing/changing the result therefore causes unchanged semantic tools to be unregistered and re-registered. The current official draft specifically documents that quick unregister/re-register transitions can race with discovery/execution. A component-lifetime registration backed by a synchronously maintained `tryOnResult` ref remains the preferred small fix.
 
-That functional change was **not shipped** this run because the mandatory clean local validation gate remains unavailable. A fresh clone failed before mutation with `Could not resolve host: github.com`. The connected Vercel preview proves the current entering commit builds cleanly, but it does not provide a pre-commit local validation surface for a new behavioral source edit.
+That functional change was **not shipped** this run because the mandatory clean local validation gate remains unavailable. A fresh clone failed before mutation with `Could not resolve host: github.com`. The connected Vercel preview proves the entering commit builds and deploys cleanly, but it does not provide a pre-commit local validation surface for a new behavioral source edit.
 
 ### Schemas, annotations, payloads, round trips, and observability
 The 13-tool surface remains coherent and high leverage. Read tools remain read-only, provider/user-derived read content remains marked untrusted where appropriate, schemas reject unknown fields, outputs remain compact/structured, and errors remain deterministic. No new compound tool materially improves journey cost enough to justify a broader mutation surface.
@@ -98,13 +98,13 @@ The bridges still return early when `document.modelContext` or `registerTool` is
 ## Tests and verification performed this run
 - Read `PROGRESS.md` before editing.
 - Verified canonical repository identity and push/admin access.
-- Verified `webmcp-agent-native` entered at `ef6d9225ba7aa1d4fcf1fa75ece756b8a7b062eb`.
+- Verified `webmcp-agent-native` entered at `4fddfa8ee36392a97aebb634c5f3c16af55f07ef`.
 - Verified `main` remains `88daa417caa5305f81e5554977a13a94a793cdeb`.
-- Compared working branch against production: 70 commits ahead, 0 behind, merge base exactly production.
+- Compared working branch against production: 71 commits ahead, 0 behind, merge base exactly production.
 - Reverified the official 2026-09-04 WebMCP draft and current `document.modelContext` / `registerTool` / `getTools()` / `executeTool()` / execution `AbortSignal` API shape.
 - Rechecked the draft's explicit quick unregister/re-register race note.
-- Confirmed entering Vercel deployment `dpl_F8VejHSq1rL5kyJxSDdvCmDDWwqy` is `READY` for the exact branch head.
-- Confirmed its build ran `npm install`, then `tsc -b && vite build`, transformed 2020 modules, and completed successfully.
+- Re-read `src/components/VRTryOn.tsx` and confirmed the registration effect still depends on `[tryOnResult]`.
+- Confirmed entering Vercel deployment `dpl_4cXACPcT79CDaC96vzvKu2EWkc1o` is `READY` for the exact branch head.
 - Retried a fresh clean clone of `webmcp-agent-native`; direct `github.com` DNS resolution still fails in the container with `Could not resolve host: github.com`.
 - No functional source change was made, so no unvalidated behavior was committed.
 
@@ -126,7 +126,7 @@ The bridges still return early when `document.modelContext` or `registerTool` is
 7. Do not merge to `main` solely because a preview builds successfully.
 
 ## Latest commit SHA
-Branch head entering this run: `ef6d9225ba7aa1d4fcf1fa75ece756b8a7b062eb`.
+Branch head entering this run: `4fddfa8ee36392a97aebb634c5f3c16af55f07ef`.
 
 This file is updated before the audit commit is created, so the resulting commit SHA is intentionally recorded by the next run rather than attempting a self-referential hash.
 
