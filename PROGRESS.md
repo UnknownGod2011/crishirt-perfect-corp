@@ -8,11 +8,11 @@ Keep the existing human-facing CriShirt experience stable while exposing the sam
 - Production branch: `main`
 - Production commit: `88daa417caa5305f81e5554977a13a94a793cdeb`
 - Working branch: `webmcp-agent-native`
-- Branch head entering this run: `d5427b8a10cb2bc52f231f769eeaaf621ae3b45f`
-- Compare entering this run: 105 commits ahead of `main`, 0 behind; merge base exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Branch head entering this run: `dab4d95a5f615309ac82c14a29a8b9820f1ddb67`
+- Compare entering this run: 106 commits ahead of `main`, 0 behind; merge base exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Production remains on `main`; the WebMCP branch has not been promoted.
 - Vercel project: `crishirtpc` (`prj_jAm749oRS01LbAdwec2lKvKZgAEF`).
-- Latest entering branch preview: `dpl_FACjb9sEYgnuvTxhofP8mcFfeZ49`, state `READY`, for commit `d5427b8a10cb2bc52f231f769eeaaf621ae3b45f`.
+- Latest entering branch preview: `dpl_FcRyUHAW8sUR5Z5zGGVdWSqXyezm`, state `READY`, for commit `dab4d95a5f615309ac82c14a29a8b9820f1ddb67`.
 - No production deployment configuration, environment variables, auth, database, commerce, Perfect Corp provider behavior, or unrelated UI was changed in this run.
 
 ## Current WebMCP tool surface
@@ -44,7 +44,7 @@ All WebMCP entry points feature-detect `document.modelContext`, so browsers with
 - Virtual Try-On keeps camera/file permission and raw person/result image data human-controlled.
 - Primary tools are semantic and structured; they do not expose selectors, arbitrary clicks, arbitrary URLs, or product capabilities the site does not already support.
 
-## Current official WebMCP specification check
+## Official WebMCP specification check
 Reverified on 2026-09-09 against the official Web Machine Learning Community Group Draft Community Group Report dated 2026-09-04.
 
 Relevant facts remain:
@@ -52,10 +52,8 @@ Relevant facts remain:
 - `registerTool(tool, options)` is the semantic registration path.
 - `getTools()` and `executeTool()` are the in-page discovery/execution APIs.
 - Tool execution receives an `AbortSignal`; registration lifetime can separately be tied to an `AbortSignal`.
-- The draft still documents ambiguity around rapid unregister/re-register cycles.
-- CriShirt's current semantic tools, compact schemas, cancellation, annotations, and privacy-safe structured outputs remain aligned with the draft.
-
-No new specification-driven tool-surface correction is required this run.
+- The draft explicitly documents ambiguity around rapid unregister/re-register cycles.
+- CriShirt's semantic tools, compact schemas, cancellation, annotations, and privacy-safe structured outputs remain aligned with the current draft.
 
 ## Fresh full-journey audit — 2026-09-09
 
@@ -63,7 +61,7 @@ No new specification-driven tool-surface correction is required this run.
 `crishirt_get_workspace_state` remains the high-leverage recovery primitive for route, garment configuration, front/back design presence and placement, busy state, cart count, valid options, and revision. Configure, placement, generation, refinement, and constrained navigation cover the stable Create journey without selector-level tools.
 
 ### Generation / refinement
-Generation and refinement continue to reuse the existing Perfect Corp-backed routes, validate inputs, expose deterministic failures, reject calls while shared workspace state is already busy, and pass execution cancellation to `fetch`. A bridge-only mutex remains unjustified because it would not protect the visible human path and could create divergent semantics.
+Generation and refinement continue to reuse existing Perfect Corp-backed routes, validate inputs, expose deterministic failures, reject calls while shared workspace state is already busy, and pass execution cancellation to `fetch`. A bridge-only mutex remains unjustified because it would not protect the visible human path and could create divergent semantics.
 
 ### Artwork placement
 One bounded semantic placement mutation remains substantially cheaper and more reliable for agents than visual dragging while preserving the same shared application state. No DOM drag wrapper is justified.
@@ -95,13 +93,14 @@ The bridges still feature-detect `document.modelContext` / `registerTool` and re
 ## Tests and verification performed this run
 - Read `PROGRESS.md` before editing.
 - Verified repository is exactly `UnknownGod2011/crishirt-perfect-corp` and default branch is `main`.
-- Verified working branch entered at `d5427b8a10cb2bc52f231f769eeaaf621ae3b45f`.
+- Verified working branch entered at `dab4d95a5f615309ac82c14a29a8b9820f1ddb67`.
 - Verified `main` remains `88daa417caa5305f81e5554977a13a94a793cdeb`.
-- Compared branch against production: 105 commits ahead, 0 behind, merge base exactly production.
+- Compared branch against production: 106 commits ahead, 0 behind, merge base exactly production.
 - Reverified the official 2026-09-04 WebMCP draft and current `document.modelContext`, `registerTool`, `getTools()`, `executeTool()`, cancellation, and registration-lifetime semantics.
 - Re-read the current Virtual Try-On registration path and confirmed the Try-On registration effect still depends on `[tryOnResult]`.
 - Attempted a fresh clean checkout of `webmcp-agent-native`; clone failed with `Could not resolve host: github.com`.
-- Verified latest entering feature-branch preview `dpl_FACjb9sEYgnuvTxhofP8mcFfeZ49` is `READY` for commit `d5427b8a10cb2bc52f231f769eeaaf621ae3b45f`.
+- Verified latest entering feature-branch preview `dpl_FcRyUHAW8sUR5Z5zGGVdWSqXyezm` is `READY` for commit `dab4d95a5f615309ac82c14a29a8b9820f1ddb67`.
+- Verified that preview ran `npm install` followed by `tsc -b && vite build`, transformed 2020 modules, completed the build, and deployed successfully.
 - No functional source change was made, so no speculative behavior was committed.
 
 ## Failures found / fixes applied
@@ -121,7 +120,7 @@ The bridges still feature-detect `document.modelContext` / `registerTool` and re
 7. Do not merge to `main` solely because a remote preview builds successfully.
 
 ## Latest commit SHA
-Branch head entering this run: `d5427b8a10cb2bc52f231f769eeaaf621ae3b45f`.
+Branch head entering this run: `dab4d95a5f615309ac82c14a29a8b9820f1ddb67`.
 
 This file is updated before the audit commit is created, so the resulting audit commit SHA is intentionally recorded by the next run rather than attempting a self-referential hash.
 
