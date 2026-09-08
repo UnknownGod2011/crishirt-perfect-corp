@@ -8,12 +8,12 @@ Keep the existing human-facing CriShirt experience stable while exposing the sam
 - Production branch: `main`
 - Production commit: `88daa417caa5305f81e5554977a13a94a793cdeb`
 - Working branch: `webmcp-agent-native`
-- Branch head entering this run: `1795867bd979b8f923d972cf9a84f3663e9e7460`
-- Compare entering this run: 93 commits ahead of `main`, 0 behind; merge base exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
-- Production remains on `main`; this WebMCP branch has not been promoted.
+- Branch head entering this run: `8a26375f323e567fed9abe82e9859719679a0c3d`
+- Compare entering this run: 94 commits ahead of `main`, 0 behind; merge base exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Production remains on `main`; the WebMCP branch has not been promoted.
 - Vercel project: `crishirtpc` (`prj_jAm749oRS01LbAdwec2lKvKZgAEF`), linked to this canonical GitHub repository.
-- Latest entering branch preview: `dpl_8BHesv91M14U88yfqv7Rs3nVZTzS`, state `READY`, for commit `1795867bd979b8f923d972cf9a84f3663e9e7460`.
-- That preview cloned `webmcp-agent-native`, ran `npm install`, then `tsc -b && vite build`, transformed 2020 modules, and completed successfully.
+- Latest entering branch preview: `dpl_FF3ssEC8pmAar7ru98bUz8e32CUt`, state `READY`, for commit `8a26375f323e567fed9abe82e9859719679a0c3d`.
+- Its build cloned `webmcp-agent-native`, ran `npm install`, then `tsc -b && vite build`, transformed 2020 modules, and completed successfully.
 - No production deployment configuration, environment variables, auth, database, commerce, Perfect Corp provider behavior, or unrelated UI was changed in this run.
 
 ## Current WebMCP tool surface
@@ -85,7 +85,7 @@ The privacy boundary remains correct: a human supplies the photo through the vis
 
 Preferred fix remains: maintain a synchronous `tryOnResultRef`, have `crishirt_get_tryon_state` read that ref, and register both tools for component lifetime rather than result lifetime.
 
-The behavioral fix was intentionally not shipped this run because the required pre-commit local validation gate is still unavailable. A fresh clean clone attempt failed before dependency installation with `Could not resolve host: github.com`. The connected GitHub and Vercel APIs can inspect repository state and completed remote builds, but a post-commit preview build is not a substitute for the requested pre-ship full-app build/test gate.
+The behavioral fix was intentionally not shipped this run because the required pre-commit full-app validation gate remains unavailable. A fresh clean clone attempt failed before dependency installation with `Could not resolve host: github.com`. The connected GitHub and Vercel APIs can inspect repository state and completed remote builds, but a previous successful preview is not a substitute for validating a new behavioral edit before committing it.
 
 ### Schemas, annotations, payloads, round trips, observability
 The 13-tool surface remains coherent and high leverage. Read tools are marked read-only where appropriate; provider/user-derived read content is marked untrusted where appropriate; schemas reject unknown fields; outputs remain compact and deterministic. No extra compound tool lowers journey cost enough to justify broadening the mutation surface this run.
@@ -94,20 +94,18 @@ The 13-tool surface remains coherent and high leverage. Read tools are marked re
 The bridges still feature-detect `document.modelContext` / `registerTool` and return early when unsupported. Nothing in this run changed rendering, Perfect Corp provider paths, editing/placement, cart behavior, navigation, collection UI, or try-on controls.
 
 ### README maturity check
-`README.md` remains appropriately scoped for the current mature semantic WebMCP surface. Its concise WebMCP section accurately describes the philosophy, thirteen implemented tools, shared state, cancellation, privacy boundaries, and test guidance. No README change is justified this run.
+`README.md` remains appropriately scoped for the current mature semantic WebMCP surface. No README change is justified this run.
 
 ## Tests and verification performed this run
 - Read `PROGRESS.md` before editing.
 - Verified repository is exactly `UnknownGod2011/crishirt-perfect-corp` and default branch is `main`.
-- Verified working branch entered at `1795867bd979b8f923d972cf9a84f3663e9e7460`.
+- Verified working branch entered at `8a26375f323e567fed9abe82e9859719679a0c3d`.
 - Verified `main` remains `88daa417caa5305f81e5554977a13a94a793cdeb`.
-- Compared branch against production: 93 commits ahead, 0 behind, merge base exactly production.
+- Compared branch against production: 94 commits ahead, 0 behind, merge base exactly production.
 - Reverified the official 2026-09-04 WebMCP draft and current `document.modelContext`, `registerTool`, `getTools()`, `executeTool()`, cancellation, and registration-lifetime semantics.
 - Re-read the current Virtual Try-On registration path and confirmed the registration effect still depends on `[tryOnResult]`.
-- Re-read the mature README WebMCP section and confirmed it remains accurate.
 - Retried a clean canonical clone for local validation; clone failed with `Could not resolve host: github.com`.
-- Verified Vercel project `crishirtpc` is linked to `UnknownGod2011/crishirt-perfect-corp`.
-- Verified latest entering feature-branch preview `dpl_8BHesv91M14U88yfqv7Rs3nVZTzS` is `READY` for commit `1795867bd979b8f923d972cf9a84f3663e9e7460`.
+- Verified latest entering feature-branch preview `dpl_FF3ssEC8pmAar7ru98bUz8e32CUt` is `READY` for commit `8a26375f323e567fed9abe82e9859719679a0c3d`.
 - Verified its build log ran `npm install`, then `tsc -b && vite build`, transformed 2020 modules, and completed successfully.
 - No functional source change was made, so no speculative behavior was committed.
 
@@ -130,7 +128,7 @@ The bridges still feature-detect `document.modelContext` / `registerTool` and re
 7. Do not merge to `main` solely because a remote preview builds successfully.
 
 ## Latest commit SHA
-Branch head entering this run: `1795867bd979b8f923d972cf9a84f3663e9e7460`.
+Branch head entering this run: `8a26375f323e567fed9abe82e9859719679a0c3d`.
 
 This file is updated before the audit commit is created, so the resulting audit commit SHA is intentionally recorded by the next run rather than attempting a self-referential hash.
 
