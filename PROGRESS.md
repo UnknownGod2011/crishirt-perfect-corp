@@ -8,8 +8,8 @@ Keep the existing human-facing CriShirt experience stable while exposing the sam
 - Production branch: `main`
 - Production commit: `88daa417caa5305f81e5554977a13a94a793cdeb`
 - Working branch: `webmcp-agent-native`
-- Branch head entering this run: `4705665cb04d771aebed236ac17aa99dcddcf4d3`
-- Compare entering this run: 86 commits ahead of `main`, 0 behind; merge base exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Branch head entering this run: `8a074d617f3df301cb69ab9bc2f905a96e419399`
+- Compare entering this run: 87 commits ahead of `main`, 0 behind; merge base exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Production remains on `main`; this WebMCP branch has not been promoted.
 - No production deployment configuration, environment variables, auth, database, commerce, or unrelated UI were changed in this run.
 
@@ -94,12 +94,12 @@ The bridges still return early when `document.modelContext` or `registerTool` is
 ## Tests and verification performed this run
 - Read `PROGRESS.md` before editing.
 - Verified canonical repository identity and default branch.
-- Verified `webmcp-agent-native` entered at `4705665cb04d771aebed236ac17aa99dcddcf4d3`.
+- Verified `webmcp-agent-native` entered at `8a074d617f3df301cb69ab9bc2f905a96e419399`.
 - Verified `main` remains `88daa417caa5305f81e5554977a13a94a793cdeb`.
-- Compared working branch against production: 86 commits ahead, 0 behind, merge base exactly production.
+- Compared working branch against production: 87 commits ahead, 0 behind, merge base exactly production.
 - Reverified the official 2026-09-04 WebMCP draft and its current `document.modelContext` / `registerTool` / `getTools()` / `executeTool()` API shape.
-- Re-read `src/components/VRTryOn.tsx` around semantic registration, state refs, cancellation, privacy boundary, and error paths.
-- Confirmed the registration effect still ends with dependency `[tryOnResult]`.
+- Re-read `src/components/WebMCPBridge.tsx` and `src/components/VRTryOn.tsx` around semantic registration, state refs, revision validation, cancellation, privacy boundary, and error paths.
+- Confirmed the Virtual Try-On registration effect still ends with dependency `[tryOnResult]`.
 - Retried a clean local clone of the canonical `webmcp-agent-native` branch; it again failed with `Could not resolve host: github.com`.
 - No functional source change was made, so no unvalidated behavior was committed.
 
@@ -122,7 +122,7 @@ The bridges still return early when `document.modelContext` or `registerTool` is
 7. Do not merge to `main` solely because a remote preview builds successfully.
 
 ## Latest commit SHA
-Branch head entering this run: `4705665cb04d771aebed236ac17aa99dcddcf4d3`.
+Branch head entering this run: `8a074d617f3df301cb69ab9bc2f905a96e419399`.
 
 This file is updated before the audit commit is created, so the resulting audit commit SHA is intentionally recorded by the next run rather than attempting a self-referential hash.
 
