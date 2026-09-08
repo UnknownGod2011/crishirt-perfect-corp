@@ -8,12 +8,12 @@ Keep the existing human-facing CriShirt experience stable while exposing the sam
 - Production branch: `main`
 - Production commit: `88daa417caa5305f81e5554977a13a94a793cdeb`
 - Working branch: `webmcp-agent-native`
-- Branch head entering this run: `873a30d24c1404b6a80f1ca06d7a3c1f31ade29e`
-- Compare entering this run: 101 commits ahead of `main`, 0 behind; merge base exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Branch head entering this run: `bfbf62b7a254d05f2547b86d16887d8399bbbc16`
+- Compare entering this run: 102 commits ahead of `main`, 0 behind; merge base exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Production remains on `main`; the WebMCP branch has not been promoted.
 - Vercel project: `crishirtpc` (`prj_jAm749oRS01LbAdwec2lKvKZgAEF`).
-- Latest entering branch preview: `dpl_8qXJkrijJwcTfKfivbY6bjgrLYkA`, state `READY`, for commit `873a30d24c1404b6a80f1ca06d7a3c1f31ade29e`.
-- The preview root returned HTTP 200 and served the expected CriShirt Vite shell.
+- Latest entering branch preview: `dpl_7ZE2wBs4XjV6WWg5gbZdd9X1ijab`, state `READY`, for commit `bfbf62b7a254d05f2547b86d16887d8399bbbc16`.
+- That preview cloned the canonical repository/branch and passed `npm install` plus `tsc -b && vite build`; Vite transformed 2020 modules and deployment completed successfully.
 - No production deployment configuration, environment variables, auth, database, commerce, Perfect Corp provider behavior, or unrelated UI was changed in this run.
 
 ## Current WebMCP tool surface
@@ -53,7 +53,7 @@ Current relevant facts:
 - `registerTool(tool, options)` remains the semantic registration path.
 - `getTools()` and `executeTool()` remain the in-page discovery/execution APIs.
 - Tool execution receives an `AbortSignal`; registration lifetime can separately be tied to an `AbortSignal`.
-- The draft still explicitly documents ambiguity around rapid unregister/re-register cycles.
+- The draft still documents ambiguity around rapid unregister/re-register cycles.
 - Current CriShirt semantic tools, compact schemas, cancellation, annotations, and privacy-safe structured outputs remain aligned with the draft.
 
 No new spec-driven tool-surface correction is required this run.
@@ -78,17 +78,17 @@ Current-design add-to-cart, compact cart inspection, removal, collection listing
 ### Virtual Try-On
 The privacy boundary remains correct: a human supplies the photo through the visible UI; the agent can read privacy-safe readiness and execute try-on against an eligible existing cart item. Raw person/result images are not returned through WebMCP.
 
-`VRTryOn.tsx` still registers both Try-On tools inside an effect with dependency `[tryOnResult]`. Successful result changes and result clearing therefore unregister and re-register otherwise identical tools. This remains the strongest narrow source improvement because the current specification explicitly warns that rapid unregister/re-register can race with discovery/execution.
+`VRTryOn.tsx` still registers both Try-On tools inside an effect with dependency `[tryOnResult]`. Successful result changes and result clearing therefore unregister and re-register otherwise identical tools. This remains the strongest narrow source improvement because the current specification warns that rapid unregister/re-register can race with discovery/execution.
 
 Preferred fix remains: maintain a synchronous `tryOnResultRef`, have `crishirt_get_tryon_state` read that ref, and register both tools for component lifetime rather than result lifetime.
 
-The behavioral fix was intentionally not shipped this run. A fresh clean checkout again failed before source retrieval with `Could not resolve host: github.com`. The connected GitHub surface can inspect exact source and the connected Vercel surface can verify completed branch previews, but neither is a substitute for the requested pre-commit build/test validation of a new source mutation.
+The behavioral fix was intentionally not shipped this run. A fresh clean checkout of the canonical branch again failed before source retrieval with `Could not resolve host: github.com`. The connected GitHub surface can inspect exact source and Vercel can verify completed branch previews, but neither substitutes for the requested pre-commit build/test validation of a new source mutation.
 
 ### Schemas, annotations, payloads, round trips, observability
 The 13-tool surface remains coherent and high leverage. Read tools are read-only where appropriate; provider/user-derived content is marked untrusted where appropriate; schemas reject unknown fields; outputs remain compact and deterministic. No additional compound tool reduces interaction cost enough to justify broadening the mutation surface this run.
 
 ### Unsupported browser / human website
-The bridges still feature-detect `document.modelContext` / `registerTool` and return early when unsupported. The latest branch preview serves the normal app shell successfully. No change this run touched rendering, Perfect Corp provider paths, editing/placement, cart behavior, navigation, collection UI, or try-on controls.
+The bridges still feature-detect `document.modelContext` / `registerTool` and return early when unsupported. No change this run touched rendering, Perfect Corp provider paths, editing/placement, cart behavior, navigation, collection UI, or try-on controls.
 
 ### README maturity check
 `README.md` remains appropriately scoped for the mature semantic WebMCP surface. No README change is justified this run.
@@ -96,24 +96,20 @@ The bridges still feature-detect `document.modelContext` / `registerTool` and re
 ## Tests and verification performed this run
 - Read `PROGRESS.md` before editing.
 - Verified repository is exactly `UnknownGod2011/crishirt-perfect-corp` and default branch is `main`.
-- Verified working branch entered at `873a30d24c1404b6a80f1ca06d7a3c1f31ade29e`.
+- Verified working branch entered at `bfbf62b7a254d05f2547b86d16887d8399bbbc16`.
 - Verified `main` remains `88daa417caa5305f81e5554977a13a94a793cdeb`.
-- Compared branch against production: 101 commits ahead, 0 behind, merge base exactly production.
+- Compared branch against production: 102 commits ahead, 0 behind, merge base exactly production.
 - Reverified the official 2026-09-04 WebMCP draft and current `document.modelContext`, `registerTool`, `getTools()`, `executeTool()`, cancellation, and registration-lifetime semantics.
-- Re-read the current main WebMCP bridge and Virtual Try-On registration path.
-- Confirmed generation/refinement busy-state checks and AbortSignal propagation remain present.
-- Confirmed the Virtual Try-On registration effect still depends on `[tryOnResult]`.
+- Re-read the current Virtual Try-On registration path and confirmed its registration effect still depends on `[tryOnResult]`.
 - Attempted a fresh clean checkout of `webmcp-agent-native`; clone failed with `Could not resolve host: github.com`.
-- Verified latest entering feature-branch preview `dpl_8qXJkrijJwcTfKfivbY6bjgrLYkA` is `READY` for commit `873a30d24c1404b6a80f1ca06d7a3c1f31ade29e`.
-- Verified that preview root returns HTTP 200 and the expected CriShirt Vite shell.
+- Verified latest entering feature-branch preview `dpl_7ZE2wBs4XjV6WWg5gbZdd9X1ijab` is `READY` for commit `bfbf62b7a254d05f2547b86d16887d8399bbbc16`.
+- Verified that preview build ran `npm install` and `tsc -b && vite build`, transformed 2020 modules, and completed deployment successfully.
 - No functional source change was made, so no speculative behavior was committed.
 
 ## Failures found / fixes applied
 - No new human-flow regression found.
 - No missing high-leverage semantic capability found.
 - Registration-lifecycle inefficiency remains in Virtual Try-On.
-- Remaining candidate: shared generation/refinement overlap protection covering both human and agent paths, only if a race can be reproduced safely.
-- Remaining candidate: focused cart retry/same-tick protection that preserves intentional duplicate adds, only if a retry race can be reproduced.
 - Environment limitation remains: clean local checkout is blocked by DNS and no actual WebMCP-capable browser execution surface was available in this run.
 - Durable handoff updated with exact repository, deployment, specification, audit, blocker, and next-run facts.
 
@@ -127,7 +123,7 @@ The bridges still feature-detect `document.modelContext` / `registerTool` and re
 7. Do not merge to `main` solely because a remote preview builds successfully.
 
 ## Latest commit SHA
-Branch head entering this run: `873a30d24c1404b6a80f1ca06d7a3c1f31ade29e`.
+Branch head entering this run: `bfbf62b7a254d05f2547b86d16887d8399bbbc16`.
 
 This file is updated before the audit commit is created, so the resulting audit commit SHA is intentionally recorded by the next run rather than attempting a self-referential hash.
 
