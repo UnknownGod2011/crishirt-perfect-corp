@@ -8,12 +8,11 @@ Keep the existing human-facing CriShirt experience stable while exposing the sam
 - Production branch: `main`
 - Production commit: `88daa417caa5305f81e5554977a13a94a793cdeb`
 - Working branch: `webmcp-agent-native`
-- Branch head entering this run: `82e9b6a989b3a8e4d79ac853ea9486982e01458f`
-- Compare entering this run: 103 commits ahead of `main`, 0 behind; merge base exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Branch head entering this run: `b038d98a0f476891f1ef8c6e8e45f92d24c67967`
+- Compare entering this run: 104 commits ahead of `main`, 0 behind; merge base exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Production remains on `main`; the WebMCP branch has not been promoted.
 - Vercel project: `crishirtpc` (`prj_jAm749oRS01LbAdwec2lKvKZgAEF`).
-- Latest entering branch preview: `dpl_7HqBCQWte9BtzqW43LBAcqfnTmSR`, state `READY`, for commit `82e9b6a989b3a8e4d79ac853ea9486982e01458f`.
-- That preview cloned the canonical repository/branch and passed `npm install` plus `tsc -b && vite build`; Vite transformed 2020 modules and deployment completed successfully.
+- Latest entering branch preview: `dpl_23NP44mZdRwhFZcZxtEjom7deSK8`, state `READY`, for commit `b038d98a0f476891f1ef8c6e8e45f92d24c67967`.
 - No production deployment configuration, environment variables, auth, database, commerce, Perfect Corp provider behavior, or unrelated UI was changed in this run.
 
 ## Current WebMCP tool surface
@@ -96,15 +95,13 @@ The bridges still feature-detect `document.modelContext` / `registerTool` and re
 ## Tests and verification performed this run
 - Read `PROGRESS.md` before editing.
 - Verified repository is exactly `UnknownGod2011/crishirt-perfect-corp` and default branch is `main`.
-- Verified working branch entered at `82e9b6a989b3a8e4d79ac853ea9486982e01458f`.
+- Verified working branch entered at `b038d98a0f476891f1ef8c6e8e45f92d24c67967`.
 - Verified `main` remains `88daa417caa5305f81e5554977a13a94a793cdeb`.
-- Compared branch against production: 103 commits ahead, 0 behind, merge base exactly production.
+- Compared branch against production: 104 commits ahead, 0 behind, merge base exactly production.
 - Reverified the official 2026-09-04 WebMCP draft and current `document.modelContext`, `registerTool`, `getTools()`, `executeTool()`, cancellation, and registration-lifetime semantics.
-- Re-read the current main WebMCP bridge and Virtual Try-On registration path.
-- Confirmed the Try-On registration effect still depends on `[tryOnResult]`.
+- Re-read the current Virtual Try-On registration path and confirmed the Try-On registration effect still depends on `[tryOnResult]`.
 - Attempted a fresh clean checkout of `webmcp-agent-native`; clone failed with `Could not resolve host: github.com`.
-- Verified latest entering feature-branch preview `dpl_7HqBCQWte9BtzqW43LBAcqfnTmSR` is `READY` for commit `82e9b6a989b3a8e4d79ac853ea9486982e01458f`.
-- Verified that preview build ran `npm install` and `tsc -b && vite build`, transformed 2020 modules, and completed deployment successfully.
+- Verified latest entering feature-branch preview `dpl_23NP44mZdRwhFZcZxtEjom7deSK8` is `READY` for commit `b038d98a0f476891f1ef8c6e8e45f92d24c67967`.
 - No functional source change was made, so no speculative behavior was committed.
 
 ## Failures found / fixes applied
@@ -124,7 +121,7 @@ The bridges still feature-detect `document.modelContext` / `registerTool` and re
 7. Do not merge to `main` solely because a remote preview builds successfully.
 
 ## Latest commit SHA
-Branch head entering this run: `82e9b6a989b3a8e4d79ac853ea9486982e01458f`.
+Branch head entering this run: `b038d98a0f476891f1ef8c6e8e45f92d24c67967`.
 
 This file is updated before the audit commit is created, so the resulting audit commit SHA is intentionally recorded by the next run rather than attempting a self-referential hash.
 
