@@ -8,8 +8,8 @@ Keep the existing human-facing CriShirt experience stable while exposing the sam
 - Production branch: `main`
 - Production commit: `88daa417caa5305f81e5554977a13a94a793cdeb`
 - Working branch: `webmcp-agent-native`
-- Branch head entering this run: `7933c8d83ec14cb429c313b210f3f6752eedfa17`
-- Compare entering this run: 88 commits ahead of `main`, 0 behind; merge base exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Branch head entering this run: `c84cc5b980e07dcc85786d4f77bbc657c6d4690b`
+- Compare entering this run: 89 commits ahead of `main`, 0 behind; merge base exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Production remains on `main`; this WebMCP branch has not been promoted.
 - No production deployment configuration, environment variables, auth, database, commerce, or unrelated UI were changed in this run.
 
@@ -49,10 +49,9 @@ Current relevant facts:
 - `document.modelContext` remains the imperative API surface.
 - `registerTool(tool, options)` remains the semantic registration path.
 - `getTools()` and `executeTool()` remain the in-page discovery/execution APIs.
-- Tool execution receives a required `AbortSignal`; registration lifetime can separately be tied to an `AbortSignal`.
-- Tool annotations currently define `readOnlyHint`, `untrustedContentHint`, and `consequentialHint`.
-- `consequentialHint` is intended for significant real-world or non-reversible actions; no existing CriShirt WebMCP operation currently justifies setting it true.
-- The draft still documents lifecycle ambiguity around rapid unregister/re-register cycles.
+- Tool execution receives an `AbortSignal`; registration lifetime can separately be tied to an `AbortSignal`.
+- The draft still explicitly documents ambiguity around rapid unregister/re-register cycles, including an example where a caller can observe an old or newly registered tool.
+- Current CriShirt use of semantic tools, compact schemas, and cancellation remains aligned with the draft.
 
 No new spec-driven tool-surface correction is required this run.
 
@@ -81,10 +80,10 @@ The privacy boundary remains correct: the human supplies the photo; WebMCP only 
 
 `VRTryOn.tsx` still registers both Try-On tools in an effect with dependency `[tryOnResult]`. Successful result changes and result clearing therefore unregister and re-register otherwise identical tools. This directly intersects the current spec's documented rapid re-registration ambiguity. The preferred narrow fix remains component-lifetime registration backed by a synchronously maintained `tryOnResult` ref.
 
-That behavioral change was intentionally not shipped in this run because a mandatory pre-ship full-app build/test surface is not available from the connected GitHub API. The prior clean-checkout environment limitation remains unresolved for behavioral edits. A remote post-commit build would not satisfy the requirement to avoid committing speculative or unvalidated code.
+That behavioral change was intentionally not shipped in this run because the mandatory pre-ship full-app build/test gate remains unavailable: a fresh clean clone attempt failed with `Could not resolve host: github.com`. The connected GitHub API can inspect and edit files but cannot substitute for a pre-commit local `npm install` + `npm run build` validation surface. A remote post-commit build would not satisfy the requirement to avoid speculative commits.
 
 ### Schemas, annotations, payloads, round trips, and observability
-The 13-tool surface remains coherent and high leverage. Read tools remain read-only, provider/user-derived read content remains marked untrusted where appropriate, schemas reject unknown fields, outputs remain compact/structured, and errors remain deterministic. The newly reverified `consequentialHint` annotation does not apply to current tools. No new compound tool materially lowers journey cost enough to justify a broader mutation surface this run.
+The 13-tool surface remains coherent and high leverage. Read tools remain read-only, provider/user-derived read content remains marked untrusted where appropriate, schemas reject unknown fields, outputs remain compact/structured, and errors remain deterministic. No new compound tool materially lowers journey cost enough to justify a broader mutation surface this run.
 
 ### Unsupported browser / human website
 The bridges still return early when `document.modelContext` or `registerTool` is unavailable. Nothing in this run changed rendering, Perfect Corp provider paths, human cart behavior, navigation, collection UI, editing/placement, or try-on controls.
@@ -95,13 +94,13 @@ The bridges still return early when `document.modelContext` or `registerTool` is
 ## Tests and verification performed this run
 - Read `PROGRESS.md` before editing.
 - Verified canonical repository identity and default branch.
-- Verified `webmcp-agent-native` entered at `7933c8d83ec14cb429c313b210f3f6752eedfa17`.
+- Verified `webmcp-agent-native` entered at `c84cc5b980e07dcc85786d4f77bbc657c6d4690b`.
 - Verified `main` remains `88daa417caa5305f81e5554977a13a94a793cdeb`.
-- Compared working branch against production: 88 commits ahead, 0 behind, merge base exactly production.
+- Compared working branch against production: 89 commits ahead, 0 behind, merge base exactly production.
 - Reverified the official 2026-09-04 WebMCP draft and current `document.modelContext` / `registerTool` / `getTools()` / `executeTool()` API shape.
-- Reverified current annotation semantics: `readOnlyHint`, `untrustedContentHint`, and `consequentialHint`.
 - Re-read `src/components/VRTryOn.tsx` around semantic registration, state refs, cancellation, privacy boundary, busy handling, provider failures, and error paths.
 - Confirmed the Virtual Try-On registration effect still ends with dependency `[tryOnResult]`.
+- Retried a clean checkout and full build path; cloning failed before dependency installation with `Could not resolve host: github.com`.
 - No functional source change was made, so no unvalidated behavior was committed.
 
 ## Failures found / fixes applied
@@ -110,7 +109,7 @@ The bridges still return early when `document.modelContext` or `registerTool` is
 - Registration-lifecycle inefficiency remains in Virtual Try-On.
 - Remaining candidate: shared generation/refinement same-tick overlap protection covering both human and agent paths.
 - Remaining candidate: focused cart retry/same-tick protection that preserves intentional duplicate adds.
-- Environment limitation remains: no safe pre-commit build-capable checkout or actual browser-side `document.modelContext.getTools()` / `executeTool()` execution surface is available in this run.
+- Environment limitation remains transient: this run could not obtain a clean build-capable checkout or actual browser-side `document.modelContext.getTools()` / `executeTool()` execution surface.
 - Durable handoff updated with exact current branch/spec/audit facts and verified no-op reasoning.
 
 ## Remaining opportunities
@@ -123,7 +122,7 @@ The bridges still return early when `document.modelContext` or `registerTool` is
 7. Do not merge to `main` solely because a remote preview builds successfully.
 
 ## Latest commit SHA
-Branch head entering this run: `7933c8d83ec14cb429c313b210f3f6752eedfa17`.
+Branch head entering this run: `c84cc5b980e07dcc85786d4f77bbc657c6d4690b`.
 
 This file is updated before the audit commit is created, so the resulting audit commit SHA is intentionally recorded by the next run rather than attempting a self-referential hash.
 
