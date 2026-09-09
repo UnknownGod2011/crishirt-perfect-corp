@@ -8,8 +8,8 @@ Keep the existing human-facing CriShirt experience stable while exposing the sam
 - Production branch: `main`.
 - Production commit: `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Working branch: `webmcp-agent-native`.
-- Branch head entering this audit: `ab0d1bfe1d54b1dc317abe80e7a257f52c13602c`.
-- Compare entering this audit: 124 commits ahead of `main`, 0 behind; merge base is exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Branch head entering this audit: `cc6d6c916ee41cbfadd4ed03d91523cc64929410`.
+- Compare entering this audit: 125 commits ahead of `main`, 0 behind; merge base is exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - GitHub combined status on the entering branch head: Vercel `success`.
 - Production remains on `main`; this audit did not alter production or deployment configuration.
 
@@ -52,11 +52,12 @@ Current relevant facts:
 - `getTools()` and `executeTool()` remain the in-page discovery/execution APIs.
 - Tool execution and registration lifetime can use `AbortSignal`.
 - The specification continues to document same-name registration ambiguity, so unnecessary registration churn should be avoided.
+- The official test suite remains linked from the report at WPT (`wpt.fyi/results/webmcp`).
 
-## Fresh full-journey audit — 2026-09-09 21:24 IST
+## Fresh full-journey audit — 2026-09-09 22:21 IST
 
 ### Repository / production isolation
-Verified the canonical repository, default branch `main`, working branch `webmcp-agent-native`, entering branch head `ab0d1bfe1d54b1dc317abe80e7a257f52c13602c`, and exact production merge base `88daa417caa5305f81e5554977a13a94a793cdeb`. The WebMCP branch is 124 commits ahead / 0 behind. No unrelated repository or production configuration was touched.
+Verified the canonical repository, default branch `main`, working branch `webmcp-agent-native`, entering branch head `cc6d6c916ee41cbfadd4ed03d91523cc64929410`, and exact production merge base `88daa417caa5305f81e5554977a13a94a793cdeb`. The WebMCP branch is 125 commits ahead / 0 behind. No unrelated repository or production configuration was touched.
 
 The WebMCP-relevant changed surface relative to production remains limited to `PROGRESS.md`, the concise README WebMCP section, `src/App.tsx`, `src/components/WebMCPBridge.tsx`, `src/components/CollectionWebMCPBridge.tsx`, `src/components/VRTryOn.tsx`, `src/config/collectionCatalog.ts`, and `src/pages/collection.tsx`.
 
@@ -91,10 +92,10 @@ The concise README WebMCP section remains mature; no README change is justified 
 ## Tests and verification performed this audit
 - Read `PROGRESS.md` before editing.
 - Verified repository is exactly `UnknownGod2011/crishirt-perfect-corp` and default branch is `main`.
-- Verified entering WebMCP branch head is `ab0d1bfe1d54b1dc317abe80e7a257f52c13602c`.
-- Compared `main...webmcp-agent-native`: 124 ahead, 0 behind, merge base exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Verified entering WebMCP branch head is `cc6d6c916ee41cbfadd4ed03d91523cc64929410`.
+- Compared `main...webmcp-agent-native`: 125 ahead, 0 behind, merge base exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Checked GitHub combined status for the entering branch head; Vercel reports `success`.
-- Reverified the official 2026-09-04 WebMCP draft, including `document.modelContext`, `registerTool`, `getTools()`, `executeTool()`, AbortSignal support, and same-name re-registration ambiguity.
+- Reverified the official 2026-09-04 WebMCP draft, including `document.modelContext`, `registerTool`, `getTools()`, `executeTool()`, AbortSignal support, same-name re-registration ambiguity, and the linked Web Platform Tests suite.
 - Reinspected `src/components/VRTryOn.tsx`; confirmed Try-On registration still depends on `[tryOnResult]`, while provider cancellation still flows through the tool signal into `fetch`.
 - Attempted a fresh clean clone of `webmcp-agent-native`; it failed with `Could not resolve host: github.com`.
 - No functional source mutation was made, so no unbuilt speculative behavior was committed.
@@ -109,16 +110,17 @@ The concise README WebMCP section remains mature; no README change is justified 
 ## Remaining opportunities
 1. As soon as a build-capable clean checkout is available, implement and locally validate the Virtual Try-On result-ref/component-lifetime registration fix before committing it.
 2. Execute actual `document.modelContext.getTools()` discovery and representative `executeTool()` journeys in a WebMCP-capable browser or official test harness when available.
-3. Reproduce simultaneous human/agent generation/refinement before adding any shared concurrency guard.
-4. Reproduce retry/duplicate cart behavior before adding mutation idempotency.
-5. Continue testing stale revisions, cancellation, provider failures, route changes/refresh, unsupported-browser fallback, collection availability, shared cart state, and Try-On failure paths.
-6. Continue fresh per-run audits of schemas, annotations, payload size, round trips, state recovery, registration churn, race handling, and observability without growing the tool count unnecessarily.
-7. Do not merge to `main` solely on the basis of a remote preview build.
+3. Use the official Web Platform Tests suite as an additional compatibility signal when a capable browser environment is available.
+4. Reproduce simultaneous human/agent generation/refinement before adding any shared concurrency guard.
+5. Reproduce retry/duplicate cart behavior before adding mutation idempotency.
+6. Continue testing stale revisions, cancellation, provider failures, route changes/refresh, unsupported-browser fallback, collection availability, shared cart state, and Try-On failure paths.
+7. Continue fresh per-run audits of schemas, annotations, payload size, round trips, state recovery, registration churn, race handling, and observability without growing the tool count unnecessarily.
+8. Do not merge to `main` solely on the basis of a remote preview build.
 
 ## Latest commit SHA
-Branch head entering this audit: `ab0d1bfe1d54b1dc317abe80e7a257f52c13602c`.
+Branch head entering this audit: `cc6d6c916ee41cbfadd4ed03d91523cc64929410`.
 
 This file is updated before the audit commit is created, so the resulting audit commit SHA is intentionally recorded by the next run rather than attempting a self-referential hash.
 
 ## Next run
-Read this file first. Reverify repository/branch/production isolation and exact branch head. If a safe build-capable checkout is available, implement the Virtual Try-On result-ref/component-lifetime registration fix, build/test the full relevant app, and only then commit it. Attempt real WebMCP discovery/execution if a capable browser/test harness becomes available. Otherwise perform another fresh no-op audit and preserve current human behavior.
+Read this file first. Reverify repository/branch/production isolation and exact branch head. If a safe build-capable checkout is available, implement the Virtual Try-On result-ref/component-lifetime registration fix, build/test the full relevant app, and only then commit it. Attempt real WebMCP discovery/execution or WPT-backed verification if a capable browser/test harness becomes available. Otherwise perform another fresh no-op audit and preserve current human behavior.
