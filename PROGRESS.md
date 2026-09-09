@@ -8,11 +8,11 @@ Keep the existing human-facing CriShirt experience stable while exposing the sam
 - Production branch: `main`
 - Production commit: `88daa417caa5305f81e5554977a13a94a793cdeb`
 - Working branch: `webmcp-agent-native`
-- Branch head entering this run: `72117e62b145bc9d59ff3f81023384acfd51b5e7`
-- Compare entering this run: 108 commits ahead of `main`, 0 behind; merge base exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Branch head entering this run: `fa742d7fde8338ee39dd5c686f388e2fa599da62`
+- Compare entering this run: 109 commits ahead of `main`, 0 behind; merge base exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Production remains on `main`; the WebMCP branch has not been promoted.
 - Vercel project: `crishirtpc` (`prj_jAm749oRS01LbAdwec2lKvKZgAEF`).
-- Latest entering branch preview: `dpl_ANnvF8kvgJTvwYAomDvryXNtgZbw`, state `READY`, for commit `72117e62b145bc9d59ff3f81023384acfd51b5e7`.
+- Latest entering branch preview: `dpl_9ABoZEc1SiRUPPjPwAvQTLthRxtK`, state `READY`, for commit `fa742d7fde8338ee39dd5c686f388e2fa599da62`.
 - No production deployment configuration, environment variables, auth, database, commerce, Perfect Corp provider behavior, or unrelated UI was changed in this run.
 
 ## Current WebMCP tool surface
@@ -42,7 +42,7 @@ All WebMCP entry points feature-detect `document.modelContext`, so browsers with
 - Humans and agents reuse the same application/cart/catalog/provider logic rather than DOM-click wrappers.
 - Provider-backed callbacks propagate WebMCP execution cancellation into cancellable requests.
 - Virtual Try-On keeps camera/file permission and raw person/result image data human-controlled.
-- Primary tools are semantic and structured; they do not expose selectors, arbitrary clicks, arbitrary URLs, or product capabilities the site does not already support.
+- Primary tools are semantic and structured; they do not expose selectors, arbitrary clicks, arbitrary URLs, or functionality the site does not already support.
 
 ## Official WebMCP specification check
 Reverified on 2026-09-09 against the official Web Machine Learning Community Group Draft Community Group Report dated 2026-09-04.
@@ -52,7 +52,7 @@ Relevant facts remain:
 - `registerTool(tool, options)` is the semantic registration path.
 - `getTools()` and `executeTool()` are the in-page discovery/execution APIs.
 - Tool execution receives an `AbortSignal`; registration lifetime can separately be tied to an `AbortSignal`.
-- The draft explicitly documents asynchronous tool-change timing and unregister/re-register lifecycle behavior, so avoiding needless registration churn remains desirable.
+- The draft documents asynchronous tool-change timing and unregister/re-register lifecycle behavior, so avoiding needless registration churn remains desirable.
 - CriShirt's semantic tools, compact schemas, cancellation, annotations, and privacy-safe structured outputs remain aligned with the current draft.
 
 ## Fresh full-journey audit — 2026-09-09
@@ -93,14 +93,13 @@ The bridges still feature-detect `document.modelContext` / `registerTool` and re
 ## Tests and verification performed this run
 - Read `PROGRESS.md` before editing.
 - Verified repository is exactly `UnknownGod2011/crishirt-perfect-corp` and default branch is `main`.
-- Verified working branch entered at `72117e62b145bc9d59ff3f81023384acfd51b5e7`.
+- Verified working branch entered at `fa742d7fde8338ee39dd5c686f388e2fa599da62`.
 - Verified `main` remains `88daa417caa5305f81e5554977a13a94a793cdeb`.
-- Compared branch against production: 108 commits ahead, 0 behind, merge base exactly production.
+- Compared branch against production: 109 commits ahead, 0 behind, merge base exactly production.
 - Reverified the official 2026-09-04 WebMCP draft and current `document.modelContext`, `registerTool`, `getTools()`, `executeTool()`, cancellation, and registration-lifetime semantics.
 - Re-read the current Virtual Try-On registration path and confirmed the registration effect still depends on `[tryOnResult]`.
 - Attempted a fresh clean checkout of `webmcp-agent-native`; clone failed with `Could not resolve host: github.com`.
-- Verified latest entering feature-branch preview `dpl_ANnvF8kvgJTvwYAomDvryXNtgZbw` is `READY` for commit `72117e62b145bc9d59ff3f81023384acfd51b5e7`.
-- Verified that preview ran `npm install` followed by `tsc -b && vite build`, transformed 2020 modules, completed the build, and deployed successfully.
+- Verified latest entering feature-branch preview `dpl_9ABoZEc1SiRUPPjPwAvQTLthRxtK` is `READY` for commit `fa742d7fde8338ee39dd5c686f388e2fa599da62`.
 - No functional source change was made, so no speculative behavior was committed.
 
 ## Failures found / fixes applied
@@ -120,7 +119,7 @@ The bridges still feature-detect `document.modelContext` / `registerTool` and re
 7. Do not merge to `main` solely because a remote preview builds successfully.
 
 ## Latest commit SHA
-Branch head entering this run: `72117e62b145bc9d59ff3f81023384acfd51b5e7`.
+Branch head entering this run: `fa742d7fde8338ee39dd5c686f388e2fa599da62`.
 
 This file is updated before the audit commit is created, so the resulting audit commit SHA is intentionally recorded by the next run rather than attempting a self-referential hash.
 
