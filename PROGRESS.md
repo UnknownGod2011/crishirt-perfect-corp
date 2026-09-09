@@ -8,9 +8,9 @@ Keep the existing human-facing CriShirt experience stable while exposing the sam
 - Production branch: `main`.
 - Production commit: `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Working branch: `webmcp-agent-native`.
-- Branch head entering this audit: `9f9f8a5de68caa116fa2753ca28a24761b1573f7`.
-- Compare entering this audit: 115 commits ahead of `main`, 0 behind; merge base is exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
-- GitHub status on the entering branch head: Vercel `success`.
+- Branch head entering this audit: `945f4908b936a0a938c246bb7824d5aab6b89cb4`.
+- Compare entering this audit: 116 commits ahead of `main`, 0 behind; merge base is exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- GitHub combined status on the entering branch head: Vercel `success`.
 - Production remains on `main`; this audit did not alter production or deployment configuration.
 
 ## Current WebMCP tool surface
@@ -51,12 +51,12 @@ Current relevant facts:
 - `registerTool(tool, options)` remains the semantic registration path.
 - `getTools()` and `executeTool()` remain the in-page discovery/execution APIs.
 - Tool execution and registration lifetime can use `AbortSignal`.
-- The specification explicitly warns that rapid unregister/re-register can race with discovery/execution, so avoid unnecessary registration churn.
+- The specification explicitly warns that rapid unregister/re-register can race with discovery/execution, so unnecessary registration churn should be avoided.
 
-## Fresh full-journey audit — 2026-09-09 12:23 IST
+## Fresh full-journey audit — 2026-09-09 13:19 IST
 
 ### Repository / production isolation
-Verified the canonical repository, default branch `main`, working branch `webmcp-agent-native`, branch head `9f9f8a5de68caa116fa2753ca28a24761b1573f7`, and exact production merge base `88daa417caa5305f81e5554977a13a94a793cdeb`. The WebMCP branch is 115 commits ahead / 0 behind. No unrelated repository or production configuration was touched.
+Verified the canonical repository, default branch `main`, working branch `webmcp-agent-native`, branch head `945f4908b936a0a938c246bb7824d5aab6b89cb4`, and exact production merge base `88daa417caa5305f81e5554977a13a94a793cdeb`. The WebMCP branch is 116 commits ahead / 0 behind. No unrelated repository or production configuration was touched.
 
 ### Create / editing / state recovery
 The existing workspace state, configuration, placement, generation, and refinement tools remain the right semantic surface. They remove visual interpretation and drag/click round trips while operating on the same application state as the human UI. No selector-level tool is justified.
@@ -75,7 +75,7 @@ Fresh source inspection confirms `src/components/VRTryOn.tsx` still registers bo
 
 Preferred fix remains: add a synchronous `tryOnResultRef`, keep it current with state, read the ref from `crishirt_get_tryon_state`, and register the two tools for component lifetime rather than result lifetime.
 
-The change was intentionally not shipped in this audit because the required pre-commit local checkout/build gate remains unavailable. A fresh clone of the canonical branch again failed with `Could not resolve host: github.com`. Connected GitHub access allows exact inspection and safe documentation updates, but is not a substitute for compiling and testing a behavioral source mutation before committing it.
+The change was intentionally not shipped in this audit because the required pre-commit local checkout/build gate remains unavailable. A fresh clone of the canonical branch again failed with `Could not resolve host: github.com`. Connected GitHub access permits exact repository inspection and safe documentation updates, but is not a substitute for compiling and testing a behavioral source mutation before committing it.
 
 ### Schemas / payloads / round trips
 The 13-tool surface remains coherent. No additional compound tool or mutation was found that clearly reduces legitimate interaction cost enough to justify expanding the surface this run. Existing read tools provide recovery points for workspace, cart, collection, and Try-On state.
@@ -89,8 +89,8 @@ The concise README WebMCP section remains appropriate; no README change was just
 ## Tests and verification performed this audit
 - Read `PROGRESS.md` before editing.
 - Verified repository is exactly `UnknownGod2011/crishirt-perfect-corp` and default branch is `main`.
-- Verified current WebMCP branch head is `9f9f8a5de68caa116fa2753ca28a24761b1573f7` before this audit commit.
-- Compared `main...webmcp-agent-native`: 115 ahead, 0 behind, merge base exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Verified current WebMCP branch head is `945f4908b936a0a938c246bb7824d5aab6b89cb4` before this audit commit.
+- Compared `main...webmcp-agent-native`: 116 ahead, 0 behind, merge base exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Reverified the official 2026-09-04 WebMCP draft and current `document.modelContext` / `registerTool` / `getTools()` / `executeTool()` model.
 - Reinspected `VRTryOn.tsx`; confirmed Try-On tool registration still depends on `[tryOnResult]`, while provider cancellation still flows through `fetch`.
 - Checked GitHub combined status for the entering branch head; Vercel reports `success`.
@@ -114,7 +114,7 @@ The concise README WebMCP section remains appropriate; no README change was just
 7. Do not merge to `main` solely on the basis of a remote preview build.
 
 ## Latest commit SHA
-Branch head entering this audit: `9f9f8a5de68caa116fa2753ca28a24761b1573f7`.
+Branch head entering this audit: `945f4908b936a0a938c246bb7824d5aab6b89cb4`.
 
 This file is updated before the audit commit is created, so the resulting audit commit SHA is intentionally recorded by the next run rather than attempting a self-referential hash.
 
