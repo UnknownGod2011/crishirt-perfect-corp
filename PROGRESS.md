@@ -8,9 +8,9 @@ Keep the existing human-facing CriShirt experience stable while exposing the sam
 - Production branch: `main`.
 - Production commit: `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Working branch: `webmcp-agent-native`.
-- Branch head entering this audit: `cc6d6c916ee41cbfadd4ed03d91523cc64929410`.
-- Compare entering this audit: 125 commits ahead of `main`, 0 behind; merge base is exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
-- GitHub combined status on the entering branch head: Vercel `success`.
+- Branch head entering this audit: `10087408b79d74ce64446903da65ad24bc01f594`.
+- Compare entering this audit: 126 commits ahead of `main`, 0 behind; merge base is exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- GitHub combined status on the entering branch head: Vercel `success` (`Deployment has completed`).
 - Production remains on `main`; this audit did not alter production or deployment configuration.
 
 ## Current WebMCP tool surface
@@ -44,20 +44,20 @@ All WebMCP entry points feature-detect `document.modelContext`, preserving the n
 - Schemas are bounded, compact, and constrained to existing product capabilities.
 
 ## Official WebMCP specification check
-Reverified on 2026-09-09 against the official Web Machine Learning Community Group Draft Community Group Report dated 2026-09-04.
+Most recently reverified on 2026-09-09 against the official Web Machine Learning Community Group Draft Community Group Report dated 2026-09-04.
 
-Current relevant facts:
-- `document.modelContext` remains the imperative API surface.
-- `registerTool(tool, options)` remains the semantic registration path.
-- `getTools()` and `executeTool()` remain the in-page discovery/execution APIs.
+Current relevant facts remain:
+- `document.modelContext` is the imperative API surface.
+- `registerTool(tool, options)` is the semantic registration path.
+- `getTools()` and `executeTool()` are the in-page discovery/execution APIs.
 - Tool execution and registration lifetime can use `AbortSignal`.
-- The specification continues to document same-name registration ambiguity, so unnecessary registration churn should be avoided.
-- The official test suite remains linked from the report at WPT (`wpt.fyi/results/webmcp`).
+- The specification documents same-name registration ambiguity, so unnecessary registration churn should be avoided.
+- The official test suite is linked from the report at WPT (`wpt.fyi/results/webmcp`).
 
-## Fresh full-journey audit — 2026-09-09 22:21 IST
+## Fresh full-journey audit — 2026-09-09 23:19 IST
 
 ### Repository / production isolation
-Verified the canonical repository, default branch `main`, working branch `webmcp-agent-native`, entering branch head `cc6d6c916ee41cbfadd4ed03d91523cc64929410`, and exact production merge base `88daa417caa5305f81e5554977a13a94a793cdeb`. The WebMCP branch is 125 commits ahead / 0 behind. No unrelated repository or production configuration was touched.
+Verified the canonical repository, default branch `main`, working branch `webmcp-agent-native`, entering branch head `10087408b79d74ce64446903da65ad24bc01f594`, and exact production merge base `88daa417caa5305f81e5554977a13a94a793cdeb`. The WebMCP branch is 126 commits ahead / 0 behind. No unrelated repository or production configuration was touched.
 
 The WebMCP-relevant changed surface relative to production remains limited to `PROGRESS.md`, the concise README WebMCP section, `src/App.tsx`, `src/components/WebMCPBridge.tsx`, `src/components/CollectionWebMCPBridge.tsx`, `src/components/VRTryOn.tsx`, `src/config/collectionCatalog.ts`, and `src/pages/collection.tsx`.
 
@@ -74,7 +74,9 @@ Current-design add-to-cart, cart inspection/removal, collection listing, and col
 The constrained semantic navigation tool plus workspace/cart/collection/Try-On state reads remain preferable to arbitrary URL or DOM-click primitives. No route expansion is justified beyond routes already supported by the human product.
 
 ### Virtual Try-On
-Fresh source inspection confirms `src/components/VRTryOn.tsx` still registers both Try-On tools inside a `useEffect` whose dependency is `[tryOnResult]`. A successful result or result clearing therefore aborts and recreates otherwise identical registrations. This remains the strongest narrow improvement because same-name re-registration is exactly the kind of lifecycle churn the current WebMCP draft leaves ambiguous.
+Fresh source inspection confirms `src/components/VRTryOn.tsx` still registers both Try-On tools inside a `useEffect` whose dependency is `[tryOnResult]`. A successful result or result clearing therefore aborts and recreates otherwise identical registrations.
+
+This remains the strongest narrow improvement because same-name re-registration is exactly the kind of lifecycle churn the current WebMCP draft leaves ambiguous.
 
 Preferred fix remains deliberately small: add a synchronous `tryOnResultRef`, keep it current with state, read that ref inside `crishirt_get_tryon_state`, and register both Try-On tools for component lifetime instead of result lifetime.
 
@@ -92,10 +94,9 @@ The concise README WebMCP section remains mature; no README change is justified 
 ## Tests and verification performed this audit
 - Read `PROGRESS.md` before editing.
 - Verified repository is exactly `UnknownGod2011/crishirt-perfect-corp` and default branch is `main`.
-- Verified entering WebMCP branch head is `cc6d6c916ee41cbfadd4ed03d91523cc64929410`.
-- Compared `main...webmcp-agent-native`: 125 ahead, 0 behind, merge base exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
-- Checked GitHub combined status for the entering branch head; Vercel reports `success`.
-- Reverified the official 2026-09-04 WebMCP draft, including `document.modelContext`, `registerTool`, `getTools()`, `executeTool()`, AbortSignal support, same-name re-registration ambiguity, and the linked Web Platform Tests suite.
+- Verified entering WebMCP branch head is `10087408b79d74ce64446903da65ad24bc01f594`.
+- Compared `main...webmcp-agent-native`: 126 ahead, 0 behind, merge base exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Checked GitHub combined status for the entering branch head; Vercel reports `success` with `Deployment has completed`.
 - Reinspected `src/components/VRTryOn.tsx`; confirmed Try-On registration still depends on `[tryOnResult]`, while provider cancellation still flows through the tool signal into `fetch`.
 - Attempted a fresh clean clone of `webmcp-agent-native`; it failed with `Could not resolve host: github.com`.
 - No functional source mutation was made, so no unbuilt speculative behavior was committed.
@@ -118,7 +119,7 @@ The concise README WebMCP section remains mature; no README change is justified 
 8. Do not merge to `main` solely on the basis of a remote preview build.
 
 ## Latest commit SHA
-Branch head entering this audit: `cc6d6c916ee41cbfadd4ed03d91523cc64929410`.
+Branch head entering this audit: `10087408b79d74ce64446903da65ad24bc01f594`.
 
 This file is updated before the audit commit is created, so the resulting audit commit SHA is intentionally recorded by the next run rather than attempting a self-referential hash.
 
