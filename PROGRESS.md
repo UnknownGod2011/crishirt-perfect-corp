@@ -8,8 +8,8 @@ Keep the existing human-facing CriShirt experience stable while exposing the sam
 - Production branch: `main`.
 - Production commit: `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Working branch: `webmcp-agent-native`.
-- Branch head entering this audit: `dc09eb346e5410972ba5b267dc24be5b4d4dd85b`.
-- Compare entering this audit: 123 commits ahead of `main`, 0 behind; merge base is exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Branch head entering this audit: `ab0d1bfe1d54b1dc317abe80e7a257f52c13602c`.
+- Compare entering this audit: 124 commits ahead of `main`, 0 behind; merge base is exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - GitHub combined status on the entering branch head: Vercel `success`.
 - Production remains on `main`; this audit did not alter production or deployment configuration.
 
@@ -53,10 +53,10 @@ Current relevant facts:
 - Tool execution and registration lifetime can use `AbortSignal`.
 - The specification continues to document same-name registration ambiguity, so unnecessary registration churn should be avoided.
 
-## Fresh full-journey audit — 2026-09-09 20:23 IST
+## Fresh full-journey audit — 2026-09-09 21:24 IST
 
 ### Repository / production isolation
-Verified the canonical repository, default branch `main`, working branch `webmcp-agent-native`, entering branch head `dc09eb346e5410972ba5b267dc24be5b4d4dd85b`, and exact production merge base `88daa417caa5305f81e5554977a13a94a793cdeb`. The WebMCP branch is 123 commits ahead / 0 behind. No unrelated repository or production configuration was touched.
+Verified the canonical repository, default branch `main`, working branch `webmcp-agent-native`, entering branch head `ab0d1bfe1d54b1dc317abe80e7a257f52c13602c`, and exact production merge base `88daa417caa5305f81e5554977a13a94a793cdeb`. The WebMCP branch is 124 commits ahead / 0 behind. No unrelated repository or production configuration was touched.
 
 The WebMCP-relevant changed surface relative to production remains limited to `PROGRESS.md`, the concise README WebMCP section, `src/App.tsx`, `src/components/WebMCPBridge.tsx`, `src/components/CollectionWebMCPBridge.tsx`, `src/components/VRTryOn.tsx`, `src/config/collectionCatalog.ts`, and `src/pages/collection.tsx`.
 
@@ -91,9 +91,10 @@ The concise README WebMCP section remains mature; no README change is justified 
 ## Tests and verification performed this audit
 - Read `PROGRESS.md` before editing.
 - Verified repository is exactly `UnknownGod2011/crishirt-perfect-corp` and default branch is `main`.
-- Verified entering WebMCP branch head is `dc09eb346e5410972ba5b267dc24be5b4d4dd85b`.
-- Compared `main...webmcp-agent-native`: 123 ahead, 0 behind, merge base exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Verified entering WebMCP branch head is `ab0d1bfe1d54b1dc317abe80e7a257f52c13602c`.
+- Compared `main...webmcp-agent-native`: 124 ahead, 0 behind, merge base exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Checked GitHub combined status for the entering branch head; Vercel reports `success`.
+- Reverified the official 2026-09-04 WebMCP draft, including `document.modelContext`, `registerTool`, `getTools()`, `executeTool()`, AbortSignal support, and same-name re-registration ambiguity.
 - Reinspected `src/components/VRTryOn.tsx`; confirmed Try-On registration still depends on `[tryOnResult]`, while provider cancellation still flows through the tool signal into `fetch`.
 - Attempted a fresh clean clone of `webmcp-agent-native`; it failed with `Could not resolve host: github.com`.
 - No functional source mutation was made, so no unbuilt speculative behavior was committed.
@@ -115,7 +116,7 @@ The concise README WebMCP section remains mature; no README change is justified 
 7. Do not merge to `main` solely on the basis of a remote preview build.
 
 ## Latest commit SHA
-Branch head entering this audit: `dc09eb346e5410972ba5b267dc24be5b4d4dd85b`.
+Branch head entering this audit: `ab0d1bfe1d54b1dc317abe80e7a257f52c13602c`.
 
 This file is updated before the audit commit is created, so the resulting audit commit SHA is intentionally recorded by the next run rather than attempting a self-referential hash.
 
