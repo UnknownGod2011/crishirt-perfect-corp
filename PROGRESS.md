@@ -8,9 +8,9 @@ Keep the existing human-facing CriShirt experience stable while exposing the sam
 - Production branch: `main`.
 - Production commit: `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Working branch: `webmcp-agent-native`.
-- Branch head entering this audit: `16ee6fce1a452a482ca74fc75363cc61b4a1bc17`.
-- Compare entering this audit: 129 commits ahead of `main`, 0 behind; merge base is exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
-- GitHub combined status on the entering branch head: Vercel `success`.
+- Branch head entering this audit: `c13880836900d8d998c2aa34b456c74ee42722de`.
+- Compare entering this audit: 130 commits ahead of `main`, 0 behind; merge base is exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- GitHub combined status on the entering branch head: Vercel `success` (`Deployment has completed`).
 - Production remains on `main`; this audit did not alter production or deployment configuration.
 
 ## Current WebMCP tool surface
@@ -54,10 +54,10 @@ Current relevant facts remain:
 - The specification explicitly illustrates ambiguity around rapidly aborting and re-registering a same-name tool, so unnecessary registration churn should be avoided.
 - The official test suite remains available via WPT at `wpt.fyi/results/webmcp`.
 
-## Fresh full-journey audit — 2026-09-10 02:20 IST
+## Fresh full-journey audit — 2026-09-10 03:20 IST
 
 ### Repository / production isolation
-Verified the canonical repository, default branch `main`, working branch `webmcp-agent-native`, entering branch head `16ee6fce1a452a482ca74fc75363cc61b4a1bc17`, and exact production merge base `88daa417caa5305f81e5554977a13a94a793cdeb`. The WebMCP branch is 129 commits ahead / 0 behind. No unrelated repository or production configuration was touched.
+Verified the canonical repository, default branch `main`, working branch `webmcp-agent-native`, entering branch head `c13880836900d8d998c2aa34b456c74ee42722de`, and exact production merge base `88daa417caa5305f81e5554977a13a94a793cdeb`. The WebMCP branch is 130 commits ahead / 0 behind. No unrelated repository or production configuration was touched.
 
 The WebMCP-relevant changed surface relative to production remains limited to `PROGRESS.md`, the concise README WebMCP section, `src/App.tsx`, `src/components/WebMCPBridge.tsx`, `src/components/CollectionWebMCPBridge.tsx`, `src/components/VRTryOn.tsx`, `src/config/collectionCatalog.ts`, and `src/pages/collection.tsx`.
 
@@ -94,12 +94,11 @@ The concise README WebMCP section remains accurate and appropriately scoped; no 
 ## Tests and verification performed this audit
 - Read `PROGRESS.md` before editing.
 - Verified repository is exactly `UnknownGod2011/crishirt-perfect-corp` and default branch is `main`.
-- Verified entering WebMCP branch head is `16ee6fce1a452a482ca74fc75363cc61b4a1bc17`.
-- Compared production commit `88daa417caa5305f81e5554977a13a94a793cdeb` to the branch head: 129 ahead, 0 behind, merge base exactly production.
-- Checked GitHub combined status for the entering branch head; Vercel reports `success`.
+- Verified entering WebMCP branch head is `c13880836900d8d998c2aa34b456c74ee42722de`.
+- Compared production commit `88daa417caa5305f81e5554977a13a94a793cdeb` to the branch head: 130 ahead, 0 behind, merge base exactly production.
+- Checked GitHub combined status for the entering branch head; Vercel reports `success` and `Deployment has completed`.
 - Reverified the official 2026-09-04 WebMCP report and WPT link.
-- Reinspected `src/components/WebMCPBridge.tsx`, `src/components/CollectionWebMCPBridge.tsx`, `src/components/VRTryOn.tsx`, and the README WebMCP section.
-- Confirmed Try-On registration still depends on `[tryOnResult]`, while provider cancellation still flows through the tool signal into `fetch`.
+- Reinspected `src/components/VRTryOn.tsx`; Try-On registration still depends on `[tryOnResult]`, while provider cancellation still flows through the tool signal into `fetch`.
 - Attempted a fresh clean clone of `webmcp-agent-native`; it again failed with `Could not resolve host: github.com`.
 - No functional source mutation was made, so no unbuilt speculative behavior was committed.
 
@@ -121,7 +120,7 @@ The concise README WebMCP section remains accurate and appropriately scoped; no 
 8. Do not merge to `main` solely on the basis of a remote preview build.
 
 ## Latest commit SHA
-Branch head entering this audit: `16ee6fce1a452a482ca74fc75363cc61b4a1bc17`.
+Branch head entering this audit: `c13880836900d8d998c2aa34b456c74ee42722de`.
 
 This file is updated before the audit commit is created, so the resulting audit commit SHA is intentionally recorded by the next run rather than attempting a self-referential hash.
 
