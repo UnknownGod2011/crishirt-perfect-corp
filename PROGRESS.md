@@ -8,8 +8,8 @@ Keep the existing human-facing CriShirt experience stable while exposing the sam
 - Production branch: `main`.
 - Production commit: `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Working branch: `webmcp-agent-native`.
-- Branch head entering this audit: `68aec9d358913ae5687d74cf743f14a4a9a0f476`.
-- Compare entering this audit: 117 commits ahead of `main`, 0 behind; merge base is exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Branch head entering this audit: `0e95a05a845b6aa4f43c7d9e253d1bc227c4a4d8`.
+- Compare entering this audit: 118 commits ahead of `main`, 0 behind; merge base is exactly production commit `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - GitHub combined status on the entering branch head: Vercel `success`.
 - Production remains on `main`; this audit did not alter production or deployment configuration.
 
@@ -53,19 +53,19 @@ Current relevant facts:
 - Tool execution and registration lifetime can use `AbortSignal`.
 - The specification explicitly warns about asynchronous tool-change visibility and rapid unregister/re-register behavior, so unnecessary registration churn should be avoided.
 
-## Fresh full-journey audit — 2026-09-09 14:20 IST
+## Fresh full-journey audit — 2026-09-09 15:21 IST
 
 ### Repository / production isolation
-Verified the canonical repository, default branch `main`, working branch `webmcp-agent-native`, entering branch head `68aec9d358913ae5687d74cf743f14a4a9a0f476`, and exact production merge base `88daa417caa5305f81e5554977a13a94a793cdeb`. The WebMCP branch is 117 commits ahead / 0 behind. No unrelated repository or production configuration was touched.
+Verified the canonical repository, default branch `main`, working branch `webmcp-agent-native`, entering branch head `0e95a05a845b6aa4f43c7d9e253d1bc227c4a4d8`, and exact production merge base `88daa417caa5305f81e5554977a13a94a793cdeb`. The WebMCP branch is 118 commits ahead / 0 behind. No unrelated repository or production configuration was touched.
 
 ### Create / editing / state recovery
-The existing workspace state, configuration, placement, generation, and refinement tools remain the right semantic surface. They remove visual interpretation and drag/click round trips while operating on the same application state as the human UI. No selector-level tool is justified.
+The existing workspace state, configuration, placement, generation, and refinement tools remain the correct semantic surface. They remove visual interpretation and drag/click round trips while operating on the same application state as the human UI. No selector-level tool is justified.
 
 ### Generation / refinement
 Current tools continue to route through existing Perfect Corp-backed application paths, validate inputs, return deterministic failures, and propagate cancellation. No new concurrency architecture is justified without a reproduced human/agent race.
 
 ### Cart / collection
-Current-design add-to-cart, cart inspection/removal, collection listing, and collection add-to-cart cover the existing stable cart/collection journey. Existing duplicate-add semantics should not be changed without a reproduced agent retry problem.
+Current-design add-to-cart, cart inspection/removal, collection listing, and collection add-to-cart cover the existing stable cart/collection journey. Existing duplicate-add semantics should not be changed without a reproduced retry problem.
 
 ### Navigation / recovery
 The constrained navigation tool plus semantic state reads remain preferable to arbitrary URL navigation or DOM-click wrappers.
@@ -75,7 +75,7 @@ Fresh source inspection confirms `src/components/VRTryOn.tsx` still registers bo
 
 Preferred fix remains: add a synchronous `tryOnResultRef`, keep it current with state, read the ref from `crishirt_get_tryon_state`, and register the two tools for component lifetime rather than result lifetime.
 
-The change was intentionally not shipped in this audit because the required pre-commit local checkout/build gate remains unavailable. A fresh clone of the canonical branch again failed with `Could not resolve host: github.com`. Connected GitHub access permits exact repository inspection and safe documentation updates, but is not a substitute for compiling and testing a behavioral source mutation before committing it.
+The change was intentionally not shipped in this audit because the required pre-commit local checkout/build gate remains unavailable. A fresh clone of the canonical `webmcp-agent-native` branch again failed with `Could not resolve host: github.com`. Connected GitHub access permits exact repository inspection and safe documentation updates, but is not a substitute for compiling and testing a behavioral source mutation before committing it.
 
 ### Schemas / payloads / round trips
 The 13-tool surface remains coherent. No additional compound tool or mutation was found that clearly reduces legitimate interaction cost enough to justify expanding the surface this run. Existing read tools provide recovery points for workspace, cart, collection, and Try-On state.
@@ -89,8 +89,8 @@ The concise README WebMCP section remains appropriate; no README change was just
 ## Tests and verification performed this audit
 - Read `PROGRESS.md` before editing.
 - Verified repository is exactly `UnknownGod2011/crishirt-perfect-corp` and default branch is `main`.
-- Verified entering WebMCP branch head is `68aec9d358913ae5687d74cf743f14a4a9a0f476`.
-- Compared `main...webmcp-agent-native`: 117 ahead, 0 behind, merge base exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Verified entering WebMCP branch head is `0e95a05a845b6aa4f43c7d9e253d1bc227c4a4d8`.
+- Compared `main...webmcp-agent-native`: 118 ahead, 0 behind, merge base exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Reverified the official 2026-09-04 WebMCP draft and current `document.modelContext` / `registerTool` / `getTools()` / `executeTool()` model.
 - Reinspected `VRTryOn.tsx`; confirmed Try-On tool registration still depends on `[tryOnResult]`, while provider cancellation still flows through `fetch`.
 - Checked GitHub combined status for the entering branch head; Vercel reports `success`.
@@ -114,7 +114,7 @@ The concise README WebMCP section remains appropriate; no README change was just
 7. Do not merge to `main` solely on the basis of a remote preview build.
 
 ## Latest commit SHA
-Branch head entering this audit: `68aec9d358913ae5687d74cf743f14a4a9a0f476`.
+Branch head entering this audit: `0e95a05a845b6aa4f43c7d9e253d1bc227c4a4d8`.
 
 This file is updated before the audit commit is created, so the resulting audit commit SHA is intentionally recorded by the next run rather than attempting a self-referential hash.
 
