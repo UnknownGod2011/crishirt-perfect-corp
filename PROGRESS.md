@@ -8,8 +8,8 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Production branch: `main`.
 - Production commit / exact merge base: `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Working branch: `webmcp-agent-native`.
-- Branch head entering this run: `c07701f289176255e32f4f2ddc82f1fc31b4c8a3`.
-- Comparison at run start: 150 commits ahead of production, 0 behind.
+- Branch head entering this run: `f186e4390ec0b7e7c379b8af49fe28a24da0716c`.
+- Comparison at run start: 151 commits ahead of production, 0 behind.
 - Entering branch Vercel status: `success`.
 - Production and production deployment configuration were not modified.
 
@@ -44,10 +44,10 @@ All bridges feature-detect `document.modelContext`, so normal human flows contin
 - Schemas are bounded to existing product capabilities and responses are compact/structured.
 - Try-On photo capture/upload remains human-controlled and tools do not return raw person/result image bytes.
 
-## Fresh full-product audit — 2026-09-10 23:21 IST
+## Fresh full-product audit — 2026-09-11 00:20 IST
 
 ### Repository isolation
-Verified the canonical repository, production `main`, working `webmcp-agent-native`, entering head `c07701f289176255e32f4f2ddc82f1fc31b4c8a3`, exact production merge base `88daa417caa5305f81e5554977a13a94a793cdeb`, and 150-ahead/0-behind comparison. The branch diff remains confined to WebMCP integration/support files plus README and this durable log. Production remains untouched.
+Verified the canonical repository, production `main`, working `webmcp-agent-native`, entering head `f186e4390ec0b7e7c379b8af49fe28a24da0716c`, exact production merge base `88daa417caa5305f81e5554977a13a94a793cdeb`, and 151-ahead/0-behind comparison. The branch diff remains confined to WebMCP integration/support files plus README and this durable log. Production remains untouched.
 
 ### Official WebMCP specification
 Fresh verification against the current WebMCP Community Group report (Draft Community Group Report, 9 September 2026) reconfirmed the document-scoped `document.modelContext` API and semantic registered-tool model. No standards change observed this run requires a runtime migration.
@@ -68,7 +68,7 @@ No Perfect Corp generation, refinement/editor placement, cart, collection, Try-O
 
 ## Verification / tests performed this run
 - Read this durable handoff before mutation.
-- Verified exact canonical repository, production branch, working branch, entering head, exact production merge base, and 150-ahead/0-behind state through connected GitHub.
+- Verified exact canonical repository, production branch, working branch, entering head, exact production merge base, and 151-ahead/0-behind state through connected GitHub.
 - Verified entering head Vercel status is `success`.
 - Re-read `src/components/VRTryOn.tsx` and reconfirmed `useEffect(..., [tryOnResult])` registration churn.
 - Rechecked the current WebMCP Community Group report dated 9 September 2026.
@@ -95,7 +95,7 @@ No Perfect Corp generation, refinement/editor placement, cart, collection, Try-O
 9. Do not merge to `main` solely because a remote preview build is green.
 
 ## Latest commit SHA
-Latest verified branch head before this handoff update: `c07701f289176255e32f4f2ddc82f1fc31b4c8a3`.
+Latest verified branch head before this handoff update: `f186e4390ec0b7e7c379b8af49fe28a24da0716c`.
 
 The commit containing this file is created after its contents are fixed, so its SHA is recorded by the next run rather than attempting a self-referential hash.
 
