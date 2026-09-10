@@ -8,8 +8,8 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Production branch: `main`.
 - Production commit / exact merge base: `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Working branch: `webmcp-agent-native`.
-- Branch head entering this run: `e16d087af6d16361757c3cc1aa376999a217dc08`.
-- Comparison at run start: 149 commits ahead of production, 0 behind.
+- Branch head entering this run: `c07701f289176255e32f4f2ddc82f1fc31b4c8a3`.
+- Comparison at run start: 150 commits ahead of production, 0 behind.
 - Entering branch Vercel status: `success`.
 - Production and production deployment configuration were not modified.
 
@@ -44,35 +44,35 @@ All bridges feature-detect `document.modelContext`, so normal human flows contin
 - Schemas are bounded to existing product capabilities and responses are compact/structured.
 - Try-On photo capture/upload remains human-controlled and tools do not return raw person/result image bytes.
 
-## Fresh full-product audit — 2026-09-10 22:21 IST
+## Fresh full-product audit — 2026-09-10 23:21 IST
 
 ### Repository isolation
-Verified the canonical repository, production `main`, working `webmcp-agent-native`, entering head `e16d087af6d16361757c3cc1aa376999a217dc08`, exact production merge base `88daa417caa5305f81e5554977a13a94a793cdeb`, and 149-ahead/0-behind comparison. The branch diff remains constrained to WebMCP bridges/integration, collection catalog/integration, README WebMCP documentation, App integration, Virtual Try-On integration, and this durable log. Production remains untouched.
+Verified the canonical repository, production `main`, working `webmcp-agent-native`, entering head `c07701f289176255e32f4f2ddc82f1fc31b4c8a3`, exact production merge base `88daa417caa5305f81e5554977a13a94a793cdeb`, and 150-ahead/0-behind comparison. The branch diff remains confined to WebMCP integration/support files plus README and this durable log. Production remains untouched.
 
 ### Official WebMCP specification
-Fresh verification against current W3C/Web Machine Learning Community Group material reconfirmed that WebMCP is a Community Group draft and that the API is document-scoped at `document.modelContext`. Current ecosystem/testing material also continues to use semantic registered tools rather than DOM automation as the intended agent interface.
+Fresh verification against the current WebMCP Community Group report (Draft Community Group Report, 9 September 2026) reconfirmed the document-scoped `document.modelContext` API and semantic registered-tool model. No standards change observed this run requires a runtime migration.
 
-The durable standards-alignment note remains: current WebMCP annotations include `consequentialHint` in addition to `readOnlyHint` and `untrustedContentHint`. CriShirt's ordinary reversible workspace edits, image generation/refinement, navigation, cart mutations, collection actions, and virtual try-on should not be mechanically classified as consequential. Optional local type support remains a small standards-alignment improvement, not a runtime bug.
+The durable standards-alignment note remains: current WebMCP annotations include `consequentialHint` in addition to `readOnlyHint` and `untrustedContentHint`. CriShirt's ordinary reversible workspace edits, image generation/refinement, navigation, cart mutations, collection actions, and virtual try-on should not be mechanically marked consequential. Optional local type support remains a small standards-alignment improvement, not a functional defect.
 
 ### Human journey versus agent journey
-Fresh re-audit again found no missing high-leverage semantic journey. The current 13-tool surface already collapses the major visual/click-heavy flows into semantic operations: workspace/state reading, supported garment/color/material/size/side configuration, artwork placement, Perfect Corp generation/refinement, current-design cart insertion, cart inspection/removal, constrained navigation, collection inspection/cart insertion, and virtual try-on readiness/execution. Adding DOM-shaped micro-tools would increase tool count and round trips without adding a legitimate user capability.
+Fresh end-to-end source/repository audit again found no missing high-leverage semantic journey. The current 13-tool surface covers workspace/state reading, supported garment/color/material/size/side configuration, artwork placement, Perfect Corp generation/refinement, current-design cart insertion, cart inspection/removal, constrained navigation, collection inspection/cart insertion, and virtual try-on readiness/execution. Additional DOM-shaped micro-tools would add round trips without exposing a legitimate capability unavailable today.
 
 ### Virtual Try-On lifecycle
-Fresh source inspection reconfirmed the only concrete remaining lifecycle inefficiency: both Try-On tools are registered inside a `useEffect` with dependency `[tryOnResult]`. `crishirt_get_tryon_state` directly closes over `tryOnResult`, so creation or clearing of a result aborts and re-registers otherwise identical tool definitions. The narrow preferred fix remains a `tryOnResultRef` synchronized with state and read by the state tool, allowing registration to stay scoped to component lifetime.
+Fresh source inspection reconfirmed the remaining concrete lifecycle inefficiency: both Try-On tools are registered inside a `useEffect` with dependency `[tryOnResult]`. `crishirt_get_tryon_state` directly closes over `tryOnResult`, so result creation/clearing aborts and re-registers otherwise identical tool definitions. The narrow preferred fix remains a synchronized `tryOnResultRef` read by the state tool so registration can remain scoped to component lifetime.
 
 ### Race handling / duplicate actions / recovery
-No new reproduced race, duplicate-cart mutation, route-refresh regression, provider overwrite, or stale-state issue was found from the fresh source/repository audit. Existing workspace revision validation remains the appropriate lightweight stale-state guard. Broader locking/idempotency remains deferred until a failing reproduction exists.
+No new reproduced race, duplicate-cart mutation, route-refresh regression, provider overwrite, or stale-state issue was found from this run's audit. Existing workspace revision validation remains the appropriate lightweight stale-state guard. Broader locking/idempotency remains deferred until a failing reproduction exists.
 
 ### Human stability / unsupported browser
 No Perfect Corp generation, refinement/editor placement, cart, collection, Try-On, navigation, visual design, or deployment configuration changed this run. Feature detection continues to preserve ordinary website behavior when `document.modelContext` is unavailable.
 
 ## Verification / tests performed this run
 - Read this durable handoff before mutation.
-- Verified exact canonical repository, production branch, working branch, entering head, production merge base, and 149-ahead/0-behind state through connected GitHub.
+- Verified exact canonical repository, production branch, working branch, entering head, exact production merge base, and 150-ahead/0-behind state through connected GitHub.
 - Verified entering head Vercel status is `success`.
 - Re-read `src/components/VRTryOn.tsx` and reconfirmed `useEffect(..., [tryOnResult])` registration churn.
-- Rechecked current W3C/WebMCP material and current browser/testing ecosystem information.
-- Retried a clean canonical clone of `webmcp-agent-native`; clone failed before install/build with `Could not resolve host: github.com` in the execution container.
+- Rechecked the current WebMCP Community Group report dated 9 September 2026.
+- Retried a clean canonical clone of `webmcp-agent-native`; clone again failed before install/build with `Could not resolve host: github.com` in the execution container.
 - Because the required clean build/test-capable checkout remained unavailable, no behavioral source mutation was made and no speculative source code was committed.
 
 ## Failures found / fixes applied
@@ -95,7 +95,7 @@ No Perfect Corp generation, refinement/editor placement, cart, collection, Try-O
 9. Do not merge to `main` solely because a remote preview build is green.
 
 ## Latest commit SHA
-Latest verified branch head before this handoff update: `e16d087af6d16361757c3cc1aa376999a217dc08`.
+Latest verified branch head before this handoff update: `c07701f289176255e32f4f2ddc82f1fc31b4c8a3`.
 
 The commit containing this file is created after its contents are fixed, so its SHA is recorded by the next run rather than attempting a self-referential hash.
 
