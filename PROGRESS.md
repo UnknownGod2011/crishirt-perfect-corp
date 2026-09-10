@@ -8,8 +8,8 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Production branch: `main`.
 - Production commit / exact merge base: `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Working branch: `webmcp-agent-native`.
-- Branch head entering this run: `3e684a6924dca951981df1a49685b19afc60aa8b`.
-- Comparison at run start: 148 commits ahead of production, 0 behind.
+- Branch head entering this run: `e16d087af6d16361757c3cc1aa376999a217dc08`.
+- Comparison at run start: 149 commits ahead of production, 0 behind.
 - Entering branch Vercel status: `success`.
 - Production and production deployment configuration were not modified.
 
@@ -44,34 +44,34 @@ All bridges feature-detect `document.modelContext`, so normal human flows contin
 - Schemas are bounded to existing product capabilities and responses are compact/structured.
 - Try-On photo capture/upload remains human-controlled and tools do not return raw person/result image bytes.
 
-## Fresh full-product audit — 2026-09-10 21:23 IST
+## Fresh full-product audit — 2026-09-10 22:21 IST
 
 ### Repository isolation
-Verified the canonical repository, production `main`, working `webmcp-agent-native`, entering head `3e684a6924dca951981df1a49685b19afc60aa8b`, exact production merge base `88daa417caa5305f81e5554977a13a94a793cdeb`, and 148-ahead/0-behind comparison. The branch diff remains constrained to WebMCP bridges/integration, collection catalog/integration, README WebMCP documentation, App integration, Virtual Try-On integration, and this durable log. Production remains untouched.
+Verified the canonical repository, production `main`, working `webmcp-agent-native`, entering head `e16d087af6d16361757c3cc1aa376999a217dc08`, exact production merge base `88daa417caa5305f81e5554977a13a94a793cdeb`, and 149-ahead/0-behind comparison. The branch diff remains constrained to WebMCP bridges/integration, collection catalog/integration, README WebMCP documentation, App integration, Virtual Try-On integration, and this durable log. Production remains untouched.
 
 ### Official WebMCP specification
-Fresh verification against the official WebMCP Draft Community Group Report dated **9 September 2026** reconfirmed `document.modelContext`, semantic `registerTool`, `getTools()`, `executeTool()`, execution/registration cancellation with `AbortSignal`, and `ToolAnnotations` containing `readOnlyHint`, `untrustedContentHint`, and `consequentialHint`.
+Fresh verification against current W3C/Web Machine Learning Community Group material reconfirmed that WebMCP is a Community Group draft and that the API is document-scoped at `document.modelContext`. Current ecosystem/testing material also continues to use semantic registered tools rather than DOM automation as the intended agent interface.
 
-The current spec says `consequentialHint` is for significant real-world or non-reversible actions such as booking or transferring money. CriShirt's normal workspace edits, generation, navigation, cart, collection, and virtual try-on flows remain ordinary reversible application actions and should not be mechanically marked consequential. Optional local typing support remains a standards-alignment improvement, not a runtime regression.
+The durable standards-alignment note remains: current WebMCP annotations include `consequentialHint` in addition to `readOnlyHint` and `untrustedContentHint`. CriShirt's ordinary reversible workspace edits, image generation/refinement, navigation, cart mutations, collection actions, and virtual try-on should not be mechanically classified as consequential. Optional local type support remains a small standards-alignment improvement, not a runtime bug.
 
 ### Human journey versus agent journey
 Fresh re-audit again found no missing high-leverage semantic journey. The current 13-tool surface already collapses the major visual/click-heavy flows into semantic operations: workspace/state reading, supported garment/color/material/size/side configuration, artwork placement, Perfect Corp generation/refinement, current-design cart insertion, cart inspection/removal, constrained navigation, collection inspection/cart insertion, and virtual try-on readiness/execution. Adding DOM-shaped micro-tools would increase tool count and round trips without adding a legitimate user capability.
 
 ### Virtual Try-On lifecycle
-Fresh source inspection reconfirmed the only concrete remaining lifecycle inefficiency: both Try-On tools are registered inside a `useEffect` with dependency `[tryOnResult]`. Result creation/clearing therefore aborts and re-registers otherwise identical tool definitions. The narrow preferred fix remains a `tryOnResultRef` synchronized with state and read by `crishirt_get_tryon_state`, allowing registration to stay scoped to component lifetime.
+Fresh source inspection reconfirmed the only concrete remaining lifecycle inefficiency: both Try-On tools are registered inside a `useEffect` with dependency `[tryOnResult]`. `crishirt_get_tryon_state` directly closes over `tryOnResult`, so creation or clearing of a result aborts and re-registers otherwise identical tool definitions. The narrow preferred fix remains a `tryOnResultRef` synchronized with state and read by the state tool, allowing registration to stay scoped to component lifetime.
 
 ### Race handling / duplicate actions / recovery
-No new reproduced race, duplicate-cart mutation, route-refresh regression, provider overwrite, or stale-state issue was found from source re-audit. Existing workspace revision validation remains the appropriate lightweight stale-state guard. Broader locking/idempotency remains deferred until a failing reproduction exists.
+No new reproduced race, duplicate-cart mutation, route-refresh regression, provider overwrite, or stale-state issue was found from the fresh source/repository audit. Existing workspace revision validation remains the appropriate lightweight stale-state guard. Broader locking/idempotency remains deferred until a failing reproduction exists.
 
 ### Human stability / unsupported browser
 No Perfect Corp generation, refinement/editor placement, cart, collection, Try-On, navigation, visual design, or deployment configuration changed this run. Feature detection continues to preserve ordinary website behavior when `document.modelContext` is unavailable.
 
 ## Verification / tests performed this run
 - Read this durable handoff before mutation.
-- Verified exact canonical repository, production branch, working branch, entering head, production merge base, and 148-ahead/0-behind state through connected GitHub.
+- Verified exact canonical repository, production branch, working branch, entering head, production merge base, and 149-ahead/0-behind state through connected GitHub.
 - Verified entering head Vercel status is `success`.
 - Re-read `src/components/VRTryOn.tsx` and reconfirmed `useEffect(..., [tryOnResult])` registration churn.
-- Reverified the official WebMCP Draft Community Group Report dated 9 September 2026 and current annotation semantics.
+- Rechecked current W3C/WebMCP material and current browser/testing ecosystem information.
 - Retried a clean canonical clone of `webmcp-agent-native`; clone failed before install/build with `Could not resolve host: github.com` in the execution container.
 - Because the required clean build/test-capable checkout remained unavailable, no behavioral source mutation was made and no speculative source code was committed.
 
@@ -84,8 +84,8 @@ No Perfect Corp generation, refinement/editor placement, cart, collection, Try-O
 - This durable audit handoff was refreshed; no behavioral source code changed.
 
 ## Remaining opportunities
-1. In a build-capable checkout, add optional `consequentialHint` to local WebMCP tool type shapes and classify tools deliberately against the current spec; do not mark ordinary reversible CriShirt actions consequential by default.
-2. Implement and independently test the narrow Try-On result-ref/component-lifetime registration fix.
+1. In a build-capable checkout, implement and independently test the narrow Try-On result-ref/component-lifetime registration fix.
+2. Add optional `consequentialHint` to local WebMCP tool type shapes and classify tools deliberately against the current spec; do not mark ordinary reversible CriShirt actions consequential by default.
 3. Run `npm ci`, `npm run build`, and relevant integration tests before committing either behavioral/source change.
 4. Inspect actual `document.modelContext.getTools()` output and execute representative tool journeys in WebMCP-capable/official testing tooling when available.
 5. Exercise cancellation, provider failure, stale revision, route changes/refresh, unsupported-browser fallback, annotations, and registration stability in a capable browser.
@@ -95,9 +95,9 @@ No Perfect Corp generation, refinement/editor placement, cart, collection, Try-O
 9. Do not merge to `main` solely because a remote preview build is green.
 
 ## Latest commit SHA
-Latest verified branch head before this handoff update: `3e684a6924dca951981df1a49685b19afc60aa8b`.
+Latest verified branch head before this handoff update: `e16d087af6d16361757c3cc1aa376999a217dc08`.
 
 The commit containing this file is created after its contents are fixed, so its SHA is recorded by the next run rather than attempting a self-referential hash.
 
 ## Next run
-Read this file first. Reverify canonical repo/branch/production isolation and deployment status. If a clean build/test-capable checkout is available, first add optional `consequentialHint` type support with deliberate non-consequential classification, then implement the narrow Try-On registration-lifecycle fix if both can be independently tested safely. Build/test fully and commit only green behavior. Also attempt real WebMCP discovery/execution when a capable browser/test harness is available. If the build environment remains unavailable, perform another fresh full-journey/spec audit and preserve all human behavior.
+Read this file first. Reverify canonical repo/branch/production isolation and deployment status. If a clean build/test-capable checkout is available, implement the narrow Try-On registration-lifecycle fix first, then add optional `consequentialHint` type support if both can be independently tested safely. Build/test fully and commit only green behavior. Also attempt real WebMCP discovery/execution when a capable browser/test harness is available. If the build environment remains unavailable, perform another fresh full-journey/spec audit and preserve all human behavior.
