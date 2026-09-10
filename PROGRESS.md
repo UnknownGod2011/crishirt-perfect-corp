@@ -8,8 +8,8 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Production branch: `main`.
 - Production commit / exact merge base: `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Working branch: `webmcp-agent-native`.
-- Branch head entering this run: `96c23fd2130d3de2aa7be8020342c733574e320b`.
-- Comparison at run start: 144 commits ahead of production, 0 behind.
+- Branch head entering this run: `f1bbc408ba0e82dc183eca3b0882c3debc726914`.
+- Comparison at run start: 145 commits ahead of production, 0 behind.
 - Entering branch Vercel status: `success`.
 - Production and production deployment configuration were not modified.
 
@@ -44,34 +44,33 @@ All bridges feature-detect `document.modelContext`, so ordinary human flows cont
 - Schemas are bounded to existing product capabilities and responses are compact/structured.
 - Try-On photo capture/upload remains human-controlled and tools do not return raw person/result image bytes.
 
-## Fresh full-product audit — 2026-09-10 17:19 IST
+## Fresh full-product audit — 2026-09-10 18:21 IST
 
 ### Repository isolation
-Verified the canonical repository, default `main`, working `webmcp-agent-native`, entering head `96c23fd2130d3de2aa7be8020342c733574e320b`, exact production merge base, and 144-ahead/0-behind comparison. The WebMCP-relevant diff remains limited to the existing WebMCP bridges, Try-On integration, collection integration/catalog, README WebMCP documentation, App integration, and this durable progress log. Production remains untouched.
+Verified the canonical repository, default `main`, working `webmcp-agent-native`, entering head `f1bbc408ba0e82dc183eca3b0882c3debc726914`, exact production merge base, and 145-ahead/0-behind comparison. The branch diff remains constrained to the existing WebMCP bridges/integration, collection catalog/integration, README WebMCP documentation, App integration, and this durable log. Production remains untouched.
 
 ### Official WebMCP specification
-Fresh verification against the official WebMCP Draft Community Group Report dated **9 September 2026** confirms the document-scoped `document.modelContext` API and semantic tool-registration model remain current. The existing implementation direction remains aligned: `registerTool`, structured JSON Schemas, execution/registration `AbortSignal`, compact structured outputs, and tool annotations.
+Fresh verification against the official WebMCP Draft Community Group Report dated **9 September 2026** reconfirmed `document.modelContext` as the current document-scoped entry point and the semantic `registerTool` model. The implementation direction remains aligned with structured JSON Schemas, registration/execution `AbortSignal`, compact structured outputs, and annotations.
 
-The local TypeScript `WebMCPTool.annotations` shapes in the three bridges still model `readOnlyHint` and `untrustedContentHint` but not optional `consequentialHint`. The current spec defines `consequentialHint` for significant real-world/non-reversible effects; ordinary reversible CriShirt workspace edits, generation, navigation, cart, collection, and virtual try-on actions should not be mechanically classified as consequential. Adding optional type support remains worthwhile standards alignment but is not a runtime regression.
+The local TypeScript `WebMCPTool.annotations` shapes still model `readOnlyHint` and `untrustedContentHint` but not optional `consequentialHint`. The current spec defines `consequentialHint` for significant real-world/non-reversible effects; ordinary reversible CriShirt workspace edits, generation, navigation, cart, collection, and virtual try-on actions should not be mechanically marked consequential. Adding optional type support remains worthwhile standards alignment but is not a runtime regression.
 
-### Create / edit / recovery journey
-Fresh source inspection of `WebMCPBridge.tsx` reconfirmed the main semantic surface collapses the high-cost human interactions: workspace inspection, garment/color/material/size/side selection, artwork placement, Perfect Corp generation/refinement, current-design cart insertion, cart inspection/removal, and constrained navigation. Revision validation still provides the appropriate lightweight stale-state guard. No additional micro-tool is justified this run.
+### Human journey versus agent journey
+Fresh re-audit found no missing high-leverage semantic journey. The existing 13-tool surface already collapses the main visual/click-heavy flows into semantic operations: workspace/state reading, supported garment/color/material/size/side configuration, artwork placement, Perfect Corp generation/refinement, current-design cart insertion, cart inspection/removal, constrained navigation, collection inspection/cart insertion, and virtual try-on readiness/execution. Adding tiny DOM-shaped tools would increase tool count and agent round trips without improving legitimate capability.
 
-### Cart / collection / navigation
-Fresh inspection of `CollectionWebMCPBridge.tsx` reconfirmed collection products are exposed as compact stable structured data and existing available products can be added through the same shared cart state as the human page. Main-cart and navigation capabilities remain sufficiently covered by the existing bridge. No new commerce or idempotency behavior is justified without a reproduced duplicate-action problem.
+### Virtual Try-On lifecycle
+Fresh source inspection reconfirmed privacy boundaries, stable cart-item IDs, provider cancellation, deterministic readiness/failure codes, and feature detection. The known lifecycle inefficiency remains: both Try-On tools are registered inside a `useEffect` whose dependency is `[tryOnResult]`. Result creation/clearing therefore aborts and re-registers otherwise identical tool definitions. The preferred narrow fix remains a `tryOnResultRef` synchronized with state, read by `crishirt_get_tryon_state`, with registration scoped to component lifetime.
 
-### Virtual Try-On
-Fresh source inspection of `VRTryOn.tsx` reconfirmed privacy boundaries, cart-item semantic selection, provider `AbortSignal`, deterministic readiness/failure codes, and feature detection. The known lifecycle inefficiency remains: both Try-On tools are registered inside a `useEffect` whose dependency is `[tryOnResult]`. Creating or clearing a result therefore aborts and re-registers otherwise identical tool definitions. The narrow preferred fix remains to introduce a `tryOnResultRef`, synchronize it with state, read it inside `crishirt_get_tryon_state`, and register tools for component lifetime rather than result lifetime.
+### Race handling / duplicate actions / recovery
+No reproduced new race, duplicate-cart mutation, route-refresh regression, or provider state overwrite was found from source re-audit. Existing revision validation remains the appropriate lightweight stale-state guard for workspace mutations. Broader locking or idempotency changes would be speculative without a failing reproduction and are intentionally deferred.
 
 ### Human stability / unsupported browser
 No Perfect Corp generation, refinement/editor placement, cart, collection, Try-On, navigation, visual design, or deployment configuration changed this run. Feature detection continues to preserve the ordinary website when `document.modelContext` is absent.
 
 ## Verification / tests performed this run
 - Read this durable handoff before any mutation.
-- Verified exact canonical repository, default branch, working branch, branch head, production merge base, and 144-ahead/0-behind state through connected GitHub.
+- Verified exact canonical repository, default branch, working branch, branch head, production merge base, and 145-ahead/0-behind state through connected GitHub.
 - Verified entering head Vercel status is `success`.
-- Re-read current `src/components/WebMCPBridge.tsx`, `src/components/CollectionWebMCPBridge.tsx`, and `src/components/VRTryOn.tsx`.
-- Reconfirmed the Try-On registration churn at `useEffect(..., [tryOnResult])`.
+- Re-read the WebMCP-relevant Virtual Try-On source and reconfirmed `useEffect(..., [tryOnResult])` registration churn.
 - Reverified the official WebMCP Draft Community Group Report dated 9 September 2026.
 - Retried a clean canonical clone/build gate using the correct branch. Clone again failed before install/build with `Could not resolve host: github.com` in the execution container.
 - Because a clean build/test-capable checkout remained unavailable, no behavioral source mutation was made and no speculative source code was committed.
@@ -96,7 +95,7 @@ No Perfect Corp generation, refinement/editor placement, cart, collection, Try-O
 9. Do not merge to `main` solely because a remote preview build is green.
 
 ## Latest commit SHA
-Latest verified branch head before this handoff update: `96c23fd2130d3de2aa7be8020342c733574e320b`.
+Latest verified branch head before this handoff update: `f1bbc408ba0e82dc183eca3b0882c3debc726914`.
 
 The commit containing this file is created after its contents are fixed, so its SHA is recorded by the next run rather than attempting a self-referential hash.
 
