@@ -8,8 +8,8 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Production branch: `main`.
 - Production commit: `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Working branch: `webmcp-agent-native`.
-- Branch head entering this run: `8c2113bba40d4d1242cacb2b459271490e2ef234`.
-- Comparison at run start: 137 commits ahead of production, 0 behind; merge base is exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Branch head entering this run: `a8057d41af1ce5282aa4328cbf46bd4bee21ba27`.
+- Comparison at run start: 138 commits ahead of production, 0 behind; merge base is exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Entering branch Vercel status: `success` / deployment completed.
 - Production and production deployment configuration were not modified.
 
@@ -44,10 +44,10 @@ All bridges feature-detect `document.modelContext`, so ordinary human flows cont
 - Schemas are bounded to existing product capabilities and responses are compact/structured.
 - Try-On photo capture/upload remains human-controlled and tools do not return raw person/result image bytes.
 
-## Fresh full-product audit — 2026-09-10 10:25 IST
+## Fresh full-product audit — 2026-09-10 11:23 IST
 
 ### Repository isolation
-Verified the canonical repository, default `main`, working `webmcp-agent-native`, entering head `8c2113bba40d4d1242cacb2b459271490e2ef234`, exact production merge base, and 137-ahead/0-behind comparison. The WebMCP-relevant diff remains limited to `PROGRESS.md`, README WebMCP documentation, `src/App.tsx`, the three WebMCP/Try-On bridge components, shared collection catalog, and collection page integration.
+Verified the canonical repository, default `main`, working `webmcp-agent-native`, entering head `a8057d41af1ce5282aa4328cbf46bd4bee21ba27`, exact production merge base, and 138-ahead/0-behind comparison. The WebMCP-relevant diff remains limited to `PROGRESS.md`, README WebMCP documentation, `src/App.tsx`, the three WebMCP/Try-On bridge components, shared collection catalog, and collection page integration.
 
 ### Create / edit / recovery journey
 Re-audited workspace read/configure/placement/generate/refine. The current compound semantic actions still remove unnecessary garment-selector interpretation, side switching, drag/resize estimation, prompt entry, and repeated visual reads while preserving the same underlying application state. No additional micro-tool is justified.
@@ -72,11 +72,11 @@ No Perfect Corp generation, editor/placement, cart, collection, Try-On, navigati
 - Read this durable handoff before any mutation.
 - Verified canonical repository and default branch.
 - Verified working branch head and exact production merge base.
-- Compared production to branch: 137 ahead / 0 behind.
+- Compared production to branch: 138 ahead / 0 behind.
 - Checked entering head combined status: Vercel `success`.
 - Re-read `src/components/VRTryOn.tsx` and confirmed the registration lifecycle issue remains exactly as documented.
 - Re-audited semantic coverage across create/edit/recovery, cart/collection/navigation, and Virtual Try-On.
-- Attempted a fresh clean clone/build environment; clone failed before install/build because local DNS could not resolve `github.com`.
+- Retried a fresh clean clone/build environment; clone failed before install/build because local DNS could not resolve `github.com`.
 - No functional source mutation was made; therefore no speculative or failing behavioral code was committed.
 
 ## Failures found / fixes applied
@@ -96,7 +96,7 @@ No Perfect Corp generation, editor/placement, cart, collection, Try-On, navigati
 7. Do not merge to `main` solely because a remote preview build is green.
 
 ## Latest commit SHA
-Latest verified branch head before this handoff update: `8c2113bba40d4d1242cacb2b459271490e2ef234`.
+Latest verified branch head before this handoff update: `a8057d41af1ce5282aa4328cbf46bd4bee21ba27`.
 
 The commit containing this file is necessarily created after the file contents are fixed, so its SHA is recorded by the next run rather than attempting a self-referential hash.
 
