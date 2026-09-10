@@ -8,8 +8,8 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Production branch: `main`.
 - Production commit / exact merge base: `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Working branch: `webmcp-agent-native`.
-- Branch head entering this run: `a1ae041d589bdc394c34997bd776b657ce02b803`.
-- Comparison at run start: 146 commits ahead of production, 0 behind.
+- Branch head entering this run: `392cdff147b8ae398d0c3c953534949f431b737e`.
+- Comparison at run start: 147 commits ahead of production, 0 behind.
 - Entering branch Vercel status: `success`.
 - Production and production deployment configuration were not modified.
 
@@ -44,15 +44,15 @@ All bridges feature-detect `document.modelContext`, so normal human flows contin
 - Schemas are bounded to existing product capabilities and responses are compact/structured.
 - Try-On photo capture/upload remains human-controlled and tools do not return raw person/result image bytes.
 
-## Fresh full-product audit — 2026-09-10 19:24 IST
+## Fresh full-product audit — 2026-09-10 20:22 IST
 
 ### Repository isolation
-Verified the canonical repository, production `main`, working `webmcp-agent-native`, entering head `a1ae041d589bdc394c34997bd776b657ce02b803`, exact production merge base `88daa417caa5305f81e5554977a13a94a793cdeb`, and 146-ahead/0-behind comparison. The branch diff remains constrained to the WebMCP bridges/integration, collection catalog/integration, README WebMCP documentation, App integration, Virtual Try-On integration, and this durable log. Production remains untouched.
+Verified the canonical repository, production `main`, working `webmcp-agent-native`, entering head `392cdff147b8ae398d0c3c953534949f431b737e`, exact production merge base `88daa417caa5305f81e5554977a13a94a793cdeb`, and 147-ahead/0-behind comparison. The branch diff remains constrained to WebMCP bridges/integration, collection catalog/integration, README WebMCP documentation, App integration, Virtual Try-On integration, and this durable log. Production remains untouched.
 
 ### Official WebMCP specification
 Fresh verification against the official WebMCP Draft Community Group Report dated **9 September 2026** reconfirmed `document.modelContext`, semantic `registerTool`, `getTools()`, `executeTool()`, execution/registration cancellation with `AbortSignal`, and `ToolAnnotations` containing `readOnlyHint`, `untrustedContentHint`, and `consequentialHint`.
 
-The local TypeScript `WebMCPTool.annotations` shapes still model `readOnlyHint` and `untrustedContentHint` but not optional `consequentialHint`. The current spec defines `consequentialHint` for significant real-world/non-reversible effects such as booking or transferring money. Ordinary reversible CriShirt workspace edits, generation, navigation, cart, collection, and virtual try-on actions should not be mechanically marked consequential. Adding optional type support remains worthwhile standards alignment but not a runtime regression.
+The local TypeScript `WebMCPTool.annotations` shapes still model `readOnlyHint` and `untrustedContentHint` but not optional `consequentialHint`. The current spec defines `consequentialHint` for significant real-world/non-reversible effects. Ordinary reversible CriShirt workspace edits, generation, navigation, cart, collection, and virtual try-on actions should not be mechanically marked consequential. Adding optional type support remains worthwhile standards alignment but not a runtime regression.
 
 ### Human journey versus agent journey
 Fresh re-audit found no missing high-leverage semantic journey. The 13-tool surface already collapses the major visual/click-heavy flows into semantic operations: workspace/state reading, supported garment/color/material/size/side configuration, artwork placement, Perfect Corp generation/refinement, current-design cart insertion, cart inspection/removal, constrained navigation, collection inspection/cart insertion, and virtual try-on readiness/execution. Additional tiny DOM-shaped tools would increase tool count and round trips without improving legitimate capability.
@@ -68,9 +68,10 @@ No Perfect Corp generation, refinement/editor placement, cart, collection, Try-O
 
 ## Verification / tests performed this run
 - Read this durable handoff before mutation.
-- Verified exact canonical repository, production branch, working branch, entering head, production merge base, and 146-ahead/0-behind state through connected GitHub.
+- Verified exact canonical repository, production branch, working branch, entering head, production merge base, and 147-ahead/0-behind state through connected GitHub.
 - Verified entering head Vercel status is `success`.
 - Re-read `src/components/VRTryOn.tsx` and reconfirmed `useEffect(..., [tryOnResult])` registration churn.
+- Re-read the primary WebMCP bridge and reconfirmed semantic state reuse, revision validation, bounded schemas, deterministic errors, and AbortSignal propagation.
 - Reverified the official WebMCP Draft Community Group Report dated 9 September 2026.
 - Retried a clean canonical clone of `webmcp-agent-native`; clone failed before install/build with `Could not resolve host: github.com` in the execution container.
 - Because a clean build/test-capable checkout remained unavailable, no behavioral source mutation was made and no speculative source code was committed.
@@ -95,7 +96,7 @@ No Perfect Corp generation, refinement/editor placement, cart, collection, Try-O
 9. Do not merge to `main` solely because a remote preview build is green.
 
 ## Latest commit SHA
-Latest verified branch head before this handoff update: `a1ae041d589bdc394c34997bd776b657ce02b803`.
+Latest verified branch head before this handoff update: `392cdff147b8ae398d0c3c953534949f431b737e`.
 
 The commit containing this file is created after its contents are fixed, so its SHA is recorded by the next run rather than attempting a self-referential hash.
 
