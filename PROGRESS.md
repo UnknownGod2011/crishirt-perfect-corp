@@ -52,7 +52,8 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 ## Latest commit SHA
 - Branch head before this documentation commit: `bc013dc183441ba84b999fc6ec5962eba4c52b9f`.
 - Latest tested behavioral source commit remains: `723d33e6457b894cf607af48d5f84c4d5082fee9`.
-- Current documentation update commit: pending GitHub response.
+- Current documentation update commit: `1fc1b0a4a821d9247b276e0fc75a484f777edd1c`.
+- A follow-up metadata-only correction may update this line on the next run if needed; no behavioral source changed in this run.
 
 ## Remaining opportunities
 1. When a clean build/test path is available, implement the synchronous generation/refinement admission guard in a minimal patch that preserves every existing registration, then verify concurrent second-call rejection, cancellation, provider failure cleanup, duplicate-call behavior, and no human-flow regression.
