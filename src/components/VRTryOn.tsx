@@ -50,6 +50,7 @@ const VRTryOn: React.FC = () => {
   const userPhotoRef = useRef(userPhoto);
   const selectedCartItemIdRef = useRef(selectedCartItemId);
   const loadingRef = useRef(loading);
+  const tryOnResultRef = useRef<string | null>(tryOnResult);
 
   useEffect(() => {
     cartItemsRef.current = cartItems;
@@ -66,6 +67,10 @@ const VRTryOn: React.FC = () => {
   useEffect(() => {
     loadingRef.current = loading;
   }, [loading]);
+
+  useEffect(() => {
+    tryOnResultRef.current = tryOnResult;
+  }, [tryOnResult]);
 
   const getCartDesign = (item: (typeof cartItems)[number]) =>
     item.frontDesign?.snapshotUrl ||
@@ -257,7 +262,7 @@ const VRTryOn: React.FC = () => {
           selectedCartItemId: selectedId,
           eligibleCartItems: eligibleItems,
           busy,
-          resultReady: Boolean(tryOnResult),
+          resultReady: Boolean(tryOnResultRef.current),
           readinessReason,
           humanActionRequired: !photoPresent ? 'Upload or capture a try-on photo in the visible CriShirt UI.' : null,
         };
@@ -280,7 +285,7 @@ const VRTryOn: React.FC = () => {
     });
 
     return () => registrationController.abort();
-  }, [tryOnResult]);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 py-8">
