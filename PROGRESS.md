@@ -8,9 +8,9 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Production branch: `main`.
 - Production commit / exact merge base: `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Working branch: `webmcp-agent-native`.
-- Branch head entering this run: `9f01af35e21158672a26e1d1245aeee3395b0969`.
-- Entering comparison: 166 commits ahead of production, 0 behind.
-- Entering Vercel status for `9f01af3...`: success.
+- Branch head entering this run: `7a5b57c965156d99ec955ddc286b251126bc42df`.
+- Entering comparison: 167 commits ahead of production, 0 behind; `main` is still the exact merge base.
+- Entering Vercel status for `7a5b57c...`: success.
 - Production `main` and production deployment configuration were not modified.
 
 ## Implemented WebMCP surface
@@ -45,31 +45,29 @@ All bridges feature-detect `document.modelContext`, so normal human flows contin
 - Try-On photo capture/upload remains human-controlled and tools do not return raw person/result image bytes.
 - Try-On tools remain registered stably across result-state changes via behavioral commit `723d33e6457b894cf607af48d5f84c4d5082fee9`.
 
-## Fresh full-product audit — 2026-09-11 14:24 IST
+## Fresh full-product audit — 2026-09-11 15:22 IST
 
 ### Repository isolation
-Verified the canonical repository and branch before editing. `main` remains `88daa417caa5305f81e5554977a13a94a793cdeb`; `webmcp-agent-native` entered at `9f01af35e21158672a26e1d1245aeee3395b0969`, 166 commits ahead and 0 behind, with `main` still the exact merge base. Production was not touched.
+Verified the canonical repository and working branch before editing. `main` remains `88daa417caa5305f81e5554977a13a94a793cdeb`; `webmcp-agent-native` entered at `7a5b57c965156d99ec955ddc286b251126bc42df`, 167 commits ahead and 0 behind, with `main` still the exact merge base. Production was not touched.
 
 ### Deployment verification
 GitHub combined status for the entering head reports Vercel `success`. No production deployment configuration was changed.
 
 ### Current official WebMCP specification
-Freshly checked the Web Machine Learning Community Group report. The current published draft remains dated **10 September 2026** and defines the canonical imperative surface as `document.modelContext.registerTool(...)`. It continues to define `readOnlyHint`, `untrustedContentHint`, `consequentialHint`, execution `AbortSignal`, registration-lifetime `signal`, `exposedTo` / `fromOrigins`, `getTools()`, and `executeTool()`.
-
-CriShirt's current same-origin, page-scoped tool model remains aligned. No spec-driven widening, cross-origin configuration, annotation change, or extra tool is justified this run.
+Freshly checked the Web Machine Learning Community Group report. The current published draft is dated **10 September 2026** and defines the canonical imperative surface as `document.modelContext.registerTool(...)`, with `getTools()`, `executeTool()`, registration-lifetime signals, execution `AbortSignal`, annotations, and origin exposure controls. CriShirt's current same-origin page-scoped approach remains aligned; no spec-driven tool widening or annotation change is justified this run.
 
 ### Human journey versus agent journey
-Re-audited the stable in-scope product path: workspace read/configuration, apparel/color/material/size/side selection, Perfect Corp generation, refinement, artwork placement, collection listing/add-to-cart, cart read/remove, constrained navigation, and Virtual Try-On readiness/execution after a human supplies a photo.
+Re-audited the stable in-scope product path from scratch: workspace read/configuration, apparel/color/material/size/side selection, Perfect Corp generation, refinement, artwork placement, collection listing/add-to-cart, cart read/remove, constrained navigation, and Virtual Try-On readiness/execution after a human supplies a photo.
 
-The existing 13 semantic tools still cover the stable legitimate human goals without DOM interpretation or visual selector wrappers. The surface remains round-trip efficient: generation can include garment settings in one call; refinement consumes the current workspace image; workspace state is consolidated; collection/cart are structurally readable; Try-On accepts a stable cart item id; navigation is constrained to existing routes.
+The existing 13 semantic tools still cover the stable legitimate human goals without DOM interpretation or selector wrappers. Generation can combine garment settings in one call, refinement consumes workspace state directly, workspace/cart/collection state is structurally readable, Try-On uses stable cart item IDs, and navigation is constrained to existing routes.
 
 ### Confirmed remaining race: generation/refinement admission
-Re-read `src/components/WebMCPBridge.tsx` and reconfirmed the highest-priority concrete race:
+Re-read `src/components/WebMCPBridge.tsx` on the current branch and reconfirmed the highest-priority concrete race:
 - `crishirt_generate_design` and `crishirt_refine_design` check `stateRef.current.isGenerating || stateRef.current.isRefining`.
-- The busy flags are then set using React `dispatch`.
-- Two near-simultaneous tool executions can both observe the old state before React commits the first dispatch and can therefore both enter provider work.
+- The busy flags are then set through React `dispatch`.
+- Two near-simultaneous tool executions can both observe the old state before React commits the first dispatch and can therefore both enter Perfect Corp provider work.
 
-The narrow safe fix remains a bridge-local synchronous in-flight ref shared by generation/refinement, set after validation and immediately before busy-state dispatch/provider work, rejected deterministically as `WORKSPACE_BUSY` for a second admission, and cleared in `finally` on success, cancellation, and provider failure. This requires no architecture or human-flow change.
+The narrow safe fix remains one bridge-local synchronous in-flight ref shared by generation/refinement, set only after input/state validation and immediately before busy dispatch/provider work, rejected deterministically as `WORKSPACE_BUSY` for a second admission, and cleared in `finally` on success, cancellation, and provider failure. This requires no architecture or human-flow change.
 
 ### Build gate
 Retried a clean canonical checkout with:
@@ -78,46 +76,38 @@ Retried a clean canonical checkout with:
 The execution container again failed before install/build with:
 `Could not resolve host: github.com`
 
-This remains a transient infrastructure/DNS blocker. Because the requested source fix cannot be put through a clean dependency/build/lint/test gate in this environment, the behavioral concurrency guard was not shipped untested.
+This is still a transient infrastructure/DNS blocker. Because the source fix cannot be put through the requested clean dependency/build/lint/test gate, the behavioral concurrency guard was not shipped untested.
 
-### Fresh bridge checks
-- Main WebMCP bridge still uses stable effect registration and abort-on-unmount cleanup.
-- Collection tools remain semantic and reuse the shared catalog/cart state; no extra collection wrapper is justified.
-- Virtual Try-On uses refs for live cart/photo/loading/result state, keeps registration stable with an empty dependency array, propagates cancellation, and preserves the human-controlled photo privacy boundary.
-- Unsupported-browser behavior remains safe because each bridge exits without side effects if `document.modelContext` is unavailable.
-- README's concise WebMCP section remains accurate and does not need expansion.
-- No new product capability was invented or exposed.
-
-### Schema / payload / race / recovery audit
-- Schemas remain bounded and reject extra properties.
-- Read-only and untrusted-output annotations remain appropriate under the 10 September draft.
-- No current action warrants `consequentialHint: true`; the tools mutate reversible in-app design/cart/navigation state rather than committing an external purchase or irreversible action.
+### Fresh bridge / recovery checks
+- Main WebMCP bridge still feature-detects `document.modelContext`, uses stable effect registration, and aborts registrations on unmount.
+- Collection tools remain semantic and reuse shared catalog/cart state; no additional collection wrapper is justified.
+- Virtual Try-On registration stability, live refs, cancellation propagation, and privacy boundary remain intact.
+- Unsupported-browser behavior remains safe because bridges return without side effects when WebMCP is unavailable.
 - Workspace revision validation remains the appropriate lightweight stale-edit guard.
-- No reproduced cart retry/duplicate bug justifies adding idempotency complexity yet.
-- The generation/refinement same-tick admission window remains the only concrete source change that currently clears the risk/utility bar.
+- No reproduced cart retry/duplicate failure justifies idempotency complexity yet.
+- README's concise WebMCP section remains appropriate and does not need expansion this run.
 
 ## Verification / tests performed this run
 - Read `PROGRESS.md` before mutation.
-- Verified canonical repository, production branch, working branch, current head, exact merge base, and 166-ahead/0-behind isolation.
-- Verified Vercel success on entering head `9f01af3...`.
-- Re-read the main WebMCP bridge, collection bridge, Virtual Try-On bridge, and README WebMCP section.
-- Re-audited the complete stable human-versus-agent journey.
-- Checked the official WebMCP Draft Community Group Report dated 10 September 2026.
-- Reconfirmed annotation, registration, discovery/execution, and AbortSignal semantics against the current draft.
-- Reconfirmed the generation/refinement admission race by code-path inspection.
+- Verified canonical repository, production branch, working branch, exact branch head, exact merge base, and 167-ahead/0-behind isolation.
+- Verified Vercel success on entering head `7a5b57c...`.
+- Re-read the current generation/refinement implementation in `src/components/WebMCPBridge.tsx`.
+- Re-audited the complete stable human-versus-agent journey against the established 13-tool surface.
+- Freshly checked the official WebMCP Draft Community Group Report dated 10 September 2026.
+- Reconfirmed the generation/refinement same-tick admission race by code-path inspection.
 - Retried a clean checkout/build path; clone failed before dependency installation with `Could not resolve host: github.com`.
-- No behavioral source code was changed because the clean build/test gate is unavailable.
+- No behavioral source code was changed because the clean build/test gate remains unavailable.
 - Browser-side `document.modelContext.getTools()` / `executeTool()` verification remains unavailable in this execution environment.
 
 ## Failures found / fixes applied
 - Existing concrete issue remains: near-simultaneous WebMCP generation/refinement calls can both pass the React busy-state guard before the first dispatch commits.
 - No new human-flow or WebMCP regression was found.
 - No behavioral fix was shipped because the clean build gate remains blocked by transient DNS.
-- This durable handoff was refreshed with exact repository/deployment state, current spec state, source audit, blocker, and next-run plan.
+- This durable handoff was refreshed with exact repository/deployment state, fresh spec verification, source audit, blocker, and next-run plan.
 
 ## Remaining opportunities
 1. **Highest priority:** once a clean checkout can build, add one shared synchronous WebMCP generation/refinement in-flight guard before provider work; clear it in `finally`; verify a second concurrent invocation returns deterministic `WORKSPACE_BUSY`.
-2. Run the repository's clean install, build, lint, and relevant test commands after that narrow change; commit only if green.
+2. Run clean install, build, lint, and relevant tests after that narrow change; commit only if green.
 3. In a WebMCP-capable browser or official testing environment, inspect actual `document.modelContext.getTools()` registration and execute representative end-to-end CriShirt journeys.
 4. Exercise cancellation, provider failure, stale revision, route changes/refresh, unsupported-browser fallback, annotation metadata, registration stability, and same-origin exposure.
 5. Reproduce cart retry/duplicate behavior before adding idempotency.
@@ -126,7 +116,7 @@ This remains a transient infrastructure/DNS blocker. Because the requested sourc
 
 ## Latest commit SHA
 Latest tested behavioral source commit: `723d33e6457b894cf607af48d5f84c4d5082fee9`.
-Entering branch head: `9f01af35e21158672a26e1d1245aeee3395b0969`.
+Entering branch head for this run: `7a5b57c965156d99ec955ddc286b251126bc42df`.
 
 The commit containing this handoff file is created after its contents are fixed, so its own SHA is recorded by the next run rather than attempting a self-referential hash.
 
