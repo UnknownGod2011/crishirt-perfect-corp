@@ -8,8 +8,7 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Production branch: `main`.
 - Production commit / exact merge base: `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Working branch: `webmcp-agent-native`.
-- Branch head entering this run: `786de7bc3d2cf124755aa3fcfde90f0ff7373e2f`.
-- Entering comparison: 168 commits ahead of production, 0 behind; `main` remains the exact merge base.
+- Branch head entering this run: `e6c12b130097a5aed2b7a51d5f15c2bfe4c804fa`.
 - Production `main` and production deployment configuration were not modified.
 
 ## Implemented WebMCP surface
@@ -18,35 +17,37 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Virtual Try-On bridge: `crishirt_get_tryon_state`, `crishirt_run_virtual_tryon`.
 - Bridges feature-detect `document.modelContext`, preserve normal human flows when unavailable, use semantic state/actions rather than DOM selector wrappers, propagate execution `AbortSignal` into provider fetches, and use bounded schemas plus read-only/untrusted annotations where appropriate.
 
-## Fresh full-product audit — 2026-09-11 16:21 IST
+## Fresh full-product audit — 2026-09-11 17:20 IST
 
 ### Repository and source inspection
-- Verified the canonical repository and `webmcp-agent-native` branch before any mutation.
+- Verified the canonical repository metadata and the `webmcp-agent-native` branch before mutation.
 - Read `PROGRESS.md` first.
-- Re-inspected the WebMCP bridge source and the established 13-tool surface.
-- Re-audited the full stable journey: workspace read/configuration, generation/refinement, placement, collection/cart, navigation, and human-supplied-photo Virtual Try-On.
+- Re-audited the established 13-tool WebMCP surface and the full stable journey: workspace read/configuration, Perfect Corp generation/refinement, placement, collection/cart, navigation, and human-supplied-photo Virtual Try-On.
+- Reconfirmed production isolation: `main` remains at `88daa417caa5305f81e5554977a13a94a793cdeb`; no production configuration changes were made.
 
 ### Agent ergonomics / safety findings
-- The existing 13 semantic tools still cover all stable legitimate product capabilities without visual DOM interpretation.
-- The previously identified same-tick generation/refinement admission race remains the only clearly worthwhile behavioral fix: both calls can observe stale React busy state before the first dispatch commits.
-- The narrow intended fix remains a synchronous bridge-local shared in-flight guard, set immediately before busy dispatch/provider work and cleared in `finally`, returning deterministic `WORKSPACE_BUSY` to the second admission.
-- No additional tool, schema expansion, cross-origin exposure option, cart idempotency layer, or UI change is justified by this audit.
+- No new semantic capability is justified without inventing product behavior or increasing risk.
+- The same-tick generation/refinement admission race remains the only clearly worthwhile source fix: both calls can observe stale React busy state before the first dispatch commits.
+- The narrow intended fix remains a synchronous bridge-local shared in-flight guard, set before busy dispatch/provider work and cleared in `finally`, returning deterministic `WORKSPACE_BUSY` to the second admission.
+- Existing stale-revision checks, cancellation propagation, registration cleanup, route navigation, and unsupported-browser fallback remain coherent.
+- No schema expansion, cross-origin exposure option, cart idempotency layer, or UI change is justified by this run.
 
-### Build / execution verification
-- A clean checkout/build/test could not be performed in this environment because the runtime has no direct local checkout capability and the previous clean-clone path was blocked by DNS (`Could not resolve host: github.com`).
-- Because the guard cannot be installed and then validated through the requested build/test gate, no behavioral source code was changed this run.
-- Browser-side `document.modelContext.getTools()` / `executeTool()` verification remains unavailable here.
+### Verification
+- GitHub repository metadata, branch identity, and production ref verified.
+- Existing bridge source was re-inspected from the canonical branch.
+- No behavioral source change was made this run because a clean local install/build/lint/test environment is still unavailable in this runtime.
+- Browser-side `document.modelContext.getTools()` / `executeTool()` verification remains unavailable.
 
 ## Tests run / failures
-- Repository metadata and branch identity verified through GitHub.
-- Full source audit performed on `src/components/WebMCPBridge.tsx` plus existing bridge inventory.
-- No new human-flow or WebMCP regression found.
-- No behavioral fix shipped because the build/test gate remains unavailable.
+- Repository/branch verification: passed.
+- Full journey and tool-surface audit: passed with no new regression found.
+- Clean checkout/build/test: blocked by environment limitations; no local checkout or package-install path is available.
+- WebMCP-capable browser registration/execution inspection: unavailable.
 
 ## Latest commit SHA
-- Entering branch head: `786de7bc3d2cf124755aa3fcfde90f0ff7373e2f`.
+- Entering branch head: `e6c12b130097a5aed2b7a51d5f15c2bfe4c804fa`.
 - Latest tested behavioral source commit remains `723d33e6457b894cf607af48d5f84c4d5082fee9`.
-- This documentation commit SHA is recorded by the next run after the file contents are fixed.
+- This documentation update commit SHA is the result of the current `PROGRESS.md` update.
 
 ## Remaining opportunities
 1. When a clean build/test path is available, implement only the synchronous generation/refinement admission guard and verify concurrent second-call rejection, cancellation, provider failure cleanup, and no human-flow regression.
@@ -56,4 +57,4 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 5. Do not merge to `main` solely because a feature-branch preview is green.
 
 ## Next run
-Read this file first, reverify canonical repository/branch/production isolation, retry the clean build path, and ship the narrow synchronous admission guard only if the full relevant build/lint/test gate is available and green. Otherwise record the blocker and keep the source unchanged.
+Read this file first, reverify canonical repository/branch/production isolation, retry the clean build path if available, and ship the narrow synchronous admission guard only if the full relevant build/lint/test gate is available and green. Otherwise record the blocker and keep the source unchanged.
