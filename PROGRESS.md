@@ -6,9 +6,10 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 ## Canonical repository / deployment facts
 - Repository: `UnknownGod2011/crishirt-perfect-corp`.
 - Production branch: `main`.
-- Production commit / exact merge base: `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Production commit / exact merge base remains: `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Working branch: `webmcp-agent-native`.
-- Branch head entering this run: `e6c12b130097a5aed2b7a51d5f15c2bfe4c804fa`.
+- Branch head entering this run: `9ce6ddf15b5c8940b443017b427433a0902ebccf`.
+- Repository metadata and branch identity were verified before any mutation.
 - Production `main` and production deployment configuration were not modified.
 
 ## Implemented WebMCP surface
@@ -17,44 +18,47 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Virtual Try-On bridge: `crishirt_get_tryon_state`, `crishirt_run_virtual_tryon`.
 - Bridges feature-detect `document.modelContext`, preserve normal human flows when unavailable, use semantic state/actions rather than DOM selector wrappers, propagate execution `AbortSignal` into provider fetches, and use bounded schemas plus read-only/untrusted annotations where appropriate.
 
-## Fresh full-product audit — 2026-09-11 17:20 IST
+## Fresh full-product audit — 2026-09-11 19:20 IST
 
 ### Repository and source inspection
-- Verified the canonical repository metadata and the `webmcp-agent-native` branch before mutation.
+- Verified the canonical repository metadata, default production branch, and `webmcp-agent-native` branch before mutation.
 - Read `PROGRESS.md` first.
-- Re-audited the established 13-tool WebMCP surface and the full stable journey: workspace read/configuration, Perfect Corp generation/refinement, placement, collection/cart, navigation, and human-supplied-photo Virtual Try-On.
-- Reconfirmed production isolation: `main` remains at `88daa417caa5305f81e5554977a13a94a793cdeb`; no production configuration changes were made.
+- Inspected the repository tree and the main app composition: the WebMCP bridges are mounted inside the shared `AppProvider`, alongside the existing human routes and controls.
+- Re-inspected `WebMCPBridge.tsx`: the 13-tool surface remains semantic and shares React application state; no DOM-click wrapper is used as the primary interface.
+- Re-audited the full stable journey from scratch: workspace read/configuration, Perfect Corp generation/refinement, placement, collection/cart, navigation, and human-photo Virtual Try-On.
 
 ### Agent ergonomics / safety findings
-- No new semantic capability is justified without inventing product behavior or increasing risk.
-- The same-tick generation/refinement admission race remains the only clearly worthwhile source fix: both calls can observe stale React busy state before the first dispatch commits.
-- The narrow intended fix remains a synchronous bridge-local shared in-flight guard, set before busy dispatch/provider work and cleared in `finally`, returning deterministic `WORKSPACE_BUSY` to the second admission.
-- Existing stale-revision checks, cancellation propagation, registration cleanup, route navigation, and unsupported-browser fallback remain coherent.
-- No schema expansion, cross-origin exposure option, cart idempotency layer, or UI change is justified by this run.
+- No new tool is justified: all currently stable human-supported capabilities are already represented without expanding product behavior.
+- The same-tick generation/refinement admission race remains the only clearly worthwhile behavioral fix. Both tools independently inspect React state before dispatching their busy flag, so two same-tick executions can theoretically enter before the first state update is observable.
+- The narrow safe design remains a bridge-local synchronous in-flight guard shared only by generation and refinement, set before provider work and cleared in `finally`, returning deterministic `WORKSPACE_BUSY` to the second admission. It would not alter human controls or provider contracts.
+- This run did not ship that guard because the available GitHub connector can inspect and write repository files but cannot provide a clean local dependency install/build/lint/test execution path, and no WebMCP-capable browser is available for registration/execution inspection.
+- Existing expected-revision checks, route navigation, registration abort cleanup, provider signal propagation, and unsupported-browser fallback remain coherent.
 
 ### Verification
-- GitHub repository metadata, branch identity, and production ref verified.
-- Existing bridge source was re-inspected from the canonical branch.
-- No behavioral source change was made this run because a clean local install/build/lint/test environment is still unavailable in this runtime.
-- Browser-side `document.modelContext.getTools()` / `executeTool()` verification remains unavailable.
+- Canonical repo, working branch, and production isolation: verified.
+- Repository tree and primary application/bridge sources: re-inspected.
+- Full user-journey / agent-round-trip audit: completed with no new regression found.
+- No behavioral source change made this run.
+- Browser-side `document.modelContext.getTools()` / `executeTool()` verification: unavailable in this runtime.
 
 ## Tests run / failures
 - Repository/branch verification: passed.
-- Full journey and tool-surface audit: passed with no new regression found.
-- Clean checkout/build/test: blocked by environment limitations; no local checkout or package-install path is available.
-- WebMCP-capable browser registration/execution inspection: unavailable.
+- Source/tree inspection: passed.
+- Full journey and 13-tool surface audit: passed with no new regression found.
+- Clean checkout/install/build/lint/unit/integration test: unavailable in this runtime; no local filesystem checkout or package execution path exposed by the connected tooling.
+- WebMCP-capable browser registration/discovery/execution inspection: unavailable.
 
 ## Latest commit SHA
-- Entering branch head: `e6c12b130097a5aed2b7a51d5f15c2bfe4c804fa`.
-- Latest tested behavioral source commit remains `723d33e6457b894cf607af48d5f84c4d5082fee9`.
-- This documentation update commit SHA is the result of the current `PROGRESS.md` update.
+- Entering branch head: `9ce6ddf15b5c8940b443017b427433a0902ebccf`.
+- Latest tested behavioral source commit remains: `723d33e6457b894cf607af48d5f84c4d5082fee9`.
+- Current documentation update commit: recorded by GitHub after this file update.
 
 ## Remaining opportunities
 1. When a clean build/test path is available, implement only the synchronous generation/refinement admission guard and verify concurrent second-call rejection, cancellation, provider failure cleanup, and no human-flow regression.
 2. Run clean install, build, lint, and relevant tests before committing behavioral code.
 3. In a WebMCP-capable browser or official tooling, inspect actual registration/discovery/execution and exercise realistic end-to-end journeys.
-4. Continue auditing stale revision, route changes/refresh, unsupported-browser fallback, registration stability, payload size, recovery, and cancellation.
+4. Continue auditing stale revision, route changes/refresh, unsupported-browser fallback, registration stability, payload size, recovery, cancellation, and duplicate action behavior.
 5. Do not merge to `main` solely because a feature-branch preview is green.
 
 ## Next run
-Read this file first, reverify canonical repository/branch/production isolation, retry the clean build path if available, and ship the narrow synchronous admission guard only if the full relevant build/lint/test gate is available and green. Otherwise record the blocker and keep the source unchanged.
+Read this file first, reverify the canonical repository/branch/production isolation, inspect any newly available build/test or browser verification path, and ship the narrow synchronous admission guard only if the full relevant gate is available and green. Otherwise record the blocker and keep behavioral source unchanged.
