@@ -8,9 +8,9 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Production branch: `main`.
 - Production commit / exact merge base: `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Working branch: `webmcp-agent-native`.
-- Branch head entering this run: `0a3473a196b0573382b05c731c6fa86832943ff5`.
-- Entering comparison: 159 commits ahead of production, 0 behind.
-- Entering Vercel deployment for `0a3473a...`: `READY`; direct authenticated fetch returned HTTP 200.
+- Branch head entering this run: `452473c8ddc0e3e9f1e441a65496f4778dc55dd0`.
+- Entering comparison: 160 commits ahead of production, 0 behind.
+- Entering Vercel deployment for `452473c...`: `READY`; authenticated direct fetch returned HTTP 200 and the expected CriShirt application shell.
 - Production `main` and production deployment configuration were not modified.
 
 ## Implemented WebMCP surface
@@ -45,18 +45,18 @@ All bridges feature-detect `document.modelContext`, so normal human flows contin
 - Try-On photo capture/upload remains human-controlled and tools do not return raw person/result image bytes.
 - Try-On tools remain registered stably across result-state changes via the lifecycle fix in `723d33e6457b894cf607af48d5f84c4d5082fee9`.
 
-## Fresh full-product audit — 2026-09-11 07:19 IST
+## Fresh full-product audit — 2026-09-11 08:21 IST
 
 ### Repository isolation
-Verified the canonical repository and write permissions, production `main`, working branch `webmcp-agent-native`, entering head `0a3473a196b0573382b05c731c6fa86832943ff5`, exact production merge base `88daa417caa5305f81e5554977a13a94a793cdeb`, and 159-ahead/0-behind state. Production remains untouched.
+Verified the canonical repository, write permissions, production `main`, working branch `webmcp-agent-native`, entering head `452473c8ddc0e3e9f1e441a65496f4778dc55dd0`, exact production merge base `88daa417caa5305f81e5554977a13a94a793cdeb`, and 160-ahead/0-behind state. Production remains untouched.
 
 ### Deployment verification
-The Vercel project `crishirtpc` is still linked to `UnknownGod2011/crishirt-perfect-corp`. The newest deployment for branch head `0a3473a...` is `READY`. An authenticated direct fetch of the deployment root returned HTTP 200 and the expected CriShirt application shell. No deployment configuration was changed.
+The Vercel project `crishirtpc` is still linked to `UnknownGod2011/crishirt-perfect-corp`. The newest deployment for branch head `452473c...` is `READY`. An authenticated direct fetch of the deployment root returned HTTP 200 and the expected CriShirt application shell. No deployment configuration was changed.
 
 ### Official WebMCP review
-Fresh verification against the official WebMCP Community Group report dated 9 September 2026 reconfirmed `document.modelContext`, imperative `registerTool(...)`, `getTools()`, `executeTool()`, abortable execution/registration, and `ToolAnnotations` fields `readOnlyHint`, `untrustedContentHint`, and `consequentialHint`.
+Fresh verification against the official WebMCP Community Group report dated 9 September 2026 reconfirmed `document.modelContext`, imperative `registerTool(...)`, `getTools()`, `executeTool()`, abortable execution/registration, `title`, JSON Schema `inputSchema`, and `ToolAnnotations` fields `readOnlyHint`, `untrustedContentHint`, and `consequentialHint`.
 
-The current definition says `consequentialHint=true` is for significant real-world or non-reversible actions such as booking travel or transferring money. CriShirt currently exposes no checkout, payment, order placement, or other comparable irreversible action. Its configuration, placement, generation/refinement, navigation, Try-On, and cart mutations are reversible in-app operations. Therefore setting `consequentialHint=true` on the current tools would be semantically incorrect. Adding explicit `consequentialHint:false` would merely restate the specification default and would not improve runtime behavior or agent capability, so no behavioral source change was justified.
+The current implementation already supplies concise titles, semantic descriptions, bounded schemas, registration abort signals, execution abort propagation for provider operations, and the appropriate read/untrusted annotations. The current tools remain reversible in-app operations rather than significant real-world/non-reversible actions, so `consequentialHint=true` remains inappropriate; explicit `false` would only restate the spec default and add no runtime value.
 
 ### Human journey versus agent journey
 Re-audited the full stable journey from scratch: workspace state, garment/color/material/size/side configuration, artwork generation, refinement and placement, collection inspection, cart add/read/remove, constrained navigation, and Virtual Try-On readiness/execution. The existing 13-tool surface still covers each legitimate stable human goal without requiring visual DOM interpretation. No missing high-leverage semantic action was found, and splitting the surface into UI-shaped micro-tools would increase agent round trips.
@@ -64,39 +64,40 @@ Re-audited the full stable journey from scratch: workspace state, garment/color/
 ### Race handling / recovery / cancellation
 The prior Virtual Try-On re-registration race remains fixed. Existing revision validation is still the appropriate lightweight stale-workspace guard. No new reproduced duplicate mutation, silent overwrite, route-recovery failure, cancellation regression, or provider-state race was found in this audit. Broader idempotency/locking remains unjustified without a concrete reproduction.
 
+### Payload / schema / ergonomics audit
+The workspace read remains a single compact state call; generation accepts optional garment settings to avoid a separate configuration round trip; refinement reuses the current image rather than forcing URL transfer; collection listing returns structured catalog data; Try-On state is privacy-safe; and navigation is constrained to existing routes. No schema widening, payload expansion, or compound tool addition cleared the safety/utility bar this run.
+
 ### README maturity check
-The existing concise README WebMCP section remains appropriate; no README change was necessary.
+The existing concise README WebMCP section remains accurate and appropriately scoped; no README change was necessary.
 
 ## Verification / tests performed this run
 - Read this durable handoff before any mutation.
 - Verified canonical repository identity and permissions.
-- Verified branch head `0a3473a...` and production exact merge base via GitHub.
-- Compared branch against production: 159 ahead, 0 behind.
-- Re-read the semantic tool type/annotation implementation in the main and collection bridges.
-- Freshly verified official WebMCP annotation semantics against the 9 September 2026 report.
-- Verified the newest `crishirtpc` Vercel deployment is `READY` and corresponds to `0a3473a...` on `webmcp-agent-native`.
+- Verified branch head `452473c...` and production exact merge base via GitHub.
+- Compared branch against production: 160 ahead, 0 behind.
+- Re-read the main WebMCP bridge and README agent-interface documentation.
+- Freshly verified official WebMCP semantics against the 9 September 2026 Community Group report.
+- Verified the newest `crishirtpc` Vercel deployment is `READY` and corresponds to `452473c...` on `webmcp-agent-native`.
 - Directly fetched that deployment root through authenticated Vercel access: HTTP 200 with the expected app shell.
-- No source code was changed because no tested behavioral improvement cleared the risk/utility bar.
+- No behavioral source code was changed because no tested improvement cleared the risk/utility bar.
 
 ## Failures found / fixes applied
 - No new human-flow regression found.
 - No missing high-leverage semantic journey found.
 - No new behavioral source fix was warranted this run.
-- Local WebMCP type aliases still omit optional `consequentialHint`; this is harmless for the current surface because the spec default is false and no current tool qualifies as consequential.
 - Actual browser-side `document.modelContext.getTools()` / `executeTool()` execution is still unavailable in the current environment.
 
 ## Remaining opportunities
 1. Inspect actual `document.modelContext.getTools()` output and execute representative journeys in a WebMCP-capable browser or official test environment when available.
 2. Exercise cancellation, provider failure, stale revision, route changes/refresh, unsupported-browser fallback, annotations, and registration stability in that environment.
-3. Add `consequentialHint` to local type aliases only when a real qualifying action exists or when doing so is required by an upstream typing/test change; do not add noisy explicit-false annotations merely for appearance.
-4. Reproduce simultaneous human/agent generation/refinement before adding broader concurrency guards.
-5. Reproduce retry/duplicate cart mutations before adding idempotency.
-6. Continue re-auditing schemas, payload size, round trips, state recovery, race handling, cancellation, observability, and tool ergonomics each run.
-7. Do not merge to `main` solely because a feature-branch preview is green.
+3. Reproduce simultaneous human/agent generation/refinement before adding broader concurrency guards.
+4. Reproduce retry/duplicate cart mutations before adding idempotency.
+5. Continue re-auditing schemas, payload size, round trips, state recovery, race handling, cancellation, observability, and tool ergonomics each run.
+6. Do not merge to `main` solely because a feature-branch preview is green.
 
 ## Latest commit SHA
 Latest tested behavioral source commit: `723d33e6457b894cf607af48d5f84c4d5082fee9`.
-Entering documentation head: `0a3473a196b0573382b05c731c6fa86832943ff5`.
+Entering documentation head: `452473c8ddc0e3e9f1e441a65496f4778dc55dd0`.
 
 The commit containing this handoff file is created after its contents are fixed, so its own SHA is recorded by the next run rather than attempting a self-referential hash.
 
