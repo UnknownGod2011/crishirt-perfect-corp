@@ -8,7 +8,7 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Production branch: `main`.
 - Production commit / exact merge base remains: `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Working branch: `webmcp-agent-native`.
-- Branch head verified at start of this run: `bc013dc183441ba84b999fc6ec5962eba4c52b9f`.
+- Branch head verified at start of this run: `dbd8191dbd484b312e2016d361837dbf7ffc20cb`.
 - Repository metadata, default branch, working branch, and production isolation were verified before mutation.
 - Production `main` and production deployment configuration were not modified.
 - Vercel status for the entering branch head: success.
@@ -19,16 +19,17 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Virtual Try-On bridge: `crishirt_get_tryon_state`, `crishirt_run_virtual_tryon`.
 - Bridges feature-detect `document.modelContext`, preserve normal human flows when unavailable, use semantic state/actions rather than DOM selector wrappers, propagate execution `AbortSignal` into provider fetches, and use bounded schemas plus read-only/untrusted annotations where appropriate.
 
-## Fresh full-product audit — 2026-09-12 05:22 IST
+## Fresh full-product audit — 2026-09-12 06:22 IST
 
 ### Repository and source inspection
 - Verified canonical repository metadata and `webmcp-agent-native` before mutation.
 - Read `PROGRESS.md` first.
-- Inspected the complete branch tree recursively; branch tree root resolved to `bc013dc183441ba84b999fc6ec5962eba4c52b9f`.
+- Inspected the complete branch tree recursively; branch tree root resolved to `dbd8191dbd484b312e2016d361837dbf7ffc20cb`.
 - Re-checked production `main` ref at `88daa417caa5305f81e5554977a13a94a793cdeb`; production isolation remains intact.
-- Re-read the primary `src/components/WebMCPBridge.tsx` entrypoint and the durable WebMCP contract.
+- Re-read the primary `src/components/WebMCPBridge.tsx` entrypoint, `README.md` WebMCP section, and package/deployment contract.
 - Re-audited the complete stable journey from scratch: workspace read/configuration, Perfect Corp generation/refinement, placement, collection/cart, navigation, and human-photo Virtual Try-On.
 - Confirmed the entering branch retained the expected WebMCP source files and no unrelated product-scope additions were introduced.
+- Confirmed Vercel status for the entering branch head is successful.
 
 ### Agent ergonomics / safety findings
 - No new safe capability, schema reduction, payload improvement, or recovery improvement was justified this run.
@@ -42,7 +43,7 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - `PROGRESS.md` first-read requirement: passed.
 - Full repository-tree inspection: passed.
 - Production isolation / merge-base check: passed.
-- Main bridge/package source audit: passed.
+- Main bridge/package/README source audit: passed.
 - Full journey and 13-tool surface audit: passed with no new regression found.
 - Entering branch Vercel status: passed.
 - Clean checkout/install/build/lint/unit/integration test: unavailable in this runtime; no local filesystem/package execution path is exposed.
@@ -50,10 +51,10 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Behavioral guard implementation gate: intentionally not attempted because the required verification path remains unavailable.
 
 ## Latest commit SHA
-- Branch head before this documentation commit: `bc013dc183441ba84b999fc6ec5962eba4c52b9f`.
+- Branch head before this documentation commit: `dbd8191dbd484b312e2016d361837dbf7ffc20cb`.
 - Latest tested behavioral source commit remains: `723d33e6457b894cf607af48d5f84c4d5082fee9`.
-- Current documentation update commit: `1fc1b0a4a821d9247b276e0fc75a484f777edd1c`.
-- A follow-up metadata-only correction may update this line on the next run if needed; no behavioral source changed in this run.
+- Current documentation update commit: to be recorded from the GitHub update response.
+- No behavioral source changed in this run.
 
 ## Remaining opportunities
 1. When a clean build/test path is available, implement the synchronous generation/refinement admission guard in a minimal patch that preserves every existing registration, then verify concurrent second-call rejection, cancellation, provider failure cleanup, duplicate-call behavior, and no human-flow regression.
