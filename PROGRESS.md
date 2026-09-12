@@ -8,10 +8,10 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Production branch: `main`.
 - Production commit / exact merge base remains: `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Working branch: `webmcp-agent-native`.
-- Branch head verified at start of this run: `666b7e95b751b13d10136bb0ab176418c59ef4b8`.
+- Branch head verified at start of this run: `5971e9ce99144cfa147fe8c036e823539b047967`.
 - Production `main` and deployment configuration were not modified.
 - No new production deployment was triggered by this run.
-- Entering branch Vercel status: `success` for commit `666b7e95b751b13d10136bb0ab176418c59ef4b8`.
+- Entering branch Vercel status: `success` for commit `5971e9ce99144cfa147fe8c036e823539b047967`.
 
 ## Implemented WebMCP surface
 - Main bridge: `crishirt_get_workspace_state`, `crishirt_configure_workspace`, `crishirt_set_design_placement`, `crishirt_generate_design`, `crishirt_refine_design`, `crishirt_add_current_design_to_cart`, `crishirt_get_cart`, `crishirt_remove_cart_item`, `crishirt_navigate`.
@@ -19,12 +19,12 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Virtual Try-On bridge: `crishirt_get_tryon_state`, `crishirt_run_virtual_tryon`.
 - Bridges feature-detect `document.modelContext`, preserve normal human flows when unavailable, use semantic state/actions rather than DOM selector wrappers, propagate execution `AbortSignal` into provider fetches, and use bounded schemas plus read-only/untrusted annotations where appropriate.
 
-## Fresh full-product audit — 2026-09-12 10:22 IST
+## Fresh full-product audit — 2026-09-12 11:21 IST
 
 ### Repository and source inspection
 - Verified canonical repository metadata and `webmcp-agent-native` before mutation.
 - Read `PROGRESS.md` first.
-- Inspected the complete recursive branch tree at branch head `666b7e95b751b13d10136bb0ab176418c59ef4b8`.
+- Inspected the complete recursive branch tree at branch head `5971e9ce99144cfa147fe8c036e823539b047967`.
 - Re-checked production `main` ref at `88daa417caa5305f81e5554977a13a94a793cdeb`; production isolation remains intact.
 - Re-read `src/components/WebMCPBridge.tsx`, `README.md`, and package/dependency metadata.
 - Re-audited workspace read/configuration, Perfect Corp generation/refinement, artwork placement, collection/cart, navigation, and Virtual Try-On journeys.
@@ -51,7 +51,7 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Behavioral guard implementation gate: intentionally not attempted because required verification remains unavailable.
 
 ## Latest commit SHA
-- Branch head before this documentation commit: `666b7e95b751b13d10136bb0ab176418c59ef4b8`.
+- Branch head before this documentation commit: `5971e9ce99144cfa147fe8c036e823539b047967`.
 - Latest tested behavioral source commit remains: `723d33e6457b894cf607af48d5f84c4d5082fee9`.
 - Current documentation update commit: pending until this file update completes.
 - No behavioral source changed in this run.
