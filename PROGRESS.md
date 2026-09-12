@@ -8,7 +8,7 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Production branch: `main`.
 - Production commit / exact merge base remains: `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Working branch: `webmcp-agent-native`.
-- Branch head verified at start of this run: `ba74f2966c459181ed8735316008880a24a9ad0f`.
+- Branch head verified at start of this run: `ad32332c60430db8dfe5035f94bdf87711cf5a03`.
 - Production `main` and deployment configuration were not modified.
 - No new production deployment was triggered by this run.
 - Repository metadata, admin/push permissions, default branch, working-branch existence, and repository identity were reverified.
@@ -19,12 +19,12 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Virtual Try-On bridge: `crishirt_get_tryon_state`, `crishirt_run_virtual_tryon`.
 - Bridges feature-detect `document.modelContext`, preserve normal human flows when unavailable, use semantic state/actions rather than DOM selector wrappers, propagate execution `AbortSignal` into provider fetches, and use bounded schemas plus read-only/untrusted annotations where appropriate.
 
-## Fresh full-product audit — 2026-09-12 22:23 IST
+## Fresh full-product audit — 2026-09-12 23:21 IST
 
 ### Repository and source inspection
 - Verified the canonical repository metadata, default branch, admin/push permissions, and the `webmcp-agent-native` branch before mutation.
 - Read `PROGRESS.md` first.
-- Inspected the full available recursive repository tree at branch head `ba74f2966c459181ed8735316008880a24a9ad0f`.
+- Inspected the full available recursive repository tree at branch head `ad32332c60430db8dfe5035f94bdf87711cf5a03`.
 - Re-read `package.json` and the available `src/components/WebMCPBridge.tsx` source excerpt.
 - Reconfirmed production `main` remains isolated at `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Re-audited stable journeys: workspace read/configuration, Perfect Corp generation/refinement, artwork placement, collection/cart, navigation, and Virtual Try-On.
@@ -57,7 +57,7 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Behavioral guard implementation gate: intentionally not attempted because complete-source editing and required verification remain unavailable.
 
 ## Latest commit SHA
-- Branch head at run start: `ba74f2966c459181ed8735316008880a24a9ad0f`.
+- Branch head at run start: `ad32332c60430db8dfe5035f94bdf87711cf5a03`.
 - Latest tested behavioral source commit remains: `723d33e6457b894cf607af48d5f84c4d5082fee9`.
 - Current documentation update commit: `pending until this file update completes`.
 - No behavioral source changed in this run.
