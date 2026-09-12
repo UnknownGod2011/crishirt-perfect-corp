@@ -8,10 +8,10 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Production branch: `main`.
 - Production commit / exact merge base remains: `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Working branch: `webmcp-agent-native`.
-- Branch head verified at start of this run: `ae3c81b0dd991c832fdbc5296e60e774cc8abb05`.
+- Branch head verified at start of this run: `ba74f2966c459181ed8735316008880a24a9ad0f`.
 - Production `main` and deployment configuration were not modified.
 - No new production deployment was triggered by this run.
-- Repository metadata, permissions, default branch, working-branch existence, and push access were reverified.
+- Repository metadata, admin/push permissions, default branch, working-branch existence, and repository identity were reverified.
 
 ## Implemented WebMCP surface
 - Main bridge: `crishirt_get_workspace_state`, `crishirt_configure_workspace`, `crishirt_set_design_placement`, `crishirt_generate_design`, `crishirt_refine_design`, `crishirt_add_current_design_to_cart`, `crishirt_get_cart`, `crishirt_remove_cart_item`, `crishirt_navigate`.
@@ -19,21 +19,22 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Virtual Try-On bridge: `crishirt_get_tryon_state`, `crishirt_run_virtual_tryon`.
 - Bridges feature-detect `document.modelContext`, preserve normal human flows when unavailable, use semantic state/actions rather than DOM selector wrappers, propagate execution `AbortSignal` into provider fetches, and use bounded schemas plus read-only/untrusted annotations where appropriate.
 
-## Fresh full-product audit — 2026-09-12 21:21 IST
+## Fresh full-product audit — 2026-09-12 22:23 IST
 
 ### Repository and source inspection
-- Verified the canonical repository metadata, admin/push permissions, default branch, and the `webmcp-agent-native` branch before mutation.
+- Verified the canonical repository metadata, default branch, admin/push permissions, and the `webmcp-agent-native` branch before mutation.
 - Read `PROGRESS.md` first.
-- Re-read `package.json`, `README.md`, and the available `src/components/WebMCPBridge.tsx` source excerpt.
+- Inspected the full available recursive repository tree at branch head `ba74f2966c459181ed8735316008880a24a9ad0f`.
+- Re-read `package.json` and the available `src/components/WebMCPBridge.tsx` source excerpt.
 - Reconfirmed production `main` remains isolated at `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Re-audited stable journeys: workspace read/configuration, Perfect Corp generation/refinement, artwork placement, collection/cart, navigation, and Virtual Try-On.
 - Re-audited agent cost versus human cost: the current surface still removes visual selector hunting, canvas dragging, card scanning, and multi-step navigation while preserving the same React state and human UI.
-- Confirmed the README WebMCP section remains concise and accurate, including the 13-tool surface, shared-state philosophy, revision validation, cancellation behavior, privacy boundaries, and realistic testing flows.
+- Confirmed the README WebMCP section remains concise and accurate; no README edit was needed this run.
 
 ### Current official WebMCP guidance cross-check
-- Rechecked the current official Chrome WebMCP imperative API and security guidance (last updated September 11, 2026).
-- Current guidance still supports `document.modelContext.registerTool`, structured JSON Schemas, `readOnlyHint`, `untrustedContentHint`, cancellation through the execution `AbortSignal`, registration cleanup through a registration `AbortSignal`, and browser inspection through `document.modelContext.getTools()`.
-- No additional annotation or cross-origin exposure change is justified for this same-origin-only CriShirt surface.
+- Rechecked the official Chrome WebMCP imperative API and security guidance on September 12, 2026.
+- Current guidance supports `document.modelContext.registerTool`, structured JSON Schemas, `readOnlyHint`, `untrustedContentHint`, cancellation through the execution `AbortSignal`, registration cleanup through a registration `AbortSignal`, same-origin discovery through `document.modelContext.getTools()`, and explicit `consequentialHint` for genuinely high-impact actions.
+- The existing same-origin-only CriShirt tools do not need cross-origin exposure or new permissions-policy changes.
 
 ### Agent ergonomics / safety findings
 - No new safe capability, schema reduction, payload optimization, recovery improvement, or race fix was justified this run.
@@ -49,14 +50,14 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Full available repository/tree/source inspection: passed.
 - Production isolation verification: passed.
 - Package scripts and README WebMCP documentation audit: passed.
-- Main bridge and current official WebMCP API alignment audit: passed.
+- Main bridge and official WebMCP API alignment audit: passed.
 - Full journey and 13-tool surface audit: passed with no new regression found.
 - Clean checkout/install/build/lint/unit/integration execution: unavailable in this runtime; no local package execution path is exposed.
 - WebMCP-capable browser registration/discovery/execution inspection: unavailable.
 - Behavioral guard implementation gate: intentionally not attempted because complete-source editing and required verification remain unavailable.
 
 ## Latest commit SHA
-- Branch head at run start: `ae3c81b0dd991c832fdbc5296e60e774cc8abb05`.
+- Branch head at run start: `ba74f2966c459181ed8735316008880a24a9ad0f`.
 - Latest tested behavioral source commit remains: `723d33e6457b894cf607af48d5f84c4d5082fee9`.
 - Current documentation update commit: `pending until this file update completes`.
 - No behavioral source changed in this run.
