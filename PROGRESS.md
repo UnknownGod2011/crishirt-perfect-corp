@@ -8,7 +8,7 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Production branch: `main`.
 - Production commit / exact merge base remains: `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Working branch: `webmcp-agent-native`.
-- Branch head verified at start of this run: `b06eb18d633b2f98498e8c816b5c4732961679c9`.
+- Branch head verified at start of this run: `59af49e397d76a5f9a7c400ae2d6ea1de6d2dd28`.
 - Production `main` and deployment configuration were not modified.
 - No new production deployment was triggered by this run.
 - Repository metadata, permissions, default branch, and branch existence were reverified.
@@ -19,16 +19,17 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Virtual Try-On bridge: `crishirt_get_tryon_state`, `crishirt_run_virtual_tryon`.
 - Bridges feature-detect `document.modelContext`, preserve normal human flows when unavailable, use semantic state/actions rather than DOM selector wrappers, propagate execution `AbortSignal` into provider fetches, and use bounded schemas plus read-only/untrusted annotations where appropriate.
 
-## Fresh full-product audit — 2026-09-12 15:21 IST
+## Fresh full-product audit — 2026-09-12 16:19 IST
 
 ### Repository and source inspection
 - Verified canonical repository metadata and the `webmcp-agent-native` branch before mutation.
 - Read `PROGRESS.md` first.
-- Inspected the available repository state and verified the current branch ref resolves to `b06eb18d633b2f98498e8c816b5c4732961679c9`.
+- Inspected the full available repository tree for the branch.
+- Verified the current branch ref resolves to `59af49e397d76a5f9a7c400ae2d6ea1de6d2dd28`.
 - Reconfirmed production `main` remains isolated at `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Re-read `src/components/WebMCPBridge.tsx`, `README.md`, and `package.json`/dependency metadata.
 - Re-audited workspace read/configuration, Perfect Corp generation/refinement, artwork placement, collection/cart, navigation, and Virtual Try-On journeys.
-- Confirmed README’s WebMCP section is concise, current, and aligned with the implemented 13-tool surface.
+- Confirmed README’s WebMCP section remains concise, current, and aligned with the implemented 13-tool surface.
 
 ### Agent ergonomics / safety findings
 - No new safe capability, schema reduction, payload optimization, recovery improvement, or race fix was justified this run.
@@ -41,6 +42,7 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Repository identity / permissions / default branch verification: passed.
 - Working branch verification: passed.
 - `PROGRESS.md` first-read requirement: passed.
+- Full branch-tree inspection: passed.
 - Branch ref / current head verification: passed.
 - Production isolation verification: passed.
 - Full available repository/source audit: passed.
@@ -51,7 +53,7 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Behavioral guard implementation gate: intentionally not attempted because required verification remains unavailable.
 
 ## Latest commit SHA
-- Branch head before this documentation commit: `b06eb18d633b2f98498e8c816b5c4732961679c9`.
+- Branch head before this documentation commit: `59af49e397d76a5f9a7c400ae2d6ea1de6d2dd28`.
 - Latest tested behavioral source commit remains: `723d33e6457b894cf607af48d5f84c4d5082fee9`.
 - Current documentation update commit: `pending until this file update completes`.
 - No behavioral source changed in this run.
