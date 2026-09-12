@@ -53,7 +53,7 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 ## Latest commit SHA
 - Branch head before this documentation commit: `5065f17e93b05e9744bbd59a976008a9d70633af`.
 - Latest tested behavioral source commit remains: `723d33e6457b894cf607af48d5f84c4d5082fee9`.
-- Current documentation update commit: `to be recorded from the GitHub update response`.
+- Current documentation update commit: `5b9b86521abc886f6d3b89066dd8b0e0f77f8bf9`.
 - No behavioral source changed in this run.
 
 ## Remaining opportunities
