@@ -8,7 +8,7 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Production branch: `main`.
 - Production commit / exact merge base remains: `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Working branch: `webmcp-agent-native`.
-- Branch head verified at start of this run from the branch tree: `c8553fa19e66c1ede3e1b7ca700999d07ea4e0ee`.
+- Branch head verified at start of this run: `ae3c81b0dd991c832fdbc5296e60e774cc8abb05`.
 - Production `main` and deployment configuration were not modified.
 - No new production deployment was triggered by this run.
 - Repository metadata, permissions, default branch, working-branch existence, and push access were reverified.
@@ -19,41 +19,44 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Virtual Try-On bridge: `crishirt_get_tryon_state`, `crishirt_run_virtual_tryon`.
 - Bridges feature-detect `document.modelContext`, preserve normal human flows when unavailable, use semantic state/actions rather than DOM selector wrappers, propagate execution `AbortSignal` into provider fetches, and use bounded schemas plus read-only/untrusted annotations where appropriate.
 
-## Fresh full-product audit — 2026-09-12 20:23 IST
+## Fresh full-product audit — 2026-09-12 21:21 IST
 
 ### Repository and source inspection
-- Verified canonical repository metadata, permissions, default branch, and the `webmcp-agent-native` branch before mutation.
+- Verified the canonical repository metadata, admin/push permissions, default branch, and the `webmcp-agent-native` branch before mutation.
 - Read `PROGRESS.md` first.
-- Inspected the full available recursive tree for the working branch; tree resolved to commit `c8553fa19e66c1ede3e1b7ca700999d07ea4e0ee`.
-- Re-read the available `src/components/WebMCPBridge.tsx` source excerpt and confirmed the bridge still exposes the 13-tool semantic surface above.
+- Re-read `package.json`, `README.md`, and the available `src/components/WebMCPBridge.tsx` source excerpt.
 - Reconfirmed production `main` remains isolated at `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Re-audited stable journeys: workspace read/configuration, Perfect Corp generation/refinement, artwork placement, collection/cart, navigation, and Virtual Try-On.
-- Re-audited agent cost versus human cost: the current surface still collapses selector changes, placement edits, state reads, collection/cart actions, navigation, and try-on into semantic calls without requiring visual interpretation or DOM targeting.
-- Detected and corrected durable-log drift: the prior PROGRESS entry named an older branch head (`f430...`), while the verified branch tree is now `c855...`.
+- Re-audited agent cost versus human cost: the current surface still removes visual selector hunting, canvas dragging, card scanning, and multi-step navigation while preserving the same React state and human UI.
+- Confirmed the README WebMCP section remains concise and accurate, including the 13-tool surface, shared-state philosophy, revision validation, cancellation behavior, privacy boundaries, and realistic testing flows.
+
+### Current official WebMCP guidance cross-check
+- Rechecked the current official Chrome WebMCP imperative API and security guidance (last updated September 11, 2026).
+- Current guidance still supports `document.modelContext.registerTool`, structured JSON Schemas, `readOnlyHint`, `untrustedContentHint`, cancellation through the execution `AbortSignal`, registration cleanup through a registration `AbortSignal`, and browser inspection through `document.modelContext.getTools()`.
+- No additional annotation or cross-origin exposure change is justified for this same-origin-only CriShirt surface.
 
 ### Agent ergonomics / safety findings
 - No new safe capability, schema reduction, payload optimization, recovery improvement, or race fix was justified this run.
 - Current 13-tool semantic surface remains coherent and high-leverage; no tool proliferation or redundant wrapper was found.
 - The same-tick generation/refinement admission race remains the only concrete high-value behavioral opportunity. Both long-running tools still read React-backed state before their first dispatch, so same-tick calls can theoretically pass the busy check before either state update is observed.
 - A minimal shared synchronous in-flight guard would likely close this race, but the connector runtime still does not provide a clean local checkout/install/build/lint/unit/integration execution path or a WebMCP-capable browser. Editing a large bridge file from a truncated remote excerpt would be unsafe, so no behavioral source change was shipped.
-- Official current WebMCP guidance continues to favor `document.modelContext`, imperative `registerTool`, plain structured returns, feature detection, and honest read-only/untrusted annotations. The bridge remains aligned with those requirements.
 - Human UI behavior, Perfect Corp flows, production deployment configuration, unsupported-browser fallback, registration cleanup, provider cancellation paths, and current tool count remain unchanged.
 
 ### Tests run / failures
 - Repository identity / permissions / default branch verification: passed.
 - Working branch verification: passed.
 - `PROGRESS.md` first-read requirement: passed.
-- Full available repository/tree inspection: passed.
+- Full available repository/tree/source inspection: passed.
 - Production isolation verification: passed.
-- Main bridge, README/package metadata, and current WebMCP API alignment audit: passed.
+- Package scripts and README WebMCP documentation audit: passed.
+- Main bridge and current official WebMCP API alignment audit: passed.
 - Full journey and 13-tool surface audit: passed with no new regression found.
-- Durable-log consistency check: passed after correcting the branch-head record.
 - Clean checkout/install/build/lint/unit/integration execution: unavailable in this runtime; no local package execution path is exposed.
 - WebMCP-capable browser registration/discovery/execution inspection: unavailable.
-- Behavioral guard implementation gate: intentionally not attempted because the required verification and complete-source editing path remain unavailable.
+- Behavioral guard implementation gate: intentionally not attempted because complete-source editing and required verification remain unavailable.
 
 ## Latest commit SHA
-- Branch head at run start: `c8553fa19e66c1ede3e1b7ca700999d07ea4e0ee`.
+- Branch head at run start: `ae3c81b0dd991c832fdbc5296e60e774cc8abb05`.
 - Latest tested behavioral source commit remains: `723d33e6457b894cf607af48d5f84c4d5082fee9`.
 - Current documentation update commit: `pending until this file update completes`.
 - No behavioral source changed in this run.
