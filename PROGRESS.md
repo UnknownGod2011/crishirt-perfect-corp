@@ -8,7 +8,7 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Production branch: `main`.
 - Production commit / exact merge base remains: `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Working branch: `webmcp-agent-native`.
-- Branch head verified at start of this run: `3395d60b7005ca0542722c36d21a5cdbc707d40a`.
+- Branch head verified at start of this run: `3f558958c9db5aea61f142ffcf7aaed238382b90`.
 - Production `main` and deployment configuration were not modified.
 - No new production deployment was triggered by this run.
 - Repository metadata, permissions, default branch, and working-branch existence were reverified.
@@ -19,22 +19,21 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Virtual Try-On bridge: `crishirt_get_tryon_state`, `crishirt_run_virtual_tryon`.
 - Bridges feature-detect `document.modelContext`, preserve normal human flows when unavailable, use semantic state/actions rather than DOM selector wrappers, propagate execution `AbortSignal` into provider fetches, and use bounded schemas plus read-only/untrusted annotations where appropriate.
 
-## Fresh full-product audit — 2026-09-12 17:22 IST
+## Fresh full-product audit — 2026-09-12 18:24 IST
 
 ### Repository and source inspection
 - Verified canonical repository metadata, permissions, default branch, and the `webmcp-agent-native` branch before mutation.
 - Read `PROGRESS.md` first.
-- Re-read `src/components/WebMCPBridge.tsx` and `README.md`.
-- Confirmed branch ref resolved to `3395d60b7005ca0542722c36d21a5cdbc707d40a` at run start.
+- Inspected the full available recursive tree for the working branch; tree resolved to commit `3f558958c9db5aea61f142ffcf7aaed238382b90`.
+- Re-read `src/components/WebMCPBridge.tsx` and confirmed the bridge still implements the 13-tool semantic surface above.
 - Reconfirmed production `main` remains isolated at `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Re-audited the stable journeys: workspace read/configuration, Perfect Corp generation/refinement, artwork placement, collection/cart, navigation, and Virtual Try-On.
-- Confirmed README’s WebMCP section remains concise, accurate, and aligned with the implemented 13-tool surface.
 
 ### Agent ergonomics / safety findings
 - No new safe capability, schema reduction, payload optimization, recovery improvement, or race fix was justified this run.
 - The existing 13-tool semantic surface remains coherent and high-leverage; it avoids DOM-click wrappers as the primary interface.
 - The same-tick generation/refinement admission race remains the only concrete high-value behavioral opportunity. Both long-running tools still read React-backed state before their first dispatch, so same-tick calls can theoretically pass the busy check before either state update is observed.
-- A minimal shared synchronous in-flight guard would likely close this race, but the connected runtime still provides repository read/write APIs without a clean local checkout/install/build/lint/unit/integration execution path or WebMCP-capable browser, so shipping it would remain speculative.
+- A minimal shared synchronous in-flight guard would likely close this race, but the connected runtime still exposes repository read/write APIs without a clean local checkout/install/build/lint/unit/integration execution path or a WebMCP-capable browser. Shipping that change without the required verification would be speculative, so behavioral source remained unchanged.
 - Human UI behavior, production deployment configuration, unsupported-browser fallback, registration cleanup, provider cancellation paths, and current tool count remain unchanged.
 
 ### Tests run / failures
@@ -43,14 +42,14 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - `PROGRESS.md` first-read requirement: passed.
 - Full available repository/source inspection: passed.
 - Production isolation verification: passed.
-- Main bridge, README, and package metadata audit: passed.
+- Main bridge and README/package metadata audit: passed.
 - Full journey and 13-tool surface audit: passed with no new regression found.
 - Clean checkout/install/build/lint/unit/integration execution: unavailable in this runtime; no local package execution path is exposed.
 - WebMCP-capable browser registration/discovery/execution inspection: unavailable.
 - Behavioral guard implementation gate: intentionally not attempted because required verification remains unavailable.
 
 ## Latest commit SHA
-- Branch head before this documentation commit: `3395d60b7005ca0542722c36d21a5cdbc707d40a`.
+- Branch head before this documentation commit: `3f558958c9db5aea61f142ffcf7aaed238382b90`.
 - Latest tested behavioral source commit remains: `723d33e6457b894cf607af48d5f84c4d5082fee9`.
 - Current documentation update commit: `pending until this file update completes`.
 - No behavioral source changed in this run.
@@ -58,7 +57,7 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 ## Remaining opportunities
 1. When a clean build/test path is available, implement the synchronous generation/refinement admission guard in a minimal patch that preserves all 13 tools.
 2. Run clean install, build, lint, and relevant tests before committing behavioral code.
-3. In WebMCP-capable browser or official tooling, inspect actual registration/discovery/execution and exercise realistic end-to-end journeys.
+3. In a WebMCP-capable browser or official tooling, inspect actual registration/discovery/execution and exercise realistic end-to-end journeys.
 4. Continue auditing stale revision, route changes/refresh, unsupported-browser fallback, registration stability, payload size, recovery, cancellation, and duplicate action behavior.
 5. Do not merge to `main` solely because a feature-branch preview is green.
 
