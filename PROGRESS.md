@@ -8,8 +8,8 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Production branch: `main`.
 - Production commit and merge base: `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Working branch: `webmcp-agent-native`.
-- Branch head verified at start of this run: `a9664b6ab5b9326aa01d74afcb2a2e2f7fbe2545`.
-- Branch comparison at start: 203 commits ahead of `main`, 0 behind; merge base remains the production commit above.
+- Branch head verified at start of this run: `14a5a130e93746430c2a1be566c5aa9dd190f54f`.
+- Branch comparison at start: 204 commits ahead of `main`, 0 behind; merge base remains the production commit above.
 - Production `main` and deployment configuration were not modified.
 
 ## Implemented WebMCP surface
@@ -19,30 +19,31 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Total: 13 semantic tools.
 - Bridges feature-detect `document.modelContext`, preserve normal human flows when unavailable, use semantic state/actions rather than DOM selector wrappers, propagate execution `AbortSignal` into provider fetches, and use bounded schemas plus read-only/untrusted annotations where appropriate.
 
-## Fresh full-product audit — 2026-09-17 20:03 IST
+## Fresh full-product audit — 2026-09-18 00:58 IST
 
 ### Repository and source inspection
 - Verified canonical repository identity, admin/push permissions, default branch, working branch and entering SHA before mutation.
 - Read `PROGRESS.md` first.
 - Inspected the recursive repository tree at current branch head and rechecked the current branch commit.
-- Re-read `package.json`, the concise README WebMCP section, and the generation/refinement/cart/navigation section of `src/components/WebMCPBridge.tsx`.
+- Re-read `package.json`, the concise README WebMCP section, and the current main WebMCP bridge source available through the connector.
 - Reconfirmed package scripts: build is `tsc -b && vite build`; lint is `eslint .`.
-- Compared `main...webmcp-agent-native`: 203 commits ahead, 0 behind; merge base remains exactly production `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Compared `main...webmcp-agent-native`: 204 commits ahead, 0 behind; merge base remains exactly production `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Re-audited the stable human journeys and current 13-tool semantic coverage. No legitimate existing user capability was found that warrants another tool this run.
 - Human-vs-agent cost remains favorable: the semantic surface avoids selector hunting, canvas dragging, collection-card scanning, image-URL shuttling and avoidable navigation while using shared application state.
 
 ### Current official WebMCP cross-check
-- Rechecked current official Chrome WebMCP documentation on 17 September 2026.
-- `document.modelContext.registerTool` remains the imperative registration API. `document.modelContext.getTools()` and `executeTool()` remain the browser discovery/execution testing path.
-- Current Chrome guidance documents same-origin discovery by default, explicit cross-origin exposure only when needed, tool annotations including `readOnlyHint`, `untrustedContentHint`, and `consequentialHint`, and `AbortSignal` cancellation for pending execution.
+- Rechecked current official Chrome WebMCP documentation on 18 September 2026. The imperative API page was last updated 11 September 2026.
+- `document.modelContext.registerTool` remains the imperative registration API. `document.modelContext.getTools()` and `executeTool()` remain the documented discovery/execution testing path.
+- Current guidance continues to support registration cleanup via `AbortSignal`, execution cancellation via the execution `AbortSignal`, tool annotations including `readOnlyHint`, `untrustedContentHint` and `consequentialHint`, and same-origin discovery by default.
+- Chrome documentation notes that as of Chrome 153 unregistering a tool no longer cancels/breaks in-flight executions, which is compatible with the bridge's registration-controller lifecycle.
 - CriShirt still has no demonstrated need for cross-origin tool exposure.
 
 ### Agent ergonomics / safety findings
 - No new safe schema/payload/tool-count optimization was justified by this fresh audit.
 - Revision validation remains an appropriate lightweight stale-state safeguard for coordinated mutations.
-- The same-tick generation/refinement admission race is still concretely visible in current source: both handlers read React-backed `s.isGenerating || s.isRefining` and then dispatch their busy state, leaving a theoretical same-JavaScript-tick window before React state publication.
+- The same-tick generation/refinement admission race remains visible in current source: generation checks React-backed `s.isGenerating || s.isRefining` immediately before dispatching its busy state; the corresponding refinement path has previously been verified to use the same pattern. This leaves a theoretical same-JavaScript-tick admission window before React state publication.
 - The preferred fix remains a tiny shared synchronous in-flight guard released in every success/error/cancellation path.
-- Behavioral source was intentionally not changed because this runtime still lacks a clean package execution environment and a WebMCP-capable browser. A race fix cannot satisfy the required build/lint/integration/registration verification gate here, and stability outranks speculative progress.
+- Behavioral source was intentionally not changed because this runtime still lacks a clean package execution environment and a WebMCP-capable browser. The race fix therefore cannot satisfy the required build/lint/integration/registration verification gate here, and stability outranks speculative progress.
 - No production/deployment configuration, Perfect Corp behavior, human UI behavior, tool count, or application architecture changed.
 
 ### Tests / verification this run
@@ -50,17 +51,17 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Working branch / entering SHA verification: passed.
 - `PROGRESS.md` first-read requirement: passed.
 - Recursive tree inspection: passed.
-- Production isolation comparison: passed (`ahead 203`, `behind 0`, merge base unchanged).
+- Production isolation comparison: passed (`ahead 204`, `behind 0`, merge base unchanged).
 - Package-script / README audit: passed.
 - Current official Chrome WebMCP API/security cross-check: passed.
-- Current generation/refinement race source re-verification: passed; issue remains present.
+- Current generation race source re-verification: passed; issue remains present.
 - Stable journey / 13-tool coverage audit: passed with no newly discovered regression.
 - Clean install/build/lint/unit/integration execution: unavailable in this connector runtime.
 - Actual `document.modelContext.getTools()` / `executeTool()` browser inspection: unavailable in this connector runtime.
 - Behavioral source implementation: intentionally not attempted without those verification gates.
 
 ## Latest commit SHA
-- Branch head at run start: `a9664b6ab5b9326aa01d74afcb2a2e2f7fbe2545`.
+- Branch head at run start: `14a5a130e93746430c2a1be566c5aa9dd190f54f`.
 - Latest tested behavioral source commit remains: `723d33e6457b894cf607af48d5f84c4d5082fee9`.
 - Current documentation update commit: pending until this file update completes.
 - No behavioral source changed in this run.
