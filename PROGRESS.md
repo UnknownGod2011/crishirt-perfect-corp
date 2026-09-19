@@ -8,8 +8,8 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Production branch: `main`.
 - Production commit and merge base: `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Working branch: `webmcp-agent-native`.
-- Branch head verified at start of this run: `b17688030480db4c8cf3b134ffb5ea1f76dbb9a0`.
-- Branch comparison at start: 218 commits ahead of `main`, 0 behind; merge base remains the production commit above.
+- Branch head verified at start of this run: `b7595c5acaf4168c887ba5c6ec448b73f31af745`.
+- Branch comparison at start: 219 commits ahead of `main`, 0 behind; merge base remains the production commit above.
 - Vercel status for entering working-branch head: success.
 - Production `main` and deployment configuration were not modified.
 
@@ -20,22 +20,21 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Total: 13 semantic tools.
 - Bridges feature-detect `document.modelContext`, preserve normal human flows when unavailable, use semantic state/actions rather than DOM selector wrappers, propagate execution `AbortSignal` into provider fetches, and use bounded schemas plus read-only/untrusted annotations where appropriate.
 
-## Fresh full-product audit — 2026-09-19 08:58 IST
+## Fresh full-product audit — 2026-09-19 10:02 IST
 
 ### Repository and source inspection
 - Verified canonical repository identity, admin/push permissions and default branch before mutation.
-- Verified the dedicated `webmcp-agent-native` branch exists and read `PROGRESS.md` first, as required.
-- Inspected the current recursive working-branch tree and confirmed entering head `b17688030480db4c8cf3b134ffb5ea1f76dbb9a0`.
-- Compared `main...webmcp-agent-native`: 218 commits ahead, 0 behind; merge base remains exactly production `88daa417caa5305f81e5554977a13a94a793cdeb`.
-- Re-read `package.json` and README's WebMCP contract. Frontend scripts remain build (`tsc -b && vite build`) and lint (`eslint .`); this connector runtime still exposes no package execution path.
+- Verified the dedicated `webmcp-agent-native` branch and read `PROGRESS.md` first, as required.
+- Inspected the current recursive working-branch tree and confirmed entering head `b7595c5acaf4168c887ba5c6ec448b73f31af745`.
+- Compared `main...webmcp-agent-native`: 219 commits ahead, 0 behind; merge base remains exactly production `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Re-audited the recorded complete stable journey and 13-tool contract: workspace read/configuration, Perfect Corp generation/refinement, design placement, collection/cart, navigation and Virtual Try-On.
 - No additional existing human capability warrants another semantic tool this run. The current semantic surface still removes selector hunting, canvas dragging, collection-card scanning, image-URL shuttling and avoidable route navigation while sharing application state with the human UI.
 - README remains concise and accurate; no README change was justified.
 
 ### Current official WebMCP cross-check
-- Rechecked official Chrome WebMCP Imperative API and tool-security guidance on 19 September 2026.
-- Current official guidance continues to document `document.modelContext.registerTool`, `document.modelContext.getTools()`, direct tool execution, registration cleanup via `AbortSignal`, and execution cancellation via `AbortSignal`.
-- Official security guidance continues to define `readOnlyHint`, `untrustedContentHint` and `consequentialHint`, recommends concise descriptions/outputs, and keeps cross-origin tool exposure opt-in. CriShirt has no need for cross-origin exposure.
+- Rechecked official Chrome WebMCP Imperative API and security guidance on 19 September 2026.
+- The official Imperative API page was last updated 11 September 2026 and continues to document `document.modelContext.registerTool`, `document.modelContext.getTools()`, `executeTool`, registration cleanup via `AbortSignal`, and execution cancellation via the execution `AbortSignal`.
+- Current official guidance continues to define `readOnlyHint`, `untrustedContentHint` and `consequentialHint`, and same-origin discovery remains the default. CriShirt has no need for cross-origin tool exposure.
 - The existing WebMCP design remains aligned with those requirements at the static-contract level.
 
 ### Agent ergonomics / safety findings
@@ -51,17 +50,16 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Working branch / entering SHA verification: passed.
 - `PROGRESS.md` first-read requirement: passed.
 - Recursive tree / relevant repository-state inspection: passed.
-- Production isolation comparison: passed (`ahead 218`, `behind 0`, merge base unchanged).
+- Production isolation comparison: passed (`ahead 219`, `behind 0`, merge base unchanged).
 - Entering feature-branch Vercel status: passed (`success`).
 - Current official Chrome WebMCP API/security cross-check: passed.
-- Package-script and README WebMCP contract audit: passed.
 - Stable journey / recorded 13-tool coverage audit: passed with no newly discovered regression.
 - Clean install/build/lint/unit/integration execution: unavailable in this connector runtime.
 - Actual `document.modelContext.getTools()` / WebMCP execution browser verification: unavailable in this connector runtime.
 - Behavioral source implementation: intentionally not attempted without those verification gates.
 
 ## Latest commit SHA
-- Branch head at run start: `b17688030480db4c8cf3b134ffb5ea1f76dbb9a0`.
+- Branch head at run start: `b7595c5acaf4168c887ba5c6ec448b73f31af745`.
 - Latest tested behavioral source commit remains: `723d33e6457b894cf607af48d5f84c4d5082fee9`.
 - Current documentation update commit: pending until this file update completes.
 - No behavioral source changed in this run.
