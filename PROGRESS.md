@@ -8,8 +8,9 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Production branch: `main`.
 - Production commit and merge base: `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Working branch: `webmcp-agent-native`.
-- Branch head verified at start of this run: `4242414551f78a1b2179a17db373d629c66315a2`.
-- Branch comparison at start: 217 commits ahead of `main`, 0 behind; merge base remains the production commit above.
+- Branch head verified at start of this run: `b17688030480db4c8cf3b134ffb5ea1f76dbb9a0`.
+- Branch comparison at start: 218 commits ahead of `main`, 0 behind; merge base remains the production commit above.
+- Vercel status for entering working-branch head: success.
 - Production `main` and deployment configuration were not modified.
 
 ## Implemented WebMCP surface
@@ -19,22 +20,23 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Total: 13 semantic tools.
 - Bridges feature-detect `document.modelContext`, preserve normal human flows when unavailable, use semantic state/actions rather than DOM selector wrappers, propagate execution `AbortSignal` into provider fetches, and use bounded schemas plus read-only/untrusted annotations where appropriate.
 
-## Fresh full-product audit — 2026-09-19 07:00 IST
+## Fresh full-product audit — 2026-09-19 08:58 IST
 
 ### Repository and source inspection
 - Verified canonical repository identity, admin/push permissions and default branch before mutation.
-- Read `PROGRESS.md` first, as required.
-- Inspected the current recursive working-branch tree and confirmed entering head `4242414551f78a1b2179a17db373d629c66315a2`.
-- Compared `main...webmcp-agent-native`: 217 commits ahead, 0 behind; merge base remains exactly production `88daa417caa5305f81e5554977a13a94a793cdeb`.
-- Re-read `package.json` and the concise README WebMCP contract. Frontend scripts remain build (`tsc -b && vite build`) and lint (`eslint .`); this connector runtime still exposes no package execution path.
-- Re-inspected the available repository tree and the recorded WebMCP implementation/journey contract: workspace state/configuration, Perfect Corp generation/refinement, design placement, collection/cart, navigation and Virtual Try-On.
+- Verified the dedicated `webmcp-agent-native` branch exists and read `PROGRESS.md` first, as required.
+- Inspected the current recursive working-branch tree and confirmed entering head `b17688030480db4c8cf3b134ffb5ea1f76dbb9a0`.
+- Compared `main...webmcp-agent-native`: 218 commits ahead, 0 behind; merge base remains exactly production `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Re-read `package.json` and README's WebMCP contract. Frontend scripts remain build (`tsc -b && vite build`) and lint (`eslint .`); this connector runtime still exposes no package execution path.
+- Re-audited the recorded complete stable journey and 13-tool contract: workspace read/configuration, Perfect Corp generation/refinement, design placement, collection/cart, navigation and Virtual Try-On.
 - No additional existing human capability warrants another semantic tool this run. The current semantic surface still removes selector hunting, canvas dragging, collection-card scanning, image-URL shuttling and avoidable route navigation while sharing application state with the human UI.
+- README remains concise and accurate; no README change was justified.
 
 ### Current official WebMCP cross-check
 - Rechecked official Chrome WebMCP Imperative API and tool-security guidance on 19 September 2026.
-- The Imperative API remains last updated 11 September 2026 and documents `document.modelContext.registerTool`, `document.modelContext.getTools()`, registration cleanup through `AbortSignal`, execution cancellation through the execution `AbortSignal`, and direct execution of discovered tools.
-- Official annotations remain `readOnlyHint`, `untrustedContentHint` and `consequentialHint`.
-- Chrome security guidance continues to recommend concise descriptions/outputs (including 500 characters per tool description and 1.5K characters per individual tool output), selective annotations, and cautious cross-origin exposure. CriShirt has no reason to expose these same-origin tools cross-origin.
+- Current official guidance continues to document `document.modelContext.registerTool`, `document.modelContext.getTools()`, direct tool execution, registration cleanup via `AbortSignal`, and execution cancellation via `AbortSignal`.
+- Official security guidance continues to define `readOnlyHint`, `untrustedContentHint` and `consequentialHint`, recommends concise descriptions/outputs, and keeps cross-origin tool exposure opt-in. CriShirt has no need for cross-origin exposure.
+- The existing WebMCP design remains aligned with those requirements at the static-contract level.
 
 ### Agent ergonomics / safety findings
 - No new safe tool, schema, payload, navigation or recovery optimization was justified by this fresh audit.
@@ -48,8 +50,9 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Repository identity / permissions / default branch: passed.
 - Working branch / entering SHA verification: passed.
 - `PROGRESS.md` first-read requirement: passed.
-- Recursive tree / relevant source-state inspection: passed.
-- Production isolation comparison: passed (`ahead 217`, `behind 0`, merge base unchanged).
+- Recursive tree / relevant repository-state inspection: passed.
+- Production isolation comparison: passed (`ahead 218`, `behind 0`, merge base unchanged).
+- Entering feature-branch Vercel status: passed (`success`).
 - Current official Chrome WebMCP API/security cross-check: passed.
 - Package-script and README WebMCP contract audit: passed.
 - Stable journey / recorded 13-tool coverage audit: passed with no newly discovered regression.
@@ -58,7 +61,7 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Behavioral source implementation: intentionally not attempted without those verification gates.
 
 ## Latest commit SHA
-- Branch head at run start: `4242414551f78a1b2179a17db373d629c66315a2`.
+- Branch head at run start: `b17688030480db4c8cf3b134ffb5ea1f76dbb9a0`.
 - Latest tested behavioral source commit remains: `723d33e6457b894cf607af48d5f84c4d5082fee9`.
 - Current documentation update commit: pending until this file update completes.
 - No behavioral source changed in this run.
