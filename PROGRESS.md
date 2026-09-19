@@ -8,8 +8,8 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Production branch: `main`.
 - Production commit and merge base: `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Working branch: `webmcp-agent-native`.
-- Branch head verified at start of this run: `7ad10890254313f3bf1f3b82af6754f012e8db82`.
-- Branch comparison at start: 223 commits ahead of `main`, 0 behind; merge base remains the production commit above.
+- Branch head verified at start of this run: `ab75d05ec72455340cc637caf74c2b5965ed6538`.
+- Branch comparison at start: 224 commits ahead of `main`, 0 behind; merge base remains the production commit above.
 - Vercel status for entering working-branch head: success.
 - Production `main` and deployment configuration were not modified.
 
@@ -20,15 +20,15 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Total: 13 semantic tools.
 - Bridges feature-detect `document.modelContext`, preserve normal human flows when unavailable, use semantic state/actions rather than DOM selector wrappers, propagate execution `AbortSignal` into provider fetches, and use bounded schemas plus read-only/untrusted annotations where appropriate.
 
-## Fresh full-product audit — 2026-09-19 15:00 IST
+## Fresh full-product audit — 2026-09-19 18:01 IST
 
 ### Repository and source inspection
 - Verified canonical repository identity, admin/push permissions and default branch before mutation.
 - Verified the dedicated `webmcp-agent-native` branch and read `PROGRESS.md` first, as required.
-- Inspected the current recursive working-branch tree and confirmed entering head `7ad10890254313f3bf1f3b82af6754f012e8db82`.
-- Compared `main...webmcp-agent-native`: 223 commits ahead, 0 behind; merge base remains exactly production `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Inspected the current recursive working-branch tree and confirmed entering head `ab75d05ec72455340cc637caf74c2b5965ed6538`.
+- Compared `main...webmcp-agent-native`: 224 commits ahead, 0 behind; merge base remains exactly production `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Re-read root package scripts: build is `tsc -b && vite build`, lint is `eslint .`; no unit/integration test script is declared.
-- Re-read the complete main WebMCP bridge in bounded source ranges, plus the collection bridge and complete Virtual Try-On WebMCP registration/execution path.
+- Re-read the complete main WebMCP bridge in bounded source ranges, the complete collection bridge, and the Virtual Try-On WebMCP registration/execution path.
 - Re-audited the stable journey and all 13 semantic tools: workspace read/configuration, Perfect Corp generation/refinement, design placement, collection/cart, navigation and Virtual Try-On.
 - No additional existing human capability warrants another semantic tool this run. Current tools continue to remove selector hunting, canvas dragging, collection-card scanning, image-URL shuttling and avoidable route navigation while sharing application state with the human UI.
 
@@ -52,12 +52,12 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Working branch / entering SHA verification: passed.
 - `PROGRESS.md` first-read requirement: passed.
 - Recursive tree / relevant repository-state inspection: passed.
-- Production isolation comparison: passed (`ahead 223`, `behind 0`, merge base unchanged).
+- Production isolation comparison: passed (`ahead 224`, `behind 0`, merge base unchanged).
 - Entering feature-branch Vercel status: passed (`success`).
 - Current official Chrome WebMCP API/security cross-check: passed.
 - Main bridge complete-source static audit: passed; 9 main tools retained.
 - Collection bridge static audit: passed; 2 collection tools retained.
-- Virtual Try-On complete-source static audit: passed; 2 try-on tools retained and synchronous try-on busy ref confirmed.
+- Virtual Try-On source audit: passed; 2 try-on tools retained and synchronous try-on busy ref confirmed.
 - Stable journey / 13-tool coverage audit: passed with no newly discovered regression.
 - Root package scripts inspection: passed; build/lint scripts exist, but no root unit/integration test script is declared.
 - Clean install/build/lint execution: unavailable in this connector runtime.
@@ -65,7 +65,7 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Behavioral source implementation: intentionally not attempted without those verification gates.
 
 ## Latest commit SHA
-- Branch head at run start: `7ad10890254313f3bf1f3b82af6754f012e8db82`.
+- Branch head at run start: `ab75d05ec72455340cc637caf74c2b5965ed6538`.
 - Latest tested behavioral source commit remains: `723d33e6457b894cf607af48d5f84c4d5082fee9`.
 - This run changes documentation only; the resulting documentation commit is the commit that writes this record.
 - No behavioral source changed in this run.
