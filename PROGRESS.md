@@ -8,8 +8,8 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Production branch: `main`.
 - Production commit and merge base: `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Working branch: `webmcp-agent-native`.
-- Branch head verified at start of this run: `e1cefc8c5103cc5345fb6e3f7baad1e0a2b4ebc4`.
-- Branch comparison at start: 232 commits ahead of `main`, 0 behind; merge base remains the production commit above.
+- Branch head verified at start of this run: `1c9f38b6b127aace990fae48351a209d4176b007`.
+- Branch comparison at start: 233 commits ahead of `main`, 0 behind; merge base remains the production commit above.
 - Vercel status for entering working-branch head: success.
 - Production `main` and deployment configuration were not modified.
 
@@ -20,41 +20,44 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Total: 13 semantic tools.
 - Bridges feature-detect `document.modelContext`, preserve normal human flows when unavailable, use semantic state/actions rather than DOM selector wrappers, propagate execution `AbortSignal` into provider fetches, and use bounded schemas plus read-only/untrusted annotations where appropriate.
 
-## Fresh full-product audit — 2026-09-20 10:00 IST
+## Fresh full-product audit — 2026-09-20 11:00 IST
 
 ### Repository and source inspection
 - Verified canonical repository identity, admin/push permissions and default branch before mutation.
 - Read `PROGRESS.md` first, before mutation.
-- Inspected the current recursive working-branch tree and confirmed entering head `e1cefc8c5103cc5345fb6e3f7baad1e0a2b4ebc4`.
-- Compared `main...webmcp-agent-native`: 232 commits ahead, 0 behind; production merge base remains exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Inspected the current recursive working-branch tree and confirmed entering head `1c9f38b6b127aace990fae48351a209d4176b007`.
+- Compared `main...webmcp-agent-native`: 233 commits ahead, 0 behind; production merge base remains exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Verified Vercel status for the entering working-branch head is `success`.
 - Re-read root package scripts: build is `tsc -b && vite build`, lint is `eslint .`; no unit/integration test script is declared.
-- Re-read the complete `src/components/WebMCPBridge.tsx` in two contiguous ranges and confirmed all nine main-bridge registrations remain present and cleanup still aborts the registration controller. Together with the established collection and try-on bridges, the semantic surface remains 13 tools.
+- Re-read the complete 456-line `src/components/WebMCPBridge.tsx`, the complete collection bridge, and both WebMCP registration portions of `VRTryOn.tsx`. Confirmed all 13 established semantic registrations remain present and registration cleanup remains AbortSignal-based.
 - Re-audited stable journeys: workspace state/configuration, Perfect Corp generation/refinement, artwork placement, collection/cart, navigation, and Virtual Try-On. No newly existing human capability warrants another semantic tool this run.
 
 ### Current official WebMCP cross-check
 - Rechecked current official Chrome WebMCP Imperative API and security guidance on 20 September 2026.
-- Official guidance continues to document `document.modelContext.registerTool`, structured JSON input schemas, annotations, registration cleanup with `AbortSignal`, `getTools()` discovery, `executeTool()` execution, and execution cancellation using `AbortSignal`.
-- Security guidance continues to recommend `readOnlyHint` for non-mutating tools, `untrustedContentHint` for externally sourced/user-generated content, `consequentialHint` for genuinely high-impact actions, careful origin exposure, and succinct descriptions/outputs.
+- Official guidance continues to document `document.modelContext.registerTool`, structured JSON input schemas, annotations, registration cleanup with `AbortSignal`, same-origin `getTools()` discovery, `executeTool()` execution, and execution cancellation using `AbortSignal`.
+- Current security guidance recommends `readOnlyHint` for non-mutating tools, `untrustedContentHint` for externally sourced/user-generated content, `consequentialHint` for genuinely high-impact actions, careful origin exposure, and succinct descriptions/outputs.
 - Current CriShirt implementation remains aligned with the relevant same-origin guidance; no cross-origin exposure is required.
 
 ### Agent ergonomics / safety findings
 - No new safe semantic tool, schema reduction, payload optimization, navigation shortcut or recovery improvement was justified by this fresh audit.
 - Revision validation remains a useful lightweight stale-state safeguard for workspace mutations.
 - The same-JavaScript-tick generation/refinement admission race remains concrete in current complete source: both operations read React-backed `stateRef.current` busy flags and only then dispatch their busy state. No shared synchronous in-flight guard exists, so two operations invoked before React propagates the first dispatch can theoretically both enter provider work.
+- The Virtual Try-On path was specifically compared against this failure mode. It synchronously sets `loadingRef.current = true` before provider work and resets it in `finally`, so its duplicate-admission guard does not depend solely on React propagation. This strengthens the case for using the same narrow pattern for generation/refinement once executable verification is available.
 - The smallest likely repair remains a shared synchronous in-flight ref/guard acquired only after cheap input/state validation and immediately before busy dispatch/network work, released in `finally` by both generation and refinement, preserving deterministic `WORKSPACE_BUSY` behavior.
 - The repair was deliberately not shipped because this runtime still exposes GitHub repository read/write/status operations but no clean checkout/package execution path and no WebMCP-capable browser. Without build/lint execution, focused simultaneous-call regression execution, and actual registration verification, changing concurrency behavior would violate the stability gate.
 - No production/deployment configuration, Perfect Corp behavior, human UI behavior, tool count, or application architecture changed.
 
 ### Tests / verification this run
 - Repository identity / permissions / default branch: passed.
-- Production isolation comparison: passed (`ahead 232`, `behind 0`, merge base unchanged at production SHA).
+- Production isolation comparison: passed (`ahead 233`, `behind 0`, merge base unchanged at production SHA).
 - Working branch / entering SHA verification: passed.
 - `PROGRESS.md` first-read requirement: passed.
 - Recursive tree / relevant repository-state inspection: passed.
 - Entering feature-branch Vercel status: passed (`success`).
 - Current official Chrome WebMCP API/security cross-check: passed.
-- Complete main bridge registration/state/concurrency static audit: passed; same-tick admission opportunity reconfirmed.
+- Complete main bridge static audit: passed; all nine main registrations present and same-tick admission opportunity reconfirmed.
+- Complete collection bridge static audit: passed; both collection registrations and cleanup present.
+- Virtual Try-On WebMCP/state-concurrency static audit: passed; two registrations present, provider cancellation is propagated, and synchronous `loadingRef` admission protection is present.
 - Stable journey / established 13-tool coverage audit: passed with no justified new semantic tool.
 - Root package scripts inspection: passed; build/lint scripts exist, but no root unit/integration test script is declared.
 - Clean install/build/lint execution: unavailable in this connector runtime.
@@ -62,17 +65,17 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Behavioral source implementation: intentionally not attempted without those verification gates.
 
 ## Latest commit SHA
-- Branch head at run start: `e1cefc8c5103cc5345fb6e3f7baad1e0a2b4ebc4`.
+- Branch head at run start: `1c9f38b6b127aace990fae48351a209d4176b007`.
 - Latest tested behavioral source commit remains: `723d33e6457b894cf607af48d5f84c4d5082fee9`.
 - This run changes documentation only; the resulting documentation commit is the commit that writes this record.
 - No behavioral source changed in this run.
 
 ## Remaining opportunities
-1. When clean package execution and WebMCP browser verification are available, re-verify and, if still reproduced, implement the minimal shared synchronous generation/refinement admission guard; preserve all 13 registrations and release the guard in every exit path.
+1. When clean package execution and WebMCP browser verification are available, re-verify and, if still reproduced, implement the minimal shared synchronous generation/refinement admission guard using the already-established synchronous-ref pattern from Virtual Try-On; preserve all 13 registrations and release the guard in every exit path.
 2. Run clean install, build, lint and focused duplicate/simultaneous generate/refine regression tests before accepting behavioral code.
 3. Inspect actual registered tools in supported WebMCP tooling and execute realistic journeys, including cancellation and competing generate/refine calls.
 4. Continue auditing stale revisions, route changes/refresh, unsupported-browser fallback, registration stability, payload size, cancellation, provider failures and duplicate actions.
 5. Keep production `main` isolated; feature-branch deployment success alone is never a merge criterion.
 
 ## Next run
-Read this file first. Reverify canonical repository, current working-branch head, production isolation and deployment status. Re-audit the complete existing human journey against current official WebMCP guidance. If a clean build/test plus WebMCP browser verification path becomes available, implement only the minimal shared synchronous admission guard after re-verifying the race and verify all 13 registrations remain intact. Otherwise preserve behavioral source and record the fresh verification boundary.
+Read this file first. Reverify canonical repository, current working-branch head, production isolation and deployment status. Re-audit the complete existing human journey against current official WebMCP guidance. If a clean build/test plus WebMCP browser verification path becomes available, implement only the minimal shared synchronous admission guard after re-verifying the race, following the proven synchronous-ref pattern already used by Virtual Try-On, and verify all 13 registrations remain intact. Otherwise preserve behavioral source and record the fresh verification boundary.
