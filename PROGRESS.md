@@ -8,8 +8,8 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Production branch: `main`.
 - Production commit and merge base: `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Working branch: `webmcp-agent-native`.
-- Branch head verified at start of latest run: `0fb11ab1c8c0c090e125d6503a6379e0d4fe643d`.
-- Branch comparison at start: 253 commits ahead of `main`, 0 behind; merge base remains the production commit above.
+- Branch head verified at start of latest run: `0720aba45a62724dfb986d66feaf07a9404e3439`.
+- Branch comparison at start: 254 commits ahead of `main`, 0 behind; merge base remains the production commit above.
 - Entering branch Vercel status: success.
 - Production `main` and deployment configuration were not modified.
 
@@ -20,23 +20,22 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Total: 13 semantic tools.
 - Bridges feature-detect `document.modelContext`, preserve normal human flows when unavailable, use semantic state/actions rather than DOM selector wrappers, propagate execution `AbortSignal` into provider fetches, and use bounded schemas plus read-only/untrusted annotations where appropriate.
 
-## Fresh full-product audit — 2026-09-21 22:58 IST
+## Fresh full-product audit — 2026-09-22 00:59 IST
 
 ### Repository / production verification
 - Verified canonical repository identity, admin/push permissions and default branch before mutation.
 - Read `PROGRESS.md` first, before mutation.
-- Inspected the current recursive working-branch tree; entering head was `0fb11ab1c8c0c090e125d6503a6379e0d4fe643d`.
-- Compared `main...webmcp-agent-native`: 253 commits ahead, 0 behind; production merge base remains exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Inspected the current recursive working-branch tree; entering head was `0720aba45a62724dfb986d66feaf07a9404e3439`.
+- Compared `main...webmcp-agent-native`: 254 commits ahead, 0 behind; production merge base remains exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Entering feature-branch Vercel status is `success`.
 - Re-read current `package.json`, README WebMCP documentation and the current main WebMCP bridge source available through the connector.
 - No production branch or deployment configuration was changed.
 
 ### Current official WebMCP cross-check
-- Rechecked official Chrome WebMCP Imperative API and tool-security guidance on 21 September 2026; the Imperative API page was last updated 11 September 2026 and the security page 1 September 2026.
+- Rechecked official Chrome WebMCP Imperative API and tool-security guidance on 22 September 2026.
 - Current official guidance continues to support `document.modelContext.registerTool`, structured JSON input schemas, registration cleanup through a registration `AbortSignal`, execution cancellation through the execution `AbortSignal`, same-origin discovery through `getTools()`, and execution through `executeTool()`.
 - Security guidance continues to recommend `readOnlyHint` for non-mutating tools, `untrustedContentHint` for user/external content, `consequentialHint` for genuinely high-stakes/non-reversible actions, succinct descriptions, and compact outputs.
-- Chrome's security guidance currently recommends approximately 500 characters per tool description, 150 per parameter description, 30 per tool/parameter name, and 1.5K characters per individual output; these are recommendations rather than a reason to rename stable tools without measured agent problems.
-- No newly published official requirement found in this run invalidates the current CriShirt WebMCP design.
+- No newly observed official requirement invalidates the current CriShirt WebMCP design.
 
 ### Fresh journey / correctness audit
 - Re-audited the established 13-tool surface against the stable human journeys: workspace state/configuration, Perfect Corp generation/refinement, artwork placement, collection/cart, navigation and Virtual Try-On. No missing stable human capability justified another semantic tool.
@@ -49,7 +48,7 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Repository identity / permissions / default branch: passed.
 - `PROGRESS.md` first-read requirement: passed.
 - Recursive working-branch tree inspection: passed.
-- Production isolation comparison: passed (`ahead 253`, `behind 0`, merge base unchanged).
+- Production isolation comparison: passed (`ahead 254`, `behind 0`, merge base unchanged).
 - Entering feature-branch Vercel status: passed (`success`).
 - Current official Chrome WebMCP API/security cross-check: passed.
 - README / package-script / semantic-surface static audit: passed.
@@ -60,7 +59,7 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Behavioral implementation: intentionally not attempted without those verification gates.
 
 ## Latest commit SHA
-- Branch head at latest run start: `0fb11ab1c8c0c090e125d6503a6379e0d4fe643d`.
+- Branch head at latest run start: `0720aba45a62724dfb986d66feaf07a9404e3439`.
 - Latest tested behavioral source commit remains: `723d33e6457b894cf607af48d5f84c4d5082fee9`.
 - Latest run changes documentation only; the resulting documentation commit is the commit that writes this record.
 - No behavioral source changed in the latest run.
