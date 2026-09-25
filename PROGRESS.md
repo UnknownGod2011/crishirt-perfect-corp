@@ -8,8 +8,9 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Production branch: `main`.
 - Production commit and merge base: `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Working branch: `webmcp-agent-native`.
-- Branch head verified at start of latest run: `92b7156591b824ca434c38b62b73d6e3fd196f9e`.
-- Branch comparison at start: 264 commits ahead of `main`, 0 behind; merge base remains the production commit above.
+- Branch head verified at start of latest run: `dd8d3fc13ec3e64c16a6302268fc461209712b8a`.
+- Branch comparison at start: 265 commits ahead of `main`, 0 behind; merge base remains the production commit above.
+- Entering feature-branch Vercel status: successful.
 - Production `main` and deployment configuration were not modified.
 
 ## Implemented WebMCP surface
@@ -19,21 +20,23 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Total: 13 semantic tools.
 - Bridges feature-detect `document.modelContext`, preserve normal human flows when unavailable, use semantic state/actions rather than DOM selector wrappers, propagate execution `AbortSignal` into provider fetches, and use bounded schemas plus read-only/untrusted annotations where appropriate.
 
-## Fresh full-product audit — 2026-09-24 07:58 IST
+## Fresh full-product audit — 2026-09-25 16:02 IST
 
 ### Repository / production verification
 - Verified canonical repository identity, admin/push permissions and default branch before mutation.
 - Read `PROGRESS.md` first on `webmcp-agent-native` before mutation.
-- Inspected the current recursive working-branch tree available through the connector; entering head was `92b7156591b824ca434c38b62b73d6e3fd196f9e`.
-- Compared `main...webmcp-agent-native`: 264 commits ahead, 0 behind; production merge base remains exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Inspected the current recursive working-branch tree available through the connector; entering head was `dd8d3fc13ec3e64c16a6302268fc461209712b8a`.
+- Compared `main...webmcp-agent-native`: 265 commits ahead, 0 behind; production merge base remains exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Verified the entering branch commit's Vercel status is successful.
 - Re-read current `package.json` scripts and the README WebMCP section. README remains concise and consistent with the 13-tool surface; no README change is justified.
 - No production branch or deployment configuration was changed.
 
 ### Current official WebMCP cross-check
-- Rechecked the official Chrome WebMCP Imperative API and tool-security guidance on 24 September 2026. The Imperative API remains last updated 21 September 2026; security guidance remains last updated 1 September 2026.
+- Rechecked the official Chrome WebMCP Imperative API, tool-security guidance, and Lighthouse registered-WebMCP-tools audit on 25 September 2026. The Imperative API remains last updated 21 September 2026; security guidance remains last updated 1 September 2026.
 - Current guidance continues to support `document.modelContext.registerTool`, structured JSON input schemas, `readOnlyHint`, `untrustedContentHint`, `consequentialHint`, registration cleanup through `AbortSignal`, and execution cancellation through the execution `AbortSignal`.
 - Official security guidance additionally recommends succinct tool descriptions/outputs and character budgets. The existing CriShirt surface is already intentionally compact and semantic; no new tool or migration is justified from this guidance.
 - The Chrome 156 `debugging` annotation is not appropriate for CriShirt's end-user tools, and the experimental React helper does not justify replacing the working imperative bridge.
+- Chrome's current Lighthouse guidance now provides an additional concrete verification surface: the Registered WebMCP tools audit enumerates tools registered through the Imperative/Declarative APIs and warns only above 40 tools. CriShirt's 13-tool surface remains comfortably below that threshold. When browser execution becomes available, run this Lighthouse audit in addition to `getTools()`/`executeTool()` checks.
 
 ### Fresh journey / correctness audit
 - Re-audited the existing 13-tool semantic surface against the stable human journey: workspace state/configuration, generation, refinement, placement, current-design cart add, cart read/remove, collection read/add, navigation, try-on state and try-on execution remain covered without DOM-selector wrappers.
@@ -46,7 +49,9 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Repository identity / permissions / default branch: passed.
 - Working branch and `PROGRESS.md` first-read requirement: passed.
 - Recursive working-branch tree inspection: passed within connector output limits.
-- Production isolation comparison: passed (`ahead 264`, `behind 0`, merge base unchanged).
+- Production isolation comparison: passed (`ahead 265`, `behind 0`, merge base unchanged).
+- Entering feature-branch Vercel status: passed (`success`).
+- Official Lighthouse registered-WebMCP-tools guidance audit: passed; current 13-tool surface remains below Chrome's >40 warning threshold.
 - `package.json` build/lint script audit: passed; scripts remain `tsc -b && vite build` and `eslint .`.
 - README / 13-tool capability audit: passed; documentation remains accurate.
 - Current official Chrome WebMCP API/security cross-check: passed; no newly required migration found.
@@ -57,7 +62,7 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Behavioral implementation: intentionally not attempted without those verification gates.
 
 ## Latest commit SHA
-- Branch head at latest run start: `92b7156591b824ca434c38b62b73d6e3fd196f9e`.
+- Branch head at latest run start: `dd8d3fc13ec3e64c16a6302268fc461209712b8a`.
 - Latest tested behavioral source commit remains: `723d33e6457b894cf607af48d5f84c4d5082fee9`.
 - Latest run changes documentation only; the resulting documentation commit is the commit that writes this record.
 - No behavioral source changed in the latest run.
@@ -69,7 +74,7 @@ An earlier attempted remote whole-file replacement for the concurrency guard wou
 1. When clean package execution and WebMCP browser verification are available, reproduce the generation/refinement same-tick admission race and implement the minimal shared synchronous in-flight guard only if executable regression evidence confirms it.
 2. Guard requirements: acquire synchronously only after validation succeeds and immediately before the first busy dispatch/provider work; share it across generate/refine; release it in every success/error/cancellation path via `finally`; preserve existing React busy flags for the human UI; do not alter the 13-tool surface.
 3. Run clean install, build, lint and focused duplicate/simultaneous generate/refine regression tests before accepting behavioral code.
-4. Inspect actual registered tools with `document.modelContext.getTools()` and exercise them with `executeTool()` in supported WebMCP tooling, including cancellation and competing generate/refine calls.
+4. Inspect actual registered tools with Chrome's Lighthouse Registered WebMCP tools audit and `document.modelContext.getTools()`, then exercise them with `executeTool()` in supported WebMCP tooling, including cancellation and competing generate/refine calls.
 5. Continue auditing stale revisions, route changes/refresh, unsupported-browser fallback, registration stability, payload size, cancellation, provider failures and duplicate actions.
 6. Keep production `main` isolated; feature-branch deployment success alone is never a merge criterion.
 
