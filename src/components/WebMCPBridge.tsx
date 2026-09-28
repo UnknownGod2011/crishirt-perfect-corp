@@ -52,6 +52,7 @@ export default function WebMCPBridge() {
   const stateRef = useRef(state);
   const revisionRef = useRef(1);
   const navigateRef = useRef(navigate);
+  const designOperationInFlightRef = useRef(false);
 
   useEffect(() => {
     stateRef.current = state;
@@ -242,7 +243,7 @@ export default function WebMCPBridge() {
         const prompt = asString(input.prompt);
         if (!prompt) return failure('INVALID_PROMPT', 'A non-empty design prompt is required.');
         const s = stateRef.current;
-        if (s.isGenerating || s.isRefining) return failure('WORKSPACE_BUSY', 'CriShirt is already generating or refining a design.');
+        if (s.isGenerating || s.isRefining || designOperationInFlightRef.current) return failure('WORKSPACE_BUSY', 'CriShirt is already generating or refining a design.');
 
         const side = asSide(input.side) || s.currentSide;
         const apparelType = asString(input.apparelType) || s.apparelType;
@@ -255,6 +256,7 @@ export default function WebMCPBridge() {
         if (!apparel.sizes.includes(size)) return failure('INVALID_SIZE', `${size} is not available for ${apparel.label}.`, { validSizes: apparel.sizes });
         if (!isHexColor(color)) return failure('INVALID_COLOR', 'Color must be a six-digit hex value.');
 
+        designOperationInFlightRef.current = true;
         dispatch({ type: 'SET_GENERATING', payload: true });
         dispatch({ type: 'SET_ERROR', payload: null });
         dispatch({ type: 'SET_GENERATION_PROGRESS', payload: 'Starting Perfect Corp generation...' });
@@ -284,6 +286,7 @@ export default function WebMCPBridge() {
           dispatch({ type: 'SET_GENERATION_PROGRESS', payload: '' });
           return failure('PERFECT_GENERATION_FAILED', message);
         } finally {
+          designOperationInFlightRef.current = false;
           dispatch({ type: 'SET_GENERATING', payload: false });
         }
       },
@@ -310,12 +313,13 @@ export default function WebMCPBridge() {
         const instruction = asString(input.instruction);
         if (!instruction) return failure('INVALID_INSTRUCTION', 'A non-empty refinement instruction is required.');
         const s = stateRef.current;
-        if (s.isGenerating || s.isRefining) return failure('WORKSPACE_BUSY', 'CriShirt is already generating or refining a design.');
+        if (s.isGenerating || s.isRefining || designOperationInFlightRef.current) return failure('WORKSPACE_BUSY', 'CriShirt is already generating or refining a design.');
         const side = asSide(input.side) || s.currentSide;
         const design = side === 'front' ? s.frontDesign : s.backDesign;
         if (!design.currentImage) return failure('DESIGN_NOT_FOUND', `There is no ${side} design to refine.`);
         const apparel = getApparelConfig(s.apparelType);
 
+        designOperationInFlightRef.current = true;
         dispatch({ type: 'SET_REFINING', payload: true });
         dispatch({ type: 'SET_ERROR', payload: null });
         dispatch({ type: 'SET_GENERATION_PROGRESS', payload: 'Starting Perfect Corp refinement...' });
@@ -345,6 +349,7 @@ export default function WebMCPBridge() {
           dispatch({ type: 'SET_GENERATION_PROGRESS', payload: '' });
           return failure('PERFECT_REFINEMENT_FAILED', message);
         } finally {
+          designOperationInFlightRef.current = false;
           dispatch({ type: 'SET_REFINING', payload: false });
         }
       },
