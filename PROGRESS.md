@@ -8,8 +8,8 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Production branch: `main`.
 - Production commit and merge base: `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Working branch: `webmcp-agent-native`.
-- Branch head verified at start of latest run: `345ff7d845e4749bdd1f6e06a5b4620e349d8a96`.
-- Branch comparison at start: 266 commits ahead of `main`, 0 behind; merge base remains the production commit above.
+- Branch head verified at start of latest run: `ee2c1e48dc65d4b7ba35d5d133fc9ed042f61bd0`.
+- Branch comparison at start: 267 commits ahead of `main`, 0 behind; merge base remains the production commit above.
 - Entering feature-branch Vercel status: successful.
 - Production `main` and deployment configuration were not modified.
 
@@ -20,13 +20,13 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Total: 13 semantic tools.
 - Bridges feature-detect `document.modelContext`, preserve normal human flows when unavailable, use semantic state/actions rather than DOM selector wrappers, propagate execution `AbortSignal` into provider fetches, and use bounded schemas plus read-only/untrusted annotations where appropriate.
 
-## Fresh full-product audit — 2026-09-28 02:57 IST
+## Fresh full-product audit — 2026-09-28 22:02 IST
 
 ### Repository / production verification
 - Verified canonical repository identity, admin/push permissions and default branch before mutation.
 - Read `PROGRESS.md` first on `webmcp-agent-native` before mutation.
-- Inspected the current working-branch tree available through the connector; entering head was `345ff7d845e4749bdd1f6e06a5b4620e349d8a96`.
-- Compared `main...webmcp-agent-native`: 266 commits ahead, 0 behind; production merge base remains exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
+- Inspected the current working-branch tree available through the connector; entering head was `ee2c1e48dc65d4b7ba35d5d133fc9ed042f61bd0`.
+- Compared `main...webmcp-agent-native`: 267 commits ahead, 0 behind; production merge base remains exactly `88daa417caa5305f81e5554977a13a94a793cdeb`.
 - Verified the entering branch commit's Vercel status is successful.
 - Re-read current `package.json` scripts and the README WebMCP section. README remains concise and consistent with the 13-tool surface; no README change is justified.
 - No production branch or deployment configuration was changed.
@@ -43,6 +43,7 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - No newly missing stable human capability warrants another WebMCP tool. Adding wrappers would increase agent tool-selection cost without reducing meaningful human-vs-agent interaction cost.
 - The known generation/refinement admission race remains the only concrete high-value behavioral issue identified by current static evidence. It still requires executable reproduction and regression verification before changing concurrency semantics.
 - Fresh payload audit found a second concrete efficiency issue: `crishirt_get_cart` returns every cart item plus complete front/back prompt strings with no pagination/detail control. Cart size and prompt length can therefore push an individual response beyond Chrome's current recommended ~1.5K-character WebMCP output budget. Do not blindly truncate IDs or semantics; the safe candidate is a backwards-compatible bounded/paginated or optional-detail contract, with large-cart/long-prompt regression coverage before acceptance.
+- Fresh source-level payload audit found the same bounded-output concern in `crishirt_get_workspace_state`: it returns full front/back generation and refinement prompt strings. Because generate/refine schemas each permit up to 1,000 characters, a two-sided edited workspace can exceed Chrome's recommended ~1.5K-character individual-output budget even before garment/state metadata. Preserve prompt accessibility, but when executable regression testing is available prefer an explicit optional detail mode or other backwards-compatible bounded representation rather than silent truncation.
 - No schema, payload, route, cart, collection, try-on, annotation, registration-lifecycle or tool-count change is justified in this run.
 - This is intentionally a behavioral no-op rather than manufacturing an untestable source change.
 
@@ -50,7 +51,7 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Repository identity / permissions / default branch: passed.
 - Working branch and `PROGRESS.md` first-read requirement: passed.
 - Recursive working-branch tree inspection: passed within connector output limits.
-- Production isolation comparison: passed (`ahead 266`, `behind 0`, merge base unchanged).
+- Production isolation comparison: passed (`ahead 267`, `behind 0`, merge base unchanged).
 - Entering feature-branch Vercel status: passed (`success`).
 - Official Lighthouse registered-WebMCP-tools guidance audit: passed; current 13-tool surface remains below Chrome's >40 warning threshold.
 - `package.json` build/lint script audit: passed; scripts remain `tsc -b && vite build` and `eslint .`.
@@ -63,7 +64,7 @@ Keep the existing stable human CriShirt experience unchanged while exposing the 
 - Behavioral implementation: intentionally not attempted without those verification gates.
 
 ## Latest commit SHA
-- Branch head at latest run start: `345ff7d845e4749bdd1f6e06a5b4620e349d8a96`.
+- Branch head at latest run start: `ee2c1e48dc65d4b7ba35d5d133fc9ed042f61bd0`.
 - Latest tested behavioral source commit remains: `723d33e6457b894cf607af48d5f84c4d5082fee9`.
 - Latest run changes documentation only; the resulting documentation commit is the commit that writes this record.
 - No behavioral source changed in the latest run.
@@ -76,7 +77,7 @@ An earlier attempted remote whole-file replacement for the concurrency guard wou
 2. Guard requirements: acquire synchronously only after validation succeeds and immediately before the first busy dispatch/provider work; share it across generate/refine; release it in every success/error/cancellation path via `finally`; preserve existing React busy flags for the human UI; do not alter the 13-tool surface.
 3. Run clean install, build, lint and focused duplicate/simultaneous generate/refine regression tests before accepting behavioral code.
 4. Inspect actual registered tools with Chrome's Lighthouse Registered WebMCP tools audit and `document.modelContext.getTools()`, then exercise them with `executeTool()` in supported WebMCP tooling, including cancellation and competing generate/refine calls.
-5. When executable regression testing is available, design and test a backwards-compatible bounded `crishirt_get_cart` response (pagination and/or optional prompt detail) so stable item IDs remain available while routine agent reads stay compact under realistic large-cart/long-prompt cases.
+5. When executable regression testing is available, design and test backwards-compatible bounded read responses: pagination and/or optional prompt detail for `crishirt_get_cart`, plus optional prompt detail for `crishirt_get_workspace_state`. Stable item IDs and prompt accessibility must remain available while routine reads stay compact under realistic long-prompt/large-cart cases.
 6. Continue auditing stale revisions, route changes/refresh, unsupported-browser fallback, registration stability, payload size, cancellation, provider failures and duplicate actions.
 7. Keep production `main` isolated; feature-branch deployment success alone is never a merge criterion.
 
